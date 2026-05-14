@@ -1,5 +1,7 @@
 # Luiz Air
 
+![Luiz Air preview](assets/luiz-air-preview.png)
+
 Luiz Air is een speelse, interactieve luchtvaartsite met meerdere HTML-pagina’s, afbeeldingen, geluiden en video’s.  
 De site bevat onder andere cockpit-achtige schermen, waarschuwingen, vliegtuigthema’s, radar/surveillance-achtige pagina’s en diverse media-effecten.
 
