@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LUIZ-DEFENSE // SIGINT OPS CENTER V2</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #00ff66;
+      --green-soft: rgba(0,255,102,0.16);
+      --red: #ff375f;
+      --blue: #00d9ff;
+      --orange: #ffb400;
+      --bg: #020403;
+      --panel: rgba(5, 18, 11, 0.86);
+      --border: rgba(0,255,102,0.16);
+      --muted: #84cfa2;
+      --text: #dbffe8;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(0,255,120,0.05), transparent 25%),
+        linear-gradient(180deg, #020302, #050805 60%, #030403);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.015) 0px,
+          rgba(255,255,255,0.015) 1px,
+          rgba(0,0,0,0.10) 2px,
+          rgba(0,0,0,0.10) 3px
+        );
+      pointer-events: none;
+      z-index: 1000;
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.42) 100%);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .boot-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .boot-box {
+      width: min(780px, 92vw);
+      background: rgba(0, 12, 6, 0.95);
+      border: 1px solid rgba(0,255,102,0.22);
+      box-shadow: 0 0 35px rgba(0,255,102,0.08);
+      padding: 24px;
+    }
+
+    .boot-title {
+      font-family: 'Black Ops One', cursive;
+      font-size: 24px;
+      color: var(--green);
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+
+    #boot-log {
+      min-height: 170px;
+      line-height: 1.8;
+      font-size: 13px;
+      color: #b6ffd1;
+      white-space: pre-line;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: 58px 1fr 26px;
+      height: 100vh;
+      position: relative;
+      z-index: 2;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: rgba(0,0,0,0.82);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,102,0.28);
+      background:
+        radial-gradient(circle at center, rgba(0,255,102,0.12), rgba(0,255,102,0.03) 55%, transparent 56%),
+        radial-gradient(circle at center, transparent 0 22%, rgba(0,255,102,0.22) 23% 24%, transparent 25% 46%, rgba(0,255,102,0.18) 47% 48%, transparent 49%);
+      position: relative;
+      box-shadow: 0 0 14px rgba(0,255,102,0.1);
+      overflow: hidden;
+    }
+
+    .brand-logo::before,
+    .brand-logo::after {
+      content: "";
+      position: absolute;
+      background: rgba(0,255,102,0.22);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .brand-logo::before { width: 1px; height: 80%; }
+    .brand-logo::after { width: 80%; height: 1px; }
+
+    .brand-title {
+      font-family: 'Black Ops One', cursive;
+      color: var(--green);
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(0,255,102,0.25);
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 11px;
+      opacity: 0.82;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .pill {
+      border: 1px solid var(--border);
+      background: rgba(0,255,102,0.05);
+      padding: 6px 10px;
+      color: var(--blue);
+      border-radius: 999px;
+      min-width: 96px;
+      text-align: center;
+    }
+
+    .btn {
+      background: transparent;
+      color: var(--blue);
+      border: 1px solid rgba(0,217,255,0.28);
+      padding: 6px 10px;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 8px;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      background: rgba(0,217,255,0.08);
+      box-shadow: 0 0 14px rgba(0,217,255,0.12);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1.35fr 0.85fr 0.95fr;
+      grid-template-rows: 1fr 0.92fr;
+      gap: 14px;
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .panel {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 30px rgba(0,255,102,0.03),
+        0 10px 28px rgba(0,0,0,0.35);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%);
+      pointer-events: none;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(0,255,102,0.10);
+      background: linear-gradient(90deg, rgba(0,255,102,0.08), rgba(0,255,102,0.02));
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .panel-tag {
+      color: var(--blue);
+      font-size: 10px;
+    }
+
+    .panel-body {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .websdr-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .websdr-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1200px; /* Maak dit iets minder breed om de popup te vangen */
+  height: 900px;
+  border: none;
+  transform: scale(0.8); /* Iets groter dan voorheen */
+  transform-origin: 0 0;
+  filter: hue-rotate(90deg) brightness(0.78) contrast(1.18);
+}
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(0,255,102,0.16);
+      animation: scan 7s linear infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes scan {
+      from { top: 0; }
+      to { top: 100%; }
+    }
+
+    .right-stack {
+      display: grid;
+      grid-template-rows: 170px 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .status-card {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(0,255,102,0.08);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 68px;
+      box-shadow: inset 0 0 14px rgba(0,255,102,0.03);
+    }
+
+    .status-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .status-value {
+      font-size: 22px;
+      color: var(--green);
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px rgba(0,255,102,0.12);
+    }
+
+    .status-sub {
+      margin-top: 5px;
+      font-size: 10px;
+      color: var(--blue);
+    }
+
+    .signal-meter {
+      margin-top: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #111;
+      border: 1px solid rgba(0,255,102,0.10);
+      overflow: hidden;
+    }
+
+    .signal-bar {
+      height: 100%;
+      width: 35%;
+      background: linear-gradient(90deg, var(--green), var(--orange));
+      box-shadow: 0 0 14px rgba(0,255,102,0.20);
+      transition: width 0.35s ease;
+    }
+
+    .threat-low { color: var(--green); }
+    .threat-med { color: var(--orange); }
+    .threat-high { color: var(--red); }
+
+    .log-wrap {
+      padding: 12px;
+      overflow: auto;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .log-line {
+      margin-bottom: 6px;
+      color: #cffff0;
+      opacity: 0.92;
+      border-left: 2px solid rgba(0,255,102,0.15);
+      padding-left: 8px;
+    }
+
+    .log-time {
+      color: var(--blue);
+      margin-right: 8px;
+    }
+
+    .freq-panel {
+      overflow: auto;
+      padding: 12px;
+      font-size: 11px;
+    }
+
+    .freq-item {
+      border-left: 3px solid var(--orange);
+      padding: 8px 0 8px 10px;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.015);
+    }
+
+    .freq-num {
+      color: var(--red);
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .mode {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #1b1b1b;
+      color: #fff;
+    }
+
+    .hint {
+      color: #84cda1;
+      opacity: 0.55;
+      font-size: 9px;
+      margin-top: 14px;
+    }
+
+    .frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: invert(0.9) hue-rotate(180deg) brightness(0.82);
+    }
+
+    .radar-wrap {
+      display: grid;
+      grid-template-rows: 1fr 84px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .radar-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: radial-gradient(circle at center, rgba(0,255,102,0.05), transparent 62%);
+    }
+
+    #radar {
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,102,0.14);
+      background: #030903;
+      box-shadow: 0 0 25px rgba(0,255,102,0.06);
+    }
+
+    .radar-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 10px 12px 12px;
+    }
+
+    .mini-box {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(0,255,102,0.08);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 10px;
+    }
+
+    .mini-box strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+    }
+
+    /* WORLD MAP */
+    .world-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(0,255,102,0.04), transparent 70%),
+        linear-gradient(180deg, rgba(0,255,102,0.02), transparent);
+    }
+
+    #worldMap {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-hud {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      display: grid;
+      gap: 8px;
+      z-index: 5;
+      font-size: 10px;
+    }
+
+    .hud-chip {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(0,255,102,0.14);
+      padding: 6px 8px;
+      border-radius: 999px;
+      color: var(--blue);
+      width: fit-content;
+      backdrop-filter: blur(2px);
+    }
+
+    .hud-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(0,255,102,0.55);
+    }
+
+    .map-legend {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 5;
+      background: rgba(0,0,0,0.42);
+      border: 1px solid rgba(0,255,102,0.14);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 10px;
+      color: #b7ffd2;
+      min-width: 180px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .legend-swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    /* ALERTS */
+    .alerts-overlay {
+      position: fixed;
+      top: 76px;
+      right: 16px;
+      z-index: 2500;
+      display: grid;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 360px;
+    }
+
+    .alert-toast {
+      background: linear-gradient(90deg, rgba(60,0,0,0.88), rgba(18,4,4,0.88));
+      border: 1px solid rgba(255,55,95,0.42);
+      border-left: 4px solid var(--red);
+      color: #ffe5ea;
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.35), 0 0 20px rgba(255,55,95,0.12);
+      transform: translateX(24px);
+      opacity: 0;
+      animation: slideIn 0.35s ease forwards, pulseAlert 1.2s ease-in-out infinite;
+    }
+
+    .alert-toast.warn {
+      background: linear-gradient(90deg, rgba(36,22,0,0.9), rgba(18,10,2,0.88));
+      border-color: rgba(255,180,0,0.36);
+      border-left-color: var(--orange);
+      color: #fff3d6;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.35), 0 0 20px rgba(255,180,0,0.12);
+    }
+
+    .alert-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .alert-msg {
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .orbit-map-image {
+     position: absolute;
+     inset: 0;
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+    filter: brightness(0.7) contrast(1.15);
+   }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulseAlert {
+      0%, 100% { box-shadow: 0 12px 24px rgba(0,0,0,0.35), 0 0 14px rgba(255,55,95,0.10); }
+      50% { box-shadow: 0 12px 24px rgba(0,0,0,0.35), 0 0 26px rgba(255,55,95,0.20); }
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.72);
+      color: #8db89d;
+      font-size: 10px;
+      letter-spacing: 0.6px;
+    }
+
+    .footer-alert {
+      color: var(--orange);
+    }
+
+    @media (max-width: 1280px) {
+      html, body { overflow: auto; }
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 420px 240px 320px 360px 320px 320px;
+      }
+      .alerts-overlay {
+        top: auto;
+        bottom: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="boot-screen" id="bootScreen">
+    <div class="boot-box">
+      <div class="boot-title">LUIZ-DEFENSE // OPS BOOT SEQUENCE</div>
+      <div id="boot-log"></div>
+      <span class="cursor">█</span>
+    </div>
+  </div>
+
+  <div class="alerts-overlay" id="alertsOverlay"></div>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div>
+          <div class="brand-title">LUIZ-DEFENSE</div>
+          <div class="brand-sub">SIGINT // SPACE INTEL // WORLD THREAT GRID // COMMAND NETWORK</div>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <div class="pill" id="clockUtc">UTC --:--:--</div>
+        <div class="pill" id="nodeStatus">NODE: ACTIVE</div>
+        <button class="btn" id="musicBtn" onclick="toggleMusic()">🔊 AUDIO: OFF</button>
+        <a class="btn" href="surveillance.html" style="text-decoration:none;">⬅ BACK</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- SDR -->
+      <section class="panel" style="grid-row: 1 / span 1;">
+  <div class="panel-header">
+    <span>Signal Intelligence // Radio Waterfall</span>
+    <span class="panel-tag">DIRECT_UPLINK</span>
+  </div>
+  <div class="panel-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,20,0,0.6); position: relative;">
+    
+    <div style="color: var(--blue); font-family: 'Share Tech Mono'; font-size: 12px; margin-bottom: 20px; text-align: center; z-index: 2;">
+      <div class="pulse">SCANNING HF BANDS...</div>
+      <div style="font-size: 24px; color: var(--green); margin: 10px 0;">4625.00 kHz</div>
+    </div>
+
+<div class="panel">
+      <div class="panel-header">
+      </div>
+      <div class="panel-body" style="background: #000; overflow: hidden;">
+      <div class="scan-line"></div>
+      </div>
+    </div>
+
+    <button onclick="openSDR()" style="background: rgba(0,255,102,0.1); border: 1px solid var(--green); color: var(--green); font-family: 'Black Ops One'; padding: 15px 25px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(0,255,102,0.2); z-index: 2;">
+      ESTABLISH DIRECT UPLINK
+    </button>
+    
+    <p style="font-size: 10px; color: var(--muted); margin-top: 15px; text-align: center; padding: 0 20px; z-index: 2;">
+      STATUS: Gebruik de directe Twente-link om audio-blokkades te omzeilen.
+    </p>
+
+    <div class="scan-line"></div>
+  </div>
+</section>
+
+<section class="panel" style="grid-row: 1 / span 1;">
+  <div class="panel-header">
+    <span>Visual Intel // ISS Timelapse</span>
+    <span class="panel-tag">LIVE_FEED</span>
+  </div>
+  <div class="panel-body" style="background: #000;">
+    <video
+  id="iss-video"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="auto"
+  controls
+  style="width:100%; height:100%; object-fit:cover; filter: contrast(1.1) brightness(0.9);">
+  <source src="./media2.mp4" type="video/mp4">
+  Je browser ondersteunt deze video niet.
+</video>
+    <div class="scan-line"></div>
+  </div>
+</section>
+
+<script>
+  function openSDR() {
+    // We gebruiken hier de originele HTTP link van Twente
+    // Omdat dit in een nieuw venster opent, blokkeert je HTTPS site dit niet!
+    window.open("http://websdr.ewi.utwente.nl:8901/", "SDR_EXT_UPLINK", "width=1200,height=800,menubar=no,status=no,location=no");
+    
+    if(typeof speak === "function") {
+        speak("Bypassing local proxy. Establishing direct signal intelligence uplink to University of Twente.");
+    }
+  }
+</script>
+
+      <!-- Status + log -->
+      <section class="right-stack">
+        <section class="panel">
+          <div class="panel-header">
+            <span>Node Status // Operations Overview</span>
+            <span class="panel-tag">LIVE TELEMETRY</span>
+          </div>
+          <div class="panel-body">
+            <div class="status-grid">
+              <div class="status-card">
+                <div class="status-label">Signal Strength</div>
+                <div class="status-value" id="signalValue">37%</div>
+                <div class="signal-meter"><div class="signal-bar" id="signalBar"></div></div>
+              </div>
+
+              <div class="status-card">
+                <div class="status-label">Threat Level</div>
+                <div class="status-value threat-low" id="threatLevel">LOW</div>
+                <div class="status-sub" id="threatSub">Passive monitoring only</div>
+              </div>
+
+              <div class="status-card">
+                <div class="status-label">Tracked Contacts</div>
+                <div class="status-value" id="contactCount">08</div>
+                <div class="status-sub">RF / SAT / AIR / MARITIME</div>
+              </div>
+
+              <div class="status-card">
+                <div class="status-label">System Integrity</div>
+                <div class="status-value" id="integrityValue">99%</div>
+                <div class="status-sub">No critical faults detected</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <span>Intel Event Feed</span>
+            <span class="panel-tag">ROLLING LOG</span>
+          </div>
+          <div class="log-wrap" id="intelLog"></div>
+        </section>
+      </section>
+
+      <!-- Frequency panel -->
+      <section class="panel">
+        <div class="panel-header">
+          <span>Frequency Cheat Sheet // Top Targets</span>
+          <span class="panel-tag">CLASSIFIED</span>
+        </div>
+        <div class="freq-panel">
+          <div class="freq-item">
+            <div><span class="freq-num">4625.00</span><span class="mode">USB/AM</span></div>
+            <strong>The Buzzer (UVB-76)</strong><br>
+            Russisch militair station met constante drone.
+          </div>
+
+          <div class="freq-item">
+            <div><span class="freq-num">3756.00</span><span class="mode">USB</span></div>
+            <strong>The Pip</strong><br>
+            Herhalend tactisch signaal uit Rusland.
+          </div>
+
+          <div class="freq-item">
+            <div><span class="freq-num">5505.00</span><span class="mode">USB</span></div>
+            <strong>VOLMET Aviation</strong><br>
+            Meteo-uitzendingen voor trans-Atlantische routes.
+          </div>
+
+          <div class="freq-item">
+            <div><span class="freq-num">2182.00</span><span class="mode">AM</span></div>
+            <strong>Maritime Distress</strong><br>
+            Internationaal noodkanaal voor scheepvaart.
+          </div>
+
+          <div class="freq-item">
+            <div><span class="freq-num">10051.0</span><span class="mode">USB</span></div>
+            <strong>Shannon Aeradio</strong><br>
+            Luchtverkeersleiding voor trans-oceanische sectoren.
+          </div>
+
+          <div class="hint">
+            HINT: deze frequenties kun je links handmatig invoeren in de SDR.
+          </div>
+        </div>
+      </section>
+
+      <!-- Radar -->
+      <section class="panel">
+        <div class="panel-header">
+          <span>Tactical Radar // Contact Visualization</span>
+          <span class="panel-tag">ACTIVE_SCAN</span>
+        </div>
+        <div class="panel-body radar-wrap">
+          <div class="radar-stage">
+            <canvas id="radar" width="400" height="400"></canvas>
+          </div>
+          <div class="radar-info">
+            <div class="mini-box">
+              <strong>TRACK ID</strong>
+              <span id="trackId">LD-7821</span>
+            </div>
+            <div class="mini-box">
+              <strong>AZIMUTH</strong>
+              <span id="azimuthVal">128°</span>
+            </div>
+            <div class="mini-box">
+              <strong>RANGE</strong>
+              <span id="rangeVal">214 km</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+<section class="panel">
+  <div class="panel-header">
+    <span>Orbital Surveillance Map</span>
+    <span class="panel-tag">SAT TRACK</span>
+  </div>
+  <div class="panel-body world-wrap">
+
+    <img src="/orbit-map.jpg" class="orbit-map-image" alt="Orbit map">
+
+    <div class="map-hud">
+      <div class="hud-chip">
+        <span class="hud-dot"></span>
+        <span>ORBITAL GRID ONLINE</span>
+      </div>
+
+      <div class="hud-chip">
+        <span class="hud-dot" style="background: var(--blue); box-shadow: 0 0 10px rgba(0,217,255,0.55);"></span>
+        <span>TRACKING: ACTIVE</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+      <!-- Seismic -->
+      <section class="panel" style="grid-column: 3; grid-row: 2;">
+        <div class="panel-header">
+          <span>Global Seismic Monitor</span>
+          <span class="panel-tag">NODE_ACTIVE</span>
+        </div>
+        <div class="panel-body">
+          <iframe src="https://earthquakes.volcanodiscovery.com" class="frame" scrolling="no"></iframe>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>OPS GRID STATUS // SECURE CHANNEL MAINTAINED // KEYBOARD: M = AUDIO</div>
+      <div class="footer-alert" id="footerAlert">NO PRIORITY ALERTS</div>
+    </footer>
+  </div>
+
+  <script>
+    // AUDIO
+    let musicPlaying = false;
+    const ambientAudio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
+    ambientAudio.loop = true;
+    ambientAudio.volume = 0.18;
+
+    function toggleMusic() {
+      musicPlaying = !musicPlaying;
+      const btn = document.getElementById('musicBtn');
+
+      if (musicPlaying) {
+        ambientAudio.play().catch(() => {});
+        btn.textContent = '🔊 AUDIO: ON';
+        btn.style.color = 'var(--green)';
+        speak('Secure signal uplink established.');
+      } else {
+        ambientAudio.pause();
+        btn.textContent = '🔊 AUDIO: OFF';
+        btn.style.color = 'var(--blue)';
+      }
+    }
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.pitch = 0.8;
+        u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    // CLOCK
+    function updateClock() {
+      const now = new Date();
+      const utc = now.toUTCString().split(' ')[4];
+      document.getElementById('clockUtc').textContent = `UTC ${utc}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // STATUS CARDS
+    const threatStates = [
+      { name: 'LOW', cls: 'threat-low', sub: 'Passive monitoring only' },
+      { name: 'ELEV', cls: 'threat-med', sub: 'Unusual signal bursts detected' },
+      { name: 'HIGH', cls: 'threat-high', sub: 'Priority contact under observation' }
+    ];
+
+    function updateStatus() {
+      const signal = Math.floor(18 + Math.random() * 78);
+      const integrity = Math.floor(94 + Math.random() * 6);
+      const contacts = String(Math.floor(5 + Math.random() * 8)).padStart(2, '0');
+      const threat = threatStates[Math.floor(Math.random() * threatStates.length)];
+
+      document.getElementById('signalValue').textContent = `${signal}%`;
+      document.getElementById('signalBar').style.width = `${signal}%`;
+
+      const threatEl = document.getElementById('threatLevel');
+      threatEl.textContent = threat.name;
+      threatEl.className = `status-value ${threat.cls}`;
+      document.getElementById('threatSub').textContent = threat.sub;
+
+      document.getElementById('contactCount').textContent = contacts;
+      document.getElementById('integrityValue').textContent = `${integrity}%`;
+     
+
+      document.getElementById('footerAlert').textContent =
+        threat.name === 'HIGH' ? 'PRIORITY ALERT // HIGH ENERGY CONTACT' :
+        threat.name === 'ELEV' ? 'NOTICE // SIGNAL ANOMALY TRACKED' :
+        'NO PRIORITY ALERTS';
+    }
+    updateStatus();
+    setInterval(updateStatus, 3000);
+
+    // INTEL LOG
+    const intelMessages = [
+  'HF-band activiteitspiek gedetecteerd in gemonitorde sector',
+  'Versleuteld burst-pakket opgenomen en gearchiveerd',
+  'Langeafstandsluchtverkeer blijft actief',
+  'Passieve maritieme monitoring functioneert normaal',
+  'Orbitale telemetrie succesvol ververst',
+  'Remote listening node succesvol gesynchroniseerd',
+  'Weersignaal-relay stabiel en operationeel',
+  'Spectrumscan voltooid zonder afwijkingen',
+  'Onbekende korte transmissie gemarkeerd voor analyse',
+  'Seismische feed heartbeat ontvangen',
+  'Signaalversterking opnieuw gekalibreerd',
+  'Tactische sweep bevestigt meerdere zwakke contacten'
+];
+
+    function addLogLine() {
+      const log = document.getElementById('intelLog');
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      const now = new Date().toUTCString().split(' ')[4];
+      const msg = intelMessages[Math.floor(Math.random() * intelMessages.length)];
+      line.innerHTML = `<span class="log-time">[${now}]</span>${msg}`;
+      log.prepend(line);
+
+      while (log.children.length > 12) {
+        log.removeChild(log.lastChild);
+      }
+    }
+
+    for (let i = 0; i < 6; i++) addLogLine();
+    setInterval(addLogLine, 2600);
+
+    // RADAR
+    const radarCanvas = document.getElementById('radar');
+    const radarCtx = radarCanvas.getContext('2d');
+    let angle = 0;
+
+    const dots = Array.from({ length: 10 }, () => ({
+      r: 35 + Math.random() * 140,
+      a: Math.random() * Math.PI * 2,
+      size: 2 + Math.random() * 2.5
+    }));
+
+    function drawRadar() {
+      const w = radarCanvas.width;
+      const h = radarCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = 170;
+
+      radarCtx.clearRect(0, 0, w, h);
+      radarCtx.fillStyle = '#031003';
+      radarCtx.fillRect(0, 0, w, h);
+
+      const glow = radarCtx.createRadialGradient(cx, cy, 10, cx, cy, radius);
+      glow.addColorStop(0, 'rgba(0,255,102,0.08)');
+      glow.addColorStop(1, 'rgba(0,255,102,0.01)');
+      radarCtx.fillStyle = glow;
+      radarCtx.beginPath();
+      radarCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      radarCtx.fill();
+
+      radarCtx.strokeStyle = 'rgba(0,255,102,0.32)';
+      [0.25, 0.5, 0.75, 1].forEach(f => {
+        radarCtx.beginPath();
+        radarCtx.arc(cx, cy, radius * f, 0, Math.PI * 2);
+        radarCtx.stroke();
+      });
+
+      radarCtx.strokeStyle = 'rgba(0,255,102,0.15)';
+      radarCtx.beginPath();
+      radarCtx.moveTo(cx - radius, cy);
+      radarCtx.lineTo(cx + radius, cy);
+      radarCtx.moveTo(cx, cy - radius);
+      radarCtx.lineTo(cx, cy + radius);
+      radarCtx.stroke();
+
+      const sweepWidth = 0.26;
+      for (let i = 0; i < 14; i++) {
+        const alpha = (14 - i) / 14 * 0.12;
+        radarCtx.beginPath();
+        radarCtx.moveTo(cx, cy);
+        radarCtx.arc(cx, cy, radius, angle - sweepWidth - i * 0.012, angle - i * 0.012);
+        radarCtx.closePath();
+        radarCtx.fillStyle = `rgba(0,255,102,${alpha})`;
+        radarCtx.fill();
+      }
+
+      radarCtx.strokeStyle = 'rgba(0,255,102,0.95)';
+      radarCtx.lineWidth = 2;
+      radarCtx.beginPath();
+      radarCtx.moveTo(cx, cy);
+      radarCtx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
+      radarCtx.stroke();
+
+      dots.forEach(dot => {
+        const x = cx + Math.cos(dot.a) * dot.r;
+        const y = cy + Math.sin(dot.a) * dot.r;
+        const diff = Math.abs(Math.atan2(Math.sin(angle - dot.a), Math.cos(angle - dot.a)));
+        const active = diff < 0.15;
+
+        radarCtx.beginPath();
+        radarCtx.arc(x, y, dot.size, 0, Math.PI * 2);
+        radarCtx.fillStyle = active ? 'rgba(255,180,0,0.95)' : 'rgba(0,217,255,0.55)';
+        radarCtx.fill();
+
+        if (active) {
+          radarCtx.beginPath();
+          radarCtx.arc(x, y, dot.size + 6, 0, Math.PI * 2);
+          radarCtx.strokeStyle = 'rgba(255,180,0,0.32)';
+          radarCtx.stroke();
+        }
+      });
+
+      radarCtx.beginPath();
+      radarCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+      radarCtx.fillStyle = 'rgba(0,255,102,0.95)';
+      radarCtx.fill();
+
+      angle += 0.021;
+      requestAnimationFrame(drawRadar);
+    }
+    drawRadar();
+
+    function updateRadarInfo() {
+      document.getElementById('trackId').textContent = `LD-${Math.floor(1000 + Math.random() * 9000)}`;
+      document.getElementById('azimuthVal').textContent = `${Math.floor(Math.random() * 360)}°`;
+      document.getElementById('rangeVal').textContent = `${Math.floor(80 + Math.random() * 420)} km`;
+    }
+    updateRadarInfo();
+    setInterval(updateRadarInfo, 2400);
+
+    
+    // ALERTS
+    const alertsOverlay = document.getElementById('alertsOverlay');
+    const alertMessages = [
+  { title: 'ISS PASSAGE GEDETECTEERD', msg: 'Lage baan satelliet kruist gemonitorde sector.', type: 'warn' },
+  { title: 'HF BURST ONTVANGEN', msg: 'Versleutelde korte transmissie opgeslagen voor analyse.', type: 'high' },
+  { title: 'ONBEKENDE DRAGER', msg: 'Zwak signaal gedetecteerd nabij Noord-Atlantische zone.', type: 'warn' },
+  { title: 'PRIORITEITSCONTACT', msg: 'Energiepiek waargenomen in oostelijke sector.', type: 'high' },
+  { title: 'SATCOM AFWIJKING', msg: 'Uplink vertoont afwijkingen buiten normale bandbreedte.', type: 'warn' },
+  { title: 'RADAR CONTACT', msg: 'Ongeïdentificeerd object gedetecteerd op middellange afstand.', type: 'warn' },
+  { title: 'SIGNAALVERSTORING', msg: 'Interferentie gedetecteerd op meerdere frequentiebanden.', type: 'warn' },
+  { title: 'NOODKANAAL ACTIEF', msg: 'Maritiem noodsignaal ontvangen en gelogd.', type: 'high' },
+  { title: 'DATA SYNC COMPLEET', msg: 'Alle externe sensoren succesvol gesynchroniseerd.', type: 'warn' },
+  { title: 'ANOMALIE GEDETECTEERD', msg: 'Ongebruikelijk patroon in RF-spectrum vastgesteld.', type: 'high' }
+];
+
+    function spawnAlert(forced) {
+      const item = forced || alertMessages[Math.floor(Math.random() * alertMessages.length)];
+      const toast = document.createElement('div');
+      toast.className = `alert-toast ${item.type === 'warn' ? 'warn' : ''}`;
+      const now = new Date().toUTCString().split(' ')[4];
+      toast.innerHTML = `
+        <div class="alert-top">
+          <span>${item.title}</span>
+          <span>${now}</span>
+        </div>
+        <div class="alert-msg">${item.msg}</div>
+      `;
+      alertsOverlay.prepend(toast);
+
+      if (item.type === 'high') {
+        document.getElementById('footerAlert').textContent = `PRIORITY ALERT // ${item.title}`;
+      }
+
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 360);
+      }, 5200);
+
+      while (alertsOverlay.children.length > 3) {
+        alertsOverlay.lastChild.remove();
+      }
+    }
+
+    setTimeout(() => spawnAlert(alertMessages[0]), 2800);
+    setInterval(() => spawnAlert(), 9000);
+
+    // BOOT SEQUENCE
+    const bootLines = [
+      'INITIALIZING LUIZ-DEFENSE CORE...',
+      'LOADING SIGNAL DATABASE...',
+      'ESTABLISHING SATELLITE UPLINK...',
+      'SYNCING TACTICAL RADAR GRID...',
+      'BUILDING WORLD THREAT MAP...',
+      'ARMING PRIORITY ALERT CHANNELS...',
+      'VERIFYING SECURE CHANNELS...',
+      'SYSTEM READY.'
+    ];
+
+    const bootLog = document.getElementById('boot-log');
+    const bootScreen = document.getElementById('bootScreen');
+    let idx = 0;
+
+    function runBoot() {
+      if (idx < bootLines.length) {
+        bootLog.textContent += bootLines[idx] + '\n';
+        idx++;
+        setTimeout(runBoot, 520);
+      } else {
+        setTimeout(() => {
+          bootScreen.style.transition = 'opacity 0.8s ease';
+          bootScreen.style.opacity = '0';
+          setTimeout(() => bootScreen.style.display = 'none', 800);
+        }, 700);
+      }
+    }
+    runBoot();
+
+    // KEYBOARD
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'm') toggleMusic();
+      if (e.key.toLowerCase() === 'a') spawnAlert();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1548 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>L.A. LUIZ-AIR & CARGO 🇧🇷</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Black+Ops+One&family=Courier+Prime:wght@700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Brazil Palette */
+      --brazil-blue: #002776;
+      --brazil-green: #009C3B;
+      --brazil-yellow: #FFDF00;
+      --gallery-purple: #8b5cf6;
+      --gallery-purple-dark: #6d28d9;
+      --sim-red: #7f1d1d;
+      --sim-red-dark: #450a0a;
+
+      
+      /* Cargo Palette */
+      --cargo-orange: #f97316;      
+      --cargo-orange-dark: #c2410c; 
+      --cargo-dark: #292524;
+      
+      /* VIP Palette (Nieuw) */
+      --vip-black: #0f172a;
+      --vip-gold: #d4af37;
+      
+      /* UI Colors */
+      --bg: #F0F4F8;
+      --card-bg: #FFFFFF;
+      --text-main: #002776; 
+      --text-muted: #58687e;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg);
+      background-image: linear-gradient(135deg, #F0F4F8 0%, #dbeafe 100%);
+      color: var(--text-main);
+      padding-bottom: 60px;
+      transition: all 0.5s;
+    }
+
+    /* --- VIP MODE STYLES (Overrides) --- */
+    body.vip-mode {
+      --bg: #000000;
+      --card-bg: #111; 
+      --text-main: #d4af37; /* Goud */
+      --text-muted: #aaa;
+      --border: #333;
+      background-image: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+      font-family: 'Playfair Display', serif; /* Chique lettertype */
+    }
+
+    /* --- HEADER --- */
+    header {
+      background-color: var(--brazil-blue);
+      color: white;
+      padding: 16px 0;
+      box-shadow: 0 4px 20px rgba(0, 39, 118, 0.15);
+      position: sticky; top: 0; z-index: 100;
+      transition: background-color 0.4s ease;
+    }
+    
+    body.cargo-mode header { background-color: var(--cargo-orange) !important; }
+    body.vip-mode header { background-color: #000 !important; border-bottom: 2px solid var(--vip-gold); }
+
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+    
+    .header-content { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
+    
+    /* LOGO STYLING */
+    .logo-badge {
+      width: 50px; height: 50px; 
+      background: white; 
+      border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid var(--brazil-green);
+      box-shadow: 0 0 0 3px var(--brazil-yellow); 
+      overflow: hidden;
+      transition: transform 0.3s;
+	  cursor: pointer;
+    }
+    .logo-badge:hover { transform: rotate(10deg) scale(1.1); }
+    
+    body.vip-mode .logo-badge { border-color: var(--vip-gold); box-shadow: 0 0 0 3px white; filter: grayscale(100%); }
+
+    .logo-badge img {
+      width: 90%; height: 90%; 
+      object-fit: contain;
+    }
+
+    .brand-text { font-weight: 800; font-size: 22px; letter-spacing: -0.5px; line-height: 1.2; font-family: 'Montserrat', sans-serif; }
+    .brand-text span { color: var(--brazil-yellow); }
+    body.vip-mode .brand-text span { color: var(--vip-gold); }
+
+    nav { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    nav a, nav button { color: rgba(255,255,255,0.8); text-decoration: none; padding: 8px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; border:none; background:transparent; cursor:pointer; font-family: 'Montserrat', sans-serif;}
+    nav a:hover, nav button:hover { background: rgba(255,255,255,0.15); color: var(--brazil-yellow); }
+
+    /* VIP Button */
+    #btnVip { border: 1px solid rgba(255,215,0, 0.5); color: #FFD700; }
+    #btnVip:hover { background: #FFD700; color: black; box-shadow: 0 0 10px #FFD700; }
+
+    /* --- TRACKER --- */
+    .tracker-box {
+      background-color: var(--brazil-blue); 
+      color: white; padding: 15px 20px;
+      border-radius: 0 0 20px 20px; margin-bottom: 24px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden;
+      transition: background-color 0.4s ease;
+    }
+
+    body.cargo-mode .tracker-box { background-color: var(--cargo-orange) !important; }
+    body.vip-mode .tracker-box { background-color: #111 !important; color: var(--vip-gold); border-bottom: 1px solid var(--vip-gold); }
+
+    .tracker-header { font-size: 11px; font-weight: 800; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px; }
+    .tracker-text { font-size: 14px; font-weight: 600; z-index: 2; position: relative; }
+    .tracker-line { height: 2px; background: rgba(255,255,255,0.2); margin-top: 14px; position: relative; }
+    .tracker-plane { position: absolute; top: -13px; font-size: 20px; animation: fly 14s linear infinite; }
+
+    @keyframes fly {
+      0% { left: -5%; transform: rotate(90deg); }
+      45% { left: 105%; transform: rotate(90deg); }
+      46% { opacity: 0; }
+      50% { left: 105%; transform: rotate(-90deg); opacity: 0; }
+      51% { opacity: 1; transform: rotate(-90deg); }
+      95% { left: -5%; transform: rotate(-90deg); }
+      100% { left: -5%; transform: rotate(90deg); }
+    }
+
+    /* --- LAYOUT --- */
+    .card {
+      background: var(--card-bg); border-radius: 24px; padding: 24px;
+      box-shadow: 0 10px 40px -10px rgba(0,39,118,0.08); margin-bottom: 24px;
+      overflow: hidden; position: relative;
+    }
+    body.vip-mode .card { border: 1px solid #333; box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.1); }
+
+    .hero-img-container {
+      width: 100%; height: 320px; border-radius: 18px; overflow: hidden; margin-bottom: 20px;
+      background: #eee; position: relative;
+    }
+    .hero-img-container img { 
+      width: 100%; height: 100%; object-fit: cover; 
+      transition: opacity 0.8s ease-in-out; 
+    }
+    
+    h1, h2, h3 { margin: 0 0 10px; color: var(--brazil-blue); }
+    body.vip-mode h1, body.vip-mode h2, body.vip-mode h3 { color: var(--vip-gold); letter-spacing: 1px; }
+    
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 20px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 15px; transition: 0.2s; font-family: 'Montserrat', sans-serif;}
+    
+    .btn-primary { 
+      background-color: var(--brazil-green); 
+      color: white; 
+      box-shadow: 0 4px 15px rgba(0, 156, 59, 0.3); 
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-primary:active { transform: scale(0.95); }
+    
+    body.cargo-mode .btn-primary { background-color: var(--cargo-orange) !important; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); }
+    body.vip-mode .btn-primary { 
+      background: linear-gradient(45deg, #d4af37, #f3e5ab, #d4af37); 
+      color: black; 
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-secondary { background: transparent; border: 2px solid var(--border); color: var(--text-muted); }
+    .btn-secondary:hover { background: #f8fafc; }
+    .btn-secondary:active { transform: scale(0.95); }
+    body.vip-mode .btn-secondary { border-color: var(--vip-gold); color: var(--vip-gold); }
+
+    /* --- VIDEO --- */
+    .video-wrap {
+      border-radius: 18px; overflow: hidden;
+      border: 4px solid var(--brazil-yellow);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      background: #000; margin-top: 10px;
+    }
+    body.vip-mode .video-wrap { border-color: var(--vip-gold); }
+    video { width: 100%; display: block; }
+
+    /* --- SOUNDBOARD --- */
+    .sound-panel {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+      background: #f1f5f9; padding: 15px; border-radius: 16px;
+    }
+    body.vip-mode .sound-panel { background: #222; }
+
+    .sound-btn {
+      flex: 1; min-width: 120px; background: white; border: 2px solid var(--border);
+      padding: 15px; border-radius: 12px; font-weight: 700; color: var(--text-main);
+      cursor: pointer; transition: 0.2s; text-align: center;
+      box-shadow: 0 4px 0 #e2e8f0; /* 3D effect */
+    }
+    body.vip-mode .sound-btn { background: #000; color: var(--vip-gold); border-color: #333; box-shadow: 0 4px 0 #222; }
+
+    .sound-btn:active {
+      transform: translateY(4px); box-shadow: 0 0 0 #e2e8f0; /* Click effect */
+    }
+    .sound-btn:hover { border-color: var(--brazil-blue); color: var(--brazil-blue); }
+    body.vip-mode .sound-btn:hover { border-color: var(--vip-gold); color: white; }
+
+    /* --- TOGGLE SWITCH --- */
+    .mode-switch {
+      display: flex; background: #e2e8f0; border-radius: 14px; pading: 4px; margin-bottom: 24px;
+    }
+    body.vip-mode .mode-switch { display: none; } /* Verberg switch in VIP mode */
+
+    .mode-btn {
+      flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px;
+      font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .mode-btn.active { background: white; color: var(--brazil-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    body.cargo-mode .mode-btn.active[data-mode="cargo"] { color: var(--cargo-orange); }
+
+    /* --- FORMS --- */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .full-width { grid-column: 1 / -1; }
+    input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border); font-family: inherit; outline: none; }
+    body.vip-mode input, body.vip-mode select { background: #222; color: white; border-color: #444; }
+
+    input:focus, select:focus { border-color: var(--brazil-blue); }
+    body.vip-mode input:focus, body.vip-mode select:focus { border-color: var(--vip-gold); }
+    
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; border: none; padding: 0; margin: 15px 0; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--brazil-blue); cursor: pointer; margin-top: -10px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #cbd5e1; border-radius: 3px; }
+    
+    body.cargo-mode input[type=range]::-webkit-slider-thumb { background: var(--cargo-orange); }
+    body.cargo-mode input:focus, body.cargo-mode select:focus { border-color: var(--cargo-orange); }
+
+    /* --- REVIEWS --- */
+    .review-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 10px;
+    }
+    .review-card {
+      background: #f8fafc; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
+    }
+    body.vip-mode .review-card { background: #1a1a1a; border-color: #333; }
+
+    .stars { color: var(--brazil-yellow); margin-bottom: 8px; font-size: 14px; }
+    body.vip-mode .stars { color: var(--vip-gold); }
+
+    .review-text { font-size: 14px; color: var(--text-muted); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
+    .review-author { font-size: 12px; font-weight: 700; color: var(--brazil-blue); }
+    body.cargo-mode .review-author { color: var(--cargo-orange); }
+    body.vip-mode .review-author { color: var(--vip-gold); }
+
+    /* --- VIP JETS SELECTION --- */
+    .jet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .jet-card {
+      background: #000; border: 2px solid #333; border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: 0.3s; position: relative;
+    }
+    .jet-card:hover { transform: translateY(-5px); border-color: var(--vip-gold); }
+    .jet-card.selected { border-color: var(--vip-gold); box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+    .jet-card img { width: 100%; height: 120px; object-fit: cover; }
+    .jet-info { padding: 15px; text-align: center; color: var(--vip-gold); }
+    .jet-name { font-weight: 800; margin-bottom: 5px; }
+
+    /* --- UTILS --- */
+    .hidden { display: none !important; }
+    .table-scroll { max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 12px; }
+    body.vip-mode .table-scroll { border-color: #333; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    body.vip-mode th, body.vip-mode td { border-bottom-color: #333; color: #ccc; }
+    #weightIcon { font-size: 24px; transition: font-size 0.2s; display: inline-block; }
+
+    /* --- OVERLAYS --- */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+    
+    /* ACCESS MODAL */
+    .access-card {
+      background: black; border: 2px solid var(--vip-gold); color: var(--vip-gold);
+      padding: 40px; border-radius: 20px; text-align: center;
+      box-shadow: 0 0 50px rgba(212,175,55,0.3); width: 350px;
+    }
+    .pin-input {
+      font-size: 24px; letter-spacing: 10px; text-align: center; 
+      background: #222; border: 1px solid #444; color: white;
+      margin: 20px 0; padding: 10px; width: 100%; font-family: 'Courier Prime', monospace;
+    }
+    
+    /* --- TICKET STYLING --- */
+    .ticket {
+      background: white; width: 600px; max-width: 90%;
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      position: relative; display: flex; flex-direction: column;
+      animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    /* GOLDEN TICKET STYLE */
+    .ticket.vip {
+      background: linear-gradient(135deg, #d4af37 0%, #f3e5ab 50%, #d4af37 100%);
+      border: 4px solid #000;
+    }
+    .ticket.vip .ticket-header { background: #000; color: var(--vip-gold); }
+    .ticket.vip .ticket-info p { color: #000; }
+    .ticket.vip .ticket-route { color: #000; text-shadow: 0 1px 0 rgba(255,255,255,0.4); }
+    .ticket.vip .ticket-footer { background: rgba(0,0,0,0.1); border-top: 1px solid rgba(0,0,0,0.2); }
+    .ticket.vip .ticket-stamp { border-color: #000; color: #000; background: rgba(255,255,255,0.4); }
+    
+    @keyframes slideUp { from { transform: translateY(100px); } to { transform: translateY(0); } }
+
+    .ticket-header {
+      background: var(--brazil-blue); color: white; padding: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ticket.cargo .ticket-header { background: var(--cargo-orange); }
+
+    .ticket-body { padding: 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    
+    .ticket-info h4 { margin: 0; color: #888; font-size: 12px; text-transform: uppercase; }
+    .ticket.vip .ticket-info h4 { color: #444; font-weight: bold; }
+    
+    .ticket-info p { margin: 0 0 15px; font-size: 18px; font-weight: 700; color: #333; }
+    .ticket-route { font-size: 24px; color: var(--brazil-blue); margin-bottom: 20px; font-weight: 800; }
+    .ticket.cargo .ticket-route { color: var(--cargo-orange); }
+
+    .ticket-visual {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-left: 2px dashed #ddd; padding-left: 20px;
+    }
+    .ticket.vip .ticket-visual { border-left-color: #000; }
+
+    .ticket-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 4px solid #eee; margin-bottom: 10px; }
+    .ticket.vip .ticket-img { border-color: #000; }
+    
+    .barcode { font-family: 'Courier Prime', monospace; letter-spacing: 4px; font-size: 20px; transform: rotate(-90deg); white-space: nowrap; margin-top: 20px; color: #555; }
+
+    .ticket-footer { background: #f9f9f9; padding: 15px; text-align: center; border-top: 1px solid #eee; }
+    
+    /* --- TICKET STAMP CSS --- */
+    .ticket-stamp {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-15deg) scale(3);
+      border: 5px solid var(--brazil-green); color: var(--brazil-green);
+      font-family: 'Black Ops One', cursive; font-size: 40px; padding: 10px 20px;
+      opacity: 0; pointer-events: none; border-radius: 10px; background: rgba(255,255,255,0.8);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease; 
+    }
+    .ticket-stamp.visible {
+      opacity: 1; transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+    }
+
+    /* --- SEAT MAP STYLING --- */
+    .seat-container {
+      background: white; padding: 20px; border-radius: 20px; width: 340px; max-width: 95%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+      position: relative;
+    }
+    .plane-nose {
+      width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent;
+      border-bottom: 60px solid #ddd; margin: 0 auto 10px; border-radius: 50%;
+    }
+    .seat-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 15px;
+      background: #f1f5f9; padding: 10px; border-radius: 10px;
+    }
+    .seat {
+      height: 30px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: bold; color: white; transition: 0.2s;
+    }
+    .seat.free { background: var(--brazil-green); }
+    .seat.taken { background: #ef4444; cursor: not-allowed; opacity: 0.4; }
+    .seat.extra { background: var(--brazil-yellow); color: var(--brazil-blue); } /* +€20 */
+    .seat.selected { border: 2px solid black; transform: scale(1.15); box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 2; }
+    .seat.aisle { background: transparent; pointer-events: none; grid-column: span 1; }
+    
+    /* Cargo Grid */
+    .cargo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cargo-zone {
+      height: 80px; border: 2px dashed #ccc; border-radius: 10px; display: grid; place-items: center;
+      font-weight: 800; color: #aaa; cursor: pointer; transition: 0.2s;
+    }
+    .cargo-zone:hover { border-color: var(--cargo-orange); color: var(--cargo-orange); background: #fff7ed; }
+    .cargo-zone.selected { background: var(--cargo-orange); color: white; border-style: solid; }
+
+    .legend { display: flex; justify-content: center; gap: 10px; font-size: 10px; margin-top: 10px; color: #666; }
+    .legend span { display: flex; align-items: center; gap: 4px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    /* --- WEATHER WIDGET STYLING --- */
+    .weather-widget {
+      margin-top: 6px; margin-bottom: 10px; 
+      padding: 10px 14px; border-radius: 12px;
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700; font-size: 13px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      animation: fadeIn 0.6s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .weather-widget.sunny { background: #fef9c3; color: #854d0e; border-color: #fde047; }
+    .weather-widget.rainy { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+    .weather-widget.hot   { background: #ffedd5; color: #c2410c; border-color: #fb923c; }
+
+    body.vip-mode .weather-widget { background: #111; color: var(--vip-gold); border-color: var(--vip-gold); }
+
+    .weather-icon { font-size: 20px; }
+    .weather-temp { font-size: 16px; font-weight: 800; }
+    .weather-desc { opacity: 0.8; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+@keyframes pulse-security {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 16px 10px rgba(0, 255, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
+  }
+}
+
+#btnSecurity {
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  background: transparent;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: inline-block;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+#btnSecurity:hover {
+  color: black !important;
+  background: linear-gradient(135deg, #00ff00, #009c3b) !important;
+  box-shadow: 0 0 18px rgba(0, 255, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.pulse-security-btn {
+  animation: pulse-security 1.4s infinite;
+  transition: all 0.3s ease;
+}
+
+@keyframes pulse-radar { 
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.4); } 
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); } 
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); } 
+}
+
+/* VIP JETS PULSERENDE ANIMATIE */
+    @keyframes pulse-vip {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); /* Gouden gloed */
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px 10px rgba(255, 215, 0, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+      }
+    }
+
+    .pulse-vip-btn {
+      animation: pulse-vip 2s infinite;
+      /* Zorg dat de knop een beetje overgang heeft als je eroverheen gaat met de muis */
+      transition: all 0.3s ease; 
+    }
+
+@keyframes pulse-gallery {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 16px 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+@keyframes blink-icon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+#btnGallery {
+  border: 1px solid var(--gallery-purple);
+  color: var(--gallery-purple);
+  background: transparent;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: inline-block;
+  letter-spacing: 0.3px;
+
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.25);
+  transition: all 0.25s ease;
+}
+
+#btnGallery:hover {
+  color: white;
+  background: linear-gradient(135deg, var(--gallery-purple), var(--gallery-purple-dark));
+  box-shadow: 0 0 18px rgba(139, 92, 246, 0.6);
+  transform: scale(1.05);
+}
+
+#btnGallery::first-letter {
+  animation: blink-icon 0.9s infinite;
+}
+
+.pulse-gallery-btn {
+  animation: pulse-gallery 1.4s infinite;
+  transition: all 0.3s ease;
+}
+
+.gallery-icon {
+  display: inline-block;
+  animation: blink-icon 0.9s infinite;
+  margin-right: 4px;
+}
+
+#btnSim {
+  border: 1px solid var(--sim-red);
+  color: var(--sim-red);
+  background: transparent;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: inline-block;
+  letter-spacing: 0.3px;
+
+  box-shadow: 0 0 6px rgba(127, 29, 29, 0.3);
+  transition: all 0.25s ease;
+}
+
+#btnSim:hover {
+  color: white;
+  background: linear-gradient(135deg, var(--sim-red), var(--sim-red-dark));
+  box-shadow: 0 0 18px rgba(127, 29, 29, 0.6);
+  transform: scale(1.05);
+}
+
+@keyframes pulse-sim {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(127, 29, 29, 0.7);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 16px 10px rgba(127, 29, 29, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(127, 29, 29, 0);
+  }
+}
+
+.pulse-sim-btn {
+  animation: pulse-sim 1.4s infinite;
+}
+  </style>
+</head>
+<body>
+
+	<header>
+  <div class="wrap">
+    <div class="header-content">
+      <div class="brand">
+        
+        <a href="https://luiz-air.voorbij.duckdns.org/game.html" class="logo-badge" title="Klik hier voor een verrassing!">
+          <img src="Capybara-vector2.png" alt="Capybara Logo">
+        </a>
+        
+        <a href="index.html" style="text-decoration: none; color: inherit;">
+          <div class="brand-text">L.A. LUIZ-AIR<span> & CARGO</span></div>
+        </a>
+      </div>
+    <nav>
+      <a href="#home" data-t="nav_home" onclick="setMode('passenger')">Home</a>
+      <a href="#flights" data-t="nav_flights" onclick="setMode('passenger')">Vluchten</a>
+      <button id="btnVip" onclick="openVipAccess()" class="pulse-vip-btn">⭐ VIP JETS</button>
+      <a href="https://gallery.voorbij.duckdns.org/" id="btnGallery" class="pulse-gallery-btn" target="_blank"><span class="gallery-icon">📡</span>GALLERY</a>
+      <a href="security.html" id="btnSecurity" class="pulse-security-btn">📡 SECURITY</a>
+      <a href="luiz-warning-panel.html" id="btnSim" class="pulse-sim-btn">🎮 SIMULATOR</a>
+      <button id="langBtn" style="background:transparent; border:1px solid rgba(255,255,255,0.5); color:white; padding:5px 10px; border-radius:20px; cursor:pointer;">PT/NL</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tracker-box">
+    <div class="tracker-header">Live Status</div>
+    <div id="tracker-status" class="tracker-text">Vlucht LA-BR100 is onderweg naar São Paulo...</div>
+    <div class="tracker-line">
+      <div class="tracker-plane">✈️</div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  
+  <section id="home" class="card" style="padding:0; border:none;">
+    <div class="hero-img-container" style="margin:0; border-radius:24px;">
+      <img id="heroImage" src="luiz-air-777.png" alt="LUIZ-AIR" onerror="this.src='https://images.unsplash.com/photo-1542296332-2e44a996aaad?auto=format&fit=crop&w=1200&q=80'">
+    </div>
+  </section>
+
+  <section id="book" class="card">
+    
+    <div class="mode-switch">
+      <button class="mode-btn active" data-mode="passenger" onclick="setMode('passenger')">
+        <span data-t="mode_pax">✈️ Passagiers</span>
+      </button>
+      <button class="mode-btn" data-mode="cargo" onclick="setMode('cargo')">
+        📦 LUIZ-CARGO
+      </button>
+    </div>
+
+    <form id="passengerForm">
+      <h2 style="margin-top:0" data-t="book_title">Ticket Boeken</h2>
+      <div class="form-grid">
+        <div><label data-t="lbl_first">Voornaam</label><input required name="firstName" id="paxFirst" data-ph="ph_name" placeholder="Bijv. Luiz" /></div>
+        <div><label data-t="lbl_last">Achternaam</label><input required name="lastName" id="paxLast" data-ph="ph_surname" placeholder="Bijv. da Silva" /></div>
+        
+        <div>
+          <label data-t="lbl_route">Route</label>
+          <select required class="routeSelect" id="paxRoute" name="route" onchange="updateWeather('pax')"></select>
+          <div id="paxWeather" class="weather-widget hidden"></div>
+        </div>
+        
+        <div><label data-t="lbl_dept">Vertrekdatum</label><input type="date" required id="paxDate" /></div>
+
+        <div><label data-t="lbl_class">Klasse</label><select name="cabin" id="paxCabin" onchange="updatePrice()"><option value="Economy">Economy</option><option value="Business">Business</option></select></div>
+        
+        <div>
+          <label data-t="lbl_meal">Smikkel Menu 🍴</label>
+          <select id="paxMeal">
+            <option value="Standaard">Standaard Maaltijd</option>
+            <option value="Pannenkoeken">🥞 Pannenkoeken Feest</option>
+            <option value="Pizza">🍕 Pizza Vliegtuig</option>
+            <option value="Frietjes">🍟 Frietjes</option>
+            <option value="Kaasbroodjes">🧀 Pão de Queijo (BR)</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Stoel</label>
+          <button type="button" class="btn btn-secondary" style="width:100%; justify-content:space-between;" onclick="openSeatMap('pax')">
+            <span id="paxSeatLabel">Willekeurig</span> 💺
+          </button>
+        </div>
+
+        <div><label data-t="lbl_pax">Passagiers</label><input type="number" min="1" max="9" value="1" name="pax" oninput="updatePrice()" /></div>
+      </div>
+      <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+        <div class="priceDisplay" style="font-weight:bold; font-size:18px; color:var(--brazil-green)">Totaal: €0</div>
+        <button class="btn btn-primary" type="submit" data-t="btn_pax">Boek Ticket ✅</button>
+      </div>
+    </form>
+
+    <form id="cargoForm" class="hidden">
+      <h2 style="margin-top:0; color:var(--cargo-orange)" data-t="cargo_title">Vracht & Dieren Verzenden</h2>
+      <div class="form-grid">
+        <div><label data-t="lbl_sender">Verzender</label><input required id="cargoSender" data-ph="ph_sender" placeholder="Uw naam" /></div>
+        <div><label data-t="lbl_receiver">Ontvanger</label><input required data-ph="ph_receiver" placeholder="Naam ontvanger" /></div>
+        
+        <div class="full-width">
+          <label data-t="lbl_type">Type Zending</label>
+          <select id="cargoType" onchange="toggleCargoType()">
+            <option value="package" data-t="opt_pkg">📦 Pakket / Goederen</option>
+            <option value="animal" data-t="opt_animal">🐾 Levend Dier (VIPet)</option>
+          </select>
+        </div>
+
+        <div id="packageOptions" class="full-width">
+          <label><span data-t="lbl_weight">Gewicht</span>: <span id="weightVal">10</span> kg <span id="weightIcon">📦</span></label>
+          <input type="range" min="1" max="100" value="10" id="weightSlider" oninput="updateCargoPrice()">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#aaa;">
+            <span data-t="size_s">Envelop</span><span data-t="size_m">Doos</span><span data-t="size_l">Pallet</span><span data-t="size_xl">Surfboard</span>
+          </div>
+        </div>
+
+        <div id="animalOptions" class="full-width hidden">
+          <div class="form-grid">
+            <div>
+              <label data-t="lbl_animal">Kies Dier</label>
+              <select id="animalSelect" onchange="updateCargoPrice()">
+                <option value="dog" data-t="ani_dog">🐶 Hond</option>
+                <option value="cat" data-t="ani_cat">🐱 Kat</option>
+                <option value="parrot" data-t="ani_parrot">🦜 Papegaai</option>
+                <option value="rabbit" data-t="ani_rabbit">🐰 Konijn</option>
+                <option value="hamster" data-t="ani_hamster">🐹 Hamster</option>
+                <option value="capybara" selected data-t="ani_capy">🐹 Capybara (VIP)</option>
+              </select>
+            </div>
+            <div>
+              <label>Service Level</label>
+              <select id="animalService" onchange="updateCargoPrice()">
+                <option value="1">Economy Kennel</option>
+                <option value="2">Comfort Class</option>
+                <option value="3">Royal (Incl. aai-sessie)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Positie in Ruim</label>
+          <button type="button" class="btn btn-secondary" style="width:100%; justify-content:space-between;" onclick="openSeatMap('cargo')">
+            <span id="cargoPosLabel">Auto-Assign</span> 📍
+          </button>
+        </div>
+
+        <div>
+           <label data-t="lbl_route">Route</label>
+           <select required class="routeSelect" id="cargoRoute" onchange="updateCargoPrice(); updateWeather('cargo')"></select>
+           <div id="cargoWeather" class="weather-widget hidden"></div>
+        </div>
+        
+        <div><label data-t="lbl_date">Verzenddatum</label><input type="date" required id="cargoDate" /></div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+        <div id="cargoPriceDisplay" style="font-weight:bold; font-size:18px; color:var(--cargo-orange)">Totaal: €0</div>
+        <button class="btn btn-primary" type="submit" data-t="btn_cargo">Bevestig Cargo 📦</button>
+      </div>
+    </form>
+
+    <form id="vipForm" class="hidden">
+      <h2 style="color:var(--vip-gold); text-align:center; font-family:'Playfair Display'">Exclusieve Prive Jets</h2>
+      <p style="text-align:center; color:#888; margin-bottom:30px;">Alleen voor LUIZ-AIR BLACK leden.</p>
+      
+      <div class="jet-grid">
+        <div class="jet-card" onclick="selectJet(1, this)">
+          <img src="prive_luiz1.png" alt="Golden Capybara" onerror="this.src='https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=600&q=80'">
+          <div class="jet-info">
+            <div class="jet-name">The Golden Capybara</div>
+            <div style="font-size:12px;">Max 8 Personen • 900 km/u</div>
+          </div>
+        </div>
+        <div class="jet-card" onclick="selectJet(2, this)">
+          <img src="prive_luiz2.png" alt="Silver Arrow" onerror="this.src='https://images.unsplash.com/photo-1583413230540-ddf906819630?auto=format&fit=crop&w=600&q=80'">
+          <div class="jet-info">
+            <div class="jet-name">The Silver Arrow</div>
+            <div style="font-size:12px;">Max 12 Personen • Slaapkamers</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div><label>Hoofdgast Naam</label><input required id="vipName" placeholder="Meneer/Mevrouw..." /></div>
+        <div>
+          <label>Bestemming (Privé)</label>
+          <select id="vipDest">
+             <option>Monaco</option>
+             <option>Ibiza</option>
+             <option>Dubai (Royal Terminal)</option>
+             <option>Disney World (VIP Entrance)</option>
+             <option>LUIZ Secret Island</option>
+          </select>
+        </div>
+        <div>
+          <label>Catering Service 🥂</label>
+          <select id="vipFood">
+             <option>Kreeft & Kaviaar</option>
+             <option>Wagyu Burgers (met goud)</option>
+             <option>Chocolade Fontein</option>
+             <option>Sushi Masterchef aan boord</option>
+          </select>
+        </div>
+        <div><label>Datum</label><input type="date" id="vipDate" /></div>
+      </div>
+      
+      <button class="btn btn-primary" style="width:100%; margin-top:20px; font-size:18px;" type="submit">BOOK PRIVATE FLIGHT ✨</button>
+    </form>
+  </section>
+
+  <section id="flights" class="card">
+    <h3 data-t="routes_title">Beschikbare Routes</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th data-t="th_route">Route</th><th>Passagier</th><th>Cargo p/kg</th></tr></thead>
+        <tbody id="routeTable"></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top: 24px;" data-t="video_title">Ervaar LUIZ-AIR</h3>
+    <div class="video-wrap">
+      <video id="mainVideo" controls autoplay muted loop>
+        <source src="promo.mp4" type="video/mp4">
+        Je browser ondersteunt geen video.
+      </video>
+    </div>
+
+    <div style="margin-top:20px;">
+      <h4 style="margin:0 0 10px 0; color:#555;">🔊 Cockpit Geluiden</h4>
+      <div class="sound-panel">
+        <button class="sound-btn" onclick="playSoundEffect('engine')">🚀 Motoren</button>
+        <button class="sound-btn" onclick="playSoundEffect('captain')">👨‍✈️ Piloot</button>
+        <button class="sound-btn" onclick="playSoundEffect('ding')">🔔 Service</button>
+        <button class="sound-btn" onclick="playSoundEffect('gear')">⚙️ Landingsgestel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="reviewTitle">Wat passagiers zeggen</h2>
+    <div id="paxReviews" class="review-grid">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <div class="review-text" data-t="rev_p1">"De Caipirinha's in Business Class zijn fantastisch. Beste vlucht naar Rio ooit!"</div>
+        <div class="review-author">- Ricardo G.</div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <div class="review-text" data-t="rev_p2">"Eindelijk een maatschappij die de Braziliaanse vrolijkheid begrijpt. LUIZ-AIR is top!"</div>
+        <div class="review-author">- Sophie V.</div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★☆</div>
+        <div class="review-text" data-t="rev_p3">"Goede prijzen en zeer vriendelijk personeel. New York was nog nooit zo dichtbij."</div>
+        <div class="review-author">- Jan de B.</div>
+      </div>
+    </div>
+    <div id="cargoReviews" class="review-grid hidden">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <div class="review-text" data-t="rev_c1">"Mijn Capybara 'Henk' reisde Royal Class. Hij zag er bij aankomst gelukkiger uit dan ik!"</div>
+        <div class="review-author" data-t="auth_c1">- Tevreden Baasje</div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <div class="review-text" data-t="rev_c2">"Zakelijke zending surfboards naar Rio. Binnen 24 uur geregeld zonder schade."</div>
+        <div class="review-author">- Surf Shop NL</div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★☆</div>
+        <div class="review-text" data-t="rev_c3">"Professioneel vervoer en updates. Ik kon mijn pakket de hele weg volgen."</div>
+        <div class="review-author">- Pieter Post</div>
+      </div>
+    </div>
+    <div id="vipReviews" class="review-grid hidden">
+      <div class="review-card"><div class="stars">★★★★★</div><div class="review-text">"Mijn privéjet stond klaar met warme handdoeken. Pure luxe."</div><div class="review-author">- CEO Luiz</div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><div class="review-text">"De gouden burgers waren heerlijk."</div><div class="review-author">- VIP Gast</div></div>
+    </div>
+  </section>
+
+  <footer style="text-align:center; color:#888; margin-top:30px; font-size:12px">
+    LUIZ-AIR & CARGO Demo • <span data-t="footer">Gemaakt met 🌞</span>
+  </footer>
+
+</main>
+
+<div id="vipAccessOverlay" class="modal-overlay">
+  <div class="access-card">
+    <h2 style="color:var(--vip-gold); margin:0;">VIP ACCESS</h2>
+    <p style="font-size:12px; color:#888;">ENTER SECURITY CODE</p>
+    <input type="password" id="vipCodeInput" class="pin-input" maxlength="4" placeholder="****">
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-secondary" onclick="closeVipAccess()" style="flex:1;">CANCEL</button>
+      <button class="btn btn-primary" onclick="checkVipCode()" style="flex:1;">ENTER</button>
+    </div>
+  </div>
+</div>
+
+<div id="ticketOverlay" class="modal-overlay">
+  <div id="ticketCard" class="ticket">
+    <div class="ticket-header">
+      <div style="font-weight:800; font-size:20px;">LUIZ<span style="color:var(--brazil-yellow)">AIR</span> <span id="ticketType">PASS</span></div>
+      <div style="font-size:12px;">E-TICKET</div>
+    </div>
+    <div class="ticket-body">
+      <div class="ticket-info">
+        <div class="ticket-route" id="tRoute">AMS ✈ GRU</div>
+        <h4>Passagier / Item</h4>
+        <p id="tName">Luiz da Silva</p>
+        <div style="display:flex; gap:20px;">
+          <div>
+            <h4>Datum</h4>
+            <p id="tDate">12/10/2024</p>
+          </div>
+          <div>
+            <h4>Stoel / Zone</h4>
+            <p id="tSeat" style="color:var(--brazil-green)">12A</p>
+          </div>
+        </div>
+        
+        <div style="display:flex; gap:20px;">
+           <div>
+             <h4>Klasse</h4>
+             <p id="tClass">Business</p>
+           </div>
+           <div>
+             <h4>Extra</h4>
+             <p id="tMeal">Standaard</p>
+           </div>
+        </div>
+
+      </div>
+      <div class="ticket-visual">
+        <img id="tImage" src="" class="ticket-img">
+        <div class="barcode">||| ||||| || |||</div>
+      </div>
+    </div>
+    <div class="ticket-footer">
+      <button class="btn btn-secondary" onclick="closeTicket()">Sluiten / Nieuwe Boeking</button>
+    </div>
+    <div id="ticketStamp" class="ticket-stamp">APPROVED</div>
+  </div>
+</div>
+
+<div id="seatOverlay" class="modal-overlay">
+  <div class="seat-container">
+    <h3 id="seatTitle">Kies uw plaats</h3>
+    <div class="plane-nose"></div>
+    <div id="seatGrid" class="seat-grid"></div>
+    <div id="cargoGrid" class="cargo-grid hidden"></div>
+    
+    <div class="legend" id="seatLegend">
+      <span><i class="dot" style="background:var(--brazil-green)"></i> Vrij</span>
+      <span><i class="dot" style="background:#ef4444"></i> Bezet</span>
+      <span><i class="dot" style="background:var(--brazil-yellow)"></i> Comfort (+€20)</span>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:15px; width:100%" onclick="closeSeatMap()">Bevestigen</button>
+  </div>
+</div>
+
+<audio id="bookingSound"><source src="airbus-cabin-beep-tone.mp3" type="audio/mpeg"></audio>
+
+<script>
+  // --- AFBEELDINGEN & DATA ---
+  const IMAGES_PAX = ["luiz-air-777.png", "Luiz_air2.png", "Luiz-air3.png", "777x.png", "737.png", "a330.png", "a340.png", "an124.png"];
+  const IMAGES_CARGO = ["Luiz_cargo.png", "Luiz_cargo4.png", "Luiz_cargo1.png", "Luiz_cargo3.jpeg", "Luiz_cargo2.jpeg", "a330.png", "a340.png", "a330f.png", "md11f.png", "747f.png", "an14.png"];
+  const ANIMAL_PICS = {
+    dog: "puppy.png", cat: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=200&q=80",
+    parrot: "papagaai.png", rabbit: "konijn.png",
+    hamster: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=200&q=80",
+    capybara: "Capybara-PNG-Pic.png"
+  };
+  const CARGO_PIC = "doos.png"; 
+  const PAX_PIC = "persoon.png"; 
+  
+  // VIDEOS
+  const VIDEO_PAX = "promo.mp4";
+  const VIDEO_CARGO = "promo2.mp4"; 
+  const VIDEO_VIP = "vip-jet.mp4"; // JOUW NIEUWE VIDEO
+  
+  // SOUNDBOARD
+  const SOUNDS = {
+    engine: "engine.mp3",
+    captain: "captain.mp3",
+    ding: "airbus-cabin-beep-tone.mp3", 
+    gear: "gear.mp3"
+  };
+
+  let imageInterval;
+  let imgIndex = 0;
+  
+  // SEAT LOGIC
+  let selectedSeat = null;
+  let selectedSeatPrice = 0;
+  let selectedCargoZone = null;
+  // VIP Logic
+  let selectedJetName = "";
+  let selectedJetImg = "";
+
+  const ROUTES = [
+    { id:"AMS-GRU", name:"Amsterdam ✈ São Paulo", eco:399, cargo: 12 },
+    { id:"GRU-AMS", name:"São Paulo ✈ Amsterdam", eco:385, cargo: 11 },
+    { id:"AMS-GIG", name:"Amsterdam ✈ Rio de Janeiro", eco:429, cargo: 14 },
+    { id:"AMS-JFK", name:"Amsterdam ✈ New York", eco:450, cargo: 15 },
+    { id:"AMS-NRT", name:"Amsterdam ✈ Tokyo", eco:850, cargo: 20 },
+    { id:"AMS-DXB", name:"Amsterdam ✈ Dubai", eco:380, cargo: 10 },
+  ];
+
+  // --- WEER DATA ---
+  const WEATHER_DB = {
+    "GRU": { temp: "26°C", icon: "⛅", desc: "Aangenaam Warm", type: "sunny" },
+    "AMS": { temp: "12°C", icon: "🌧️", desc: "Regenachtig", type: "rainy" },
+    "GIG": { temp: "32°C", icon: "☀️", desc: "Perfect Strandweer", type: "sunny" },
+    "JFK": { temp: "18°C", icon: "🌬️", desc: "Winderig", type: "rainy" },
+    "NRT": { temp: "20°C", icon: "🍜", desc: "Bewolkt", type: "rainy" },
+    "DXB": { temp: "41°C", icon: "🐫", desc: "Zeer Heet", type: "hot" }
+  };
+
+  const TRANSLATIONS = {
+    nl: {
+      nav_home: "Home", nav_flights: "Vluchten",
+      mode_pax: "✈️ Passagiers", book_title: "Ticket Boeken",
+      lbl_first: "Voornaam", lbl_last: "Achternaam", lbl_route: "Route", lbl_class: "Klasse", lbl_pax: "Passagiers",
+      lbl_dept: "Vertrekdatum", 
+      lbl_meal: "Smikkel Menu 🍴",
+      ph_name: "Bijv. Luiz", ph_surname: "Bijv. da Silva",
+      btn_pax: "Boek Ticket ✅", btn_cargo: "Bevestig Cargo 📦",
+      cargo_title: "Vracht & Dieren Verzenden",
+      lbl_sender: "Verzender", lbl_receiver: "Ontvanger", lbl_type: "Type Zending",
+      ph_sender: "Uw naam", ph_receiver: "Naam ontvanger",
+      opt_pkg: "📦 Pakket / Goederen", opt_animal: "🐾 Levend Dier (VIPet)",
+      lbl_weight: "Gewicht", size_s: "Envelop", size_m: "Doos", size_l: "Pallet", size_xl: "Surfboard",
+      lbl_animal: "Kies Dier", lbl_date: "Verzenddatum",
+      ani_dog: "🐶 Hond", ani_cat: "🐱 Kat", ani_parrot: "🦜 Papegaai", ani_rabbit: "🐰 Konijn", ani_hamster: "🐹 Hamster", ani_capy: "🐹 Capybara (VIP)",
+      routes_title: "Beschikbare Routes", video_title: "Ervaar LUIZ-AIR", th_route: "Route",
+      rev_title_pax: "Wat passagiers zeggen", rev_title_cargo: "Wat klanten over LUIZ-CARGO zeggen",
+      rev_p1: "\"De Caipirinha's in Business Class zijn fantastisch. Beste vlucht naar Rio ooit!\"",
+      rev_p2: "\"Eindelijk een maatschappij die de Braziliaanse vrolijkheid begrijpt. LUIZ-AIR is top!\"",
+      rev_p3: "\"Goede prijzen en zeer vriendelijk personeel. New York was nog nooit zo dichtbij.\"",
+      rev_c1: "\"Mijn Capybara 'Henk' reisde Royal Class. Hij zag er bij aankomst gelukkiger uit dan ik!\"",
+      auth_c1: "- Tevreden Baasje",
+      rev_c2: "\"Zakelijke zending surfboards naar Rio. Binnen 24 uur geregeld zonder schade.\"",
+      rev_c3: "\"Professioneel vervoer en updates. Ik kon mijn pakket de hele weg volgen.\"",
+      footer: "Gemaakt met 🌞"
+    },
+    pt: {
+      nav_home: "Início", nav_flights: "Voos",
+      mode_pax: "✈️ Passageiros", book_title: "Reservar Bilhete",
+      lbl_first: "Nome", lbl_last: "Sobrenome", lbl_route: "Rota", lbl_class: "Classe", lbl_pax: "Passageiros",
+      lbl_dept: "Data de Partida",
+      lbl_meal: "Menu Infantil 🍴",
+      ph_name: "Ex: Luiz", ph_surname: "Ex: da Silva",
+      btn_pax: "Confirmar ✅", btn_cargo: "Confirmar Carga 📦",
+      cargo_title: "Enviar Carga e Animais",
+      lbl_sender: "Remetente", lbl_receiver: "Destinatário", lbl_type: "Tipo de Envio",
+      ph_sender: "Seu nome", ph_receiver: "Nome do destinatário",
+      opt_pkg: "📦 Pacote / Mercadorias", opt_animal: "🐾 Animal Vivo (VIPet)",
+      lbl_weight: "Peso", size_s: "Envelope", size_m: "Caixa", size_l: "Palete", size_xl: "Prancha",
+      lbl_animal: "Escolha o Animal", lbl_date: "Data de Envio",
+      ani_dog: "🐶 Cachorro", ani_cat: "🐱 Gato", ani_parrot: "🦜 Papagaio", ani_rabbit: "🐰 Coelho", ani_hamster: "🐹 Hamster", ani_capy: "🐹 Capivara (VIP)",
+      routes_title: "Rotas Disponíveis", video_title: "Experimente LUIZ-AIR", th_route: "Rota",
+      rev_title_pax: "O que dizem os passageiros", rev_title_cargo: "O que dizem os clientes da LUIZ-CARGO",
+      rev_p1: "\"As Caipirinhas na Classe Executiva são fantásticas. Melhor voo para o Rio!\"",
+      rev_p2: "\"Finalmente uma companhia que entende a alegria brasileira. LUIZ-AIR é top!\"",
+      rev_p3: "\"Bons preços e funcionários muito simpáticos. Nova York nunca esteve tão perto.\"",
+      rev_c1: "\"Minha Capivara 'Henk' viajou na Classe Real. Chegou mais feliz que eu!\"",
+      auth_c1: "- Dono Satisfeito",
+      rev_c2: "\"Envio comercial de pranchas para o Rio. Resolvido em 24h sem danos.\"",
+      rev_c3: "\"Transporte profissional e atualizações. Pude rastrear meu pacote o caminho todo.\"",
+      footer: "Feito com 🌞"
+    }
+  };
+
+  const STATUS_PAX_NL = ["Vlucht LA-BR100 is onderweg naar São Paulo...", "Boarding voor Rio begint bij Gate D12", "LUIZ-AIR wenst u een fijne reis!"];
+  const STATUS_PAX_PT = ["Voo LA-BR100 a caminho de São Paulo...", "Embarque para o Rio no Portão D12", "LUIZ-AIR deseja uma ótima viagem!"];
+  const STATUS_CARGO_NL = ["Cargo laadruim wordt geopend...", "Capybara wordt momenteel gevoerd 🥕...", "Pakket LA-99 is gescand."];
+  const STATUS_CARGO_PT = ["Abrindo compartimento de carga...", "Alimentando a Capivara 🥕...", "Pacote LA-99 escaneado."];
+
+  let currentMode = 'passenger';
+  let currentLang = 'nl';
+  let statusInterval;
+
+  // --- INIT ---
+  function init() {
+    const selects = document.querySelectorAll(".routeSelect");
+    const options = ROUTES.map(r => `<option value="${r.id}" data-pax="${r.eco}" data-cargo="${r.cargo}">${r.name}</option>`).join("");
+    selects.forEach(s => s.innerHTML = options);
+
+    document.getElementById("routeTable").innerHTML = ROUTES.map(r => 
+      `<tr><td>${r.name}</td><td>€${r.eco}</td><td>€${r.cargo} /kg</td></tr>`
+    ).join("");
+
+    startTracker();
+    updatePrice(); 
+    updateCargoPrice();
+    updateWeather('pax'); 
+    updateWeather('cargo');
+    startImageRotation();
+  }
+
+  // --- SOUNDBOARD FUNCTION ---
+  function playSoundEffect(type) {
+    const audio = new Audio(SOUNDS[type]);
+    audio.play().catch(e => {
+        console.log("Audio bestand niet gevonden: " + SOUNDS[type]);
+        alert("Zorg dat '" + SOUNDS[type] + "' in je map staat voor geluid!");
+    });
+  }
+
+  // --- WEER FUNCTIE ---
+  function updateWeather(mode) {
+    const routeSelect = document.getElementById(mode === 'pax' ? 'paxRoute' : 'cargoRoute');
+    const routeId = routeSelect.value;
+    if(!routeId) return;
+
+    // Haal bestemming uit ID (bijv AMS-GRU -> GRU)
+    const dest = routeId.split('-')[1];
+    const data = WEATHER_DB[dest];
+    const widget = document.getElementById(mode === 'pax' ? 'paxWeather' : 'cargoWeather');
+
+    if(data) {
+      widget.innerHTML = `<span class="weather-icon">${data.icon}</span> 
+                          <div>
+                            <div class="weather-temp">${data.temp}</div>
+                            <div class="weather-desc">${data.desc}</div>
+                          </div>`;
+      widget.className = `weather-widget ${data.type}`;
+      widget.classList.remove("hidden");
+    } else {
+      widget.classList.add("hidden");
+    }
+  }
+
+  // --- SEAT MAP LOGIC ---
+  function openSeatMap(type) {
+    document.getElementById("seatOverlay").classList.add("visible");
+    const seatGrid = document.getElementById("seatGrid");
+    const cargoGrid = document.getElementById("cargoGrid");
+    const legend = document.getElementById("seatLegend");
+
+    if(type === 'pax') {
+      seatGrid.classList.remove("hidden");
+      cargoGrid.classList.add("hidden");
+      legend.style.display = "flex";
+      renderPaxSeats();
+    } else {
+      seatGrid.classList.add("hidden");
+      cargoGrid.classList.remove("hidden");
+      legend.style.display = "none";
+      renderCargoZones();
+    }
+  }
+
+  function closeSeatMap() {
+    document.getElementById("seatOverlay").classList.remove("visible");
+  }
+
+  function renderPaxSeats() {
+    const grid = document.getElementById("seatGrid");
+    grid.innerHTML = "";
+    const rows = 12;
+    const cols = ['A','B','C', 'AISLE', 'D','E','F'];
+
+    for(let r=1; r<=rows; r++) {
+      cols.forEach(c => {
+        if(c === 'AISLE') {
+           const aisle = document.createElement("div");
+           aisle.className = "seat aisle";
+           grid.appendChild(aisle);
+           return;
+        }
+
+        const seatId = r + c;
+        const seat = document.createElement("div");
+        seat.className = "seat";
+        seat.innerText = seatId;
+
+        // Random logic voor demo
+        if(Math.random() > 0.7) {
+          seat.classList.add("taken");
+        } else {
+          seat.classList.add("free");
+          // Rijen 1-3 zijn Extra Beenruimte (Geel)
+          if(r <= 3) seat.classList.add("extra");
+          
+          seat.onclick = () => selectSeat(seatId, seat, r <= 3);
+        }
+        
+        // Herstel selectie
+        if(selectedSeat === seatId) seat.classList.add("selected");
+        
+        grid.appendChild(seat);
+      });
+    }
+  }
+
+  function selectSeat(id, el, isExtra) {
+    // Reset vorige
+    document.querySelectorAll(".seat").forEach(s => s.classList.remove("selected"));
+    el.classList.add("selected");
+    selectedSeat = id;
+    selectedSeatPrice = isExtra ? 20 : 0;
+    
+    document.getElementById("paxSeatLabel").innerText = "Stoel " + id + (isExtra ? " (+€20)" : "");
+    updatePrice();
+  }
+
+  function renderCargoZones() {
+    const grid = document.getElementById("cargoGrid");
+    grid.innerHTML = "";
+    const zones = ["Zone A (Voor)", "Zone B (Midden)", "Zone C (Achter)", "VIP Ruim (Temp. Control)"];
+    
+    zones.forEach(z => {
+      const zone = document.createElement("div");
+      zone.className = "cargo-zone";
+      zone.innerText = z;
+      zone.onclick = () => {
+        document.querySelectorAll(".cargo-zone").forEach(el => el.classList.remove("selected"));
+        zone.classList.add("selected");
+        selectedCargoZone = z;
+        document.getElementById("cargoPosLabel").innerText = z;
+      };
+      if(selectedCargoZone === z) zone.classList.add("selected");
+      grid.appendChild(zone);
+    });
+  }
+
+
+  // --- IMAGE ROTATION ---
+  function startImageRotation() {
+    if(imageInterval) clearInterval(imageInterval);
+    imgIndex = 0;
+    updateHeroImage();
+
+    imageInterval = setInterval(() => {
+      imgIndex++;
+      updateHeroImage();
+    }, 20000);
+  }
+
+  function updateHeroImage() {
+    const imgEl = document.getElementById("heroImage");
+    let list = currentMode === 'passenger' ? IMAGES_PAX : IMAGES_CARGO;
+    if(imgIndex >= list.length) imgIndex = 0;
+    imgEl.style.opacity = 0;
+    setTimeout(() => { imgEl.src = list[imgIndex]; imgEl.style.opacity = 1; }, 500);
+  }
+
+  // --- LANGUAGE ---
+  function setLanguage(lang) {
+    currentLang = lang;
+    const t = TRANSLATIONS[lang];
+    document.querySelectorAll('[data-t]').forEach(el => { const key = el.getAttribute('data-t'); if(t[key]) el.innerText = t[key]; });
+    document.querySelectorAll('[data-ph]').forEach(el => { const key = el.getAttribute('data-ph'); if(t[key]) el.placeholder = t[key]; });
+    updateReviewTitle(); 
+    startTracker();
+  }
+
+  function updateReviewTitle() {
+    const t = TRANSLATIONS[currentLang];
+    const titleEl = document.getElementById("reviewTitle");
+    if(currentMode === 'passenger') titleEl.innerText = t.rev_title_pax;
+    else titleEl.innerText = t.rev_title_cargo;
+  }
+
+  document.getElementById("langBtn").addEventListener("click", () => {
+    setLanguage(currentLang === 'nl' ? 'pt' : 'nl');
+  });
+
+  // --- MODES & VIP ---
+  function setMode(mode) {
+    currentMode = mode;
+    document.body.className = mode === 'cargo' ? 'cargo-mode' : (mode === 'vip' ? 'vip-mode' : '');
+    
+    // Hide all forms first
+    document.getElementById('passengerForm').classList.add('hidden');
+    document.getElementById('cargoForm').classList.add('hidden');
+    document.getElementById('vipForm').classList.add('hidden'); // NEW
+    document.getElementById('paxReviews').classList.add('hidden');
+    document.getElementById('cargoReviews').classList.add('hidden');
+    document.getElementById('vipReviews').classList.add('hidden'); // NEW
+    document.querySelector('.mode-switch').style.display = 'flex'; // Show switch default
+
+    if(mode === 'cargo') {
+      document.getElementById('cargoForm').classList.remove('hidden');
+      document.getElementById('cargoReviews').classList.remove('hidden');
+      const vid = document.getElementById("mainVideo");
+      if(vid.getAttribute('src') !== VIDEO_CARGO) { vid.src = VIDEO_CARGO; vid.load(); vid.play(); }
+
+    } else if (mode === 'vip') {
+      document.getElementById('vipForm').classList.remove('hidden');
+      document.getElementById('vipReviews').classList.remove('hidden');
+      document.querySelector('.mode-switch').style.display = 'none'; // Hide switch in VIP
+      document.getElementById('heroImage').src = 'prive_luiz1.png'; // Show jet
+      
+      // HIER VERANDERT DE VIDEO NAAR DE VIP JET
+      const vid = document.getElementById("mainVideo");
+      if(vid.getAttribute('src') !== VIDEO_VIP) { 
+        vid.src = VIDEO_VIP; 
+        vid.load(); 
+        vid.play(); 
+      }
+
+    } else {
+      document.getElementById('passengerForm').classList.remove('hidden');
+      document.getElementById('paxReviews').classList.remove('hidden');
+      const vid = document.getElementById("mainVideo");
+      if(vid.getAttribute('src') !== VIDEO_PAX) { vid.src = VIDEO_PAX; vid.load(); vid.play(); }
+    }
+    
+    updateReviewTitle();
+    startTracker();
+    startImageRotation();
+    updateWeather(mode); 
+  }
+  
+  // VIP Access Logic
+  function openVipAccess() {
+    document.getElementById("vipAccessOverlay").classList.add("visible");
+    document.getElementById("vipCodeInput").value = "";
+    document.getElementById("vipCodeInput").focus();
+  }
+  function closeVipAccess() {
+    document.getElementById("vipAccessOverlay").classList.remove("visible");
+  }
+  function checkVipCode() {
+    const code = document.getElementById("vipCodeInput").value;
+    if(code === "1234" || code === "LUIZ") {
+      playSound(); // Ding dong!
+      closeVipAccess();
+      setMode('vip');
+      alert("WELKOM VIP LID. TOEGANG VERLEEND.");
+    } else {
+      alert("TOEGANG GEWEIGERD.");
+      document.getElementById("vipCodeInput").value = "";
+    }
+  }
+  function selectJet(id, el) {
+    document.querySelectorAll('.jet-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedJetName = el.querySelector('.jet-name').innerText;
+    selectedJetImg = el.querySelector('img').src;
+  }
+
+
+  // --- TRACKER ---
+  function startTracker() {
+    clearInterval(statusInterval);
+    let msgs;
+    if(currentMode === 'cargo') { msgs = currentLang === 'nl' ? STATUS_CARGO_NL : STATUS_CARGO_PT; } 
+    else { msgs = currentLang === 'nl' ? STATUS_PAX_NL : STATUS_PAX_PT; }
+
+    let i = 0;
+    const update = () => { document.getElementById('tracker-status').innerText = msgs[i]; i = (i + 1) % msgs.length; };
+    update();
+    statusInterval = setInterval(update, 4000);
+  }
+
+  // --- CARGO ---
+  function toggleCargoType() {
+    const type = document.getElementById("cargoType").value;
+    if(type === 'package') {
+      document.getElementById("packageOptions").classList.remove("hidden");
+      document.getElementById("animalOptions").classList.add("hidden");
+    } else {
+      document.getElementById("packageOptions").classList.add("hidden");
+      document.getElementById("animalOptions").classList.remove("hidden");
+    }
+    updateCargoPrice();
+  }
+
+  function updateCargoPrice() {
+    const rSelect = document.getElementById("cargoRoute");
+    const routeData = ROUTES.find(r => r.id === rSelect.value);
+    const rate = routeData ? routeData.cargo : 10;
+    const type = document.getElementById("cargoType").value;
+    let total = 0;
+
+    if(type === 'package') {
+      const kg = document.getElementById("weightSlider").value;
+      document.getElementById("weightVal").innerText = kg;
+      const icon = document.getElementById("weightIcon");
+      let scale = 1 + (kg / 100); 
+      icon.style.transform = `scale(${scale})`;
+      if(kg < 5) icon.innerText = "✉️"; else if(kg < 20) icon.innerText = "📦"; else if(kg < 50) icon.innerText = "🧳"; else icon.innerText = "🏄";
+      total = kg * rate;
+    } else {
+      const serviceLvl = document.getElementById("animalService").value;
+      const baseAnimal = 150; 
+      total = baseAnimal + (serviceLvl * 50) + (rate * 5);
+    }
+    document.getElementById("cargoPriceDisplay").innerText = "Totaal: €" + Math.round(total);
+  }
+
+  // --- PASSENGER ---
+  function updatePrice() {
+    const form = document.getElementById("passengerForm");
+    const rSelect = form.querySelector(".routeSelect");
+    const route = ROUTES.find(r => r.id === rSelect.value);
+    const pax = form.querySelector("[name=pax]").value;
+    const cabin = form.querySelector("[name=cabin]").value;
+    if(route) {
+      // BASE PRICE + SEAT PRICE
+      let price = (cabin === "Economy" ? route.eco : route.eco * 3) * pax;
+      if(selectedSeatPrice > 0) price += selectedSeatPrice;
+      
+      document.querySelector(".priceDisplay").innerText = "Totaal: €" + price;
+    }
+  }
+
+  // --- TICKET GENERATOR ---
+  function playSound() {
+    const audio = document.getElementById("bookingSound");
+    if(audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Audio play failed:", e)); }
+  }
+
+  function openTicket(data) {
+    playSound(); // Ding dong!
+    
+    // Fill Data
+    document.getElementById("tRoute").innerText = data.route;
+    document.getElementById("tName").innerText = data.name;
+    document.getElementById("tDate").innerText = data.date;
+    document.getElementById("tClass").innerText = data.details;
+    document.getElementById("tSeat").innerText = data.seat || "Auto";
+    document.getElementById("tImage").src = data.img;
+    
+    // Check of er een maaltijd is (alleen voor Pax/VIP)
+    const mealEl = document.getElementById("tMeal");
+    if(data.meal) {
+      mealEl.innerText = data.meal;
+      mealEl.parentElement.style.display = "block";
+    } else {
+      mealEl.parentElement.style.display = "none";
+    }
+    
+    // Style adjustments
+    const ticketCard = document.getElementById("ticketCard");
+    const stamp = document.getElementById("ticketStamp");
+    const typeLabel = document.getElementById("ticketType");
+
+    // RESET STEMPEL
+    ticketCard.className = "ticket"; // Reset classes
+    stamp.classList.remove("visible");
+    void stamp.offsetWidth; // Forceer herstart van animatie
+    
+    if(currentMode === 'vip') {
+      ticketCard.classList.add('vip');
+      typeLabel.innerText = "GOLD VIP";
+      stamp.innerText = "VIP ACCESS";
+      stamp.style.color = "black"; stamp.style.borderColor = "black";
+    } else if(currentMode === 'cargo') {
+      ticketCard.classList.add('cargo');
+      typeLabel.innerText = "CARGO";
+      stamp.innerText = "CARGO OK";
+      stamp.style.color = "#f97316"; stamp.style.borderColor = "#f97316";
+    } else {
+      // Normal Pax
+      typeLabel.innerText = "PASS";
+      stamp.innerText = "BOEKING OK";
+      stamp.style.color = "#009C3B"; stamp.style.borderColor = "#009C3B";
+    }
+
+    // Show Overlay
+    document.getElementById("ticketOverlay").classList.add("visible");
+    
+    // 1. Direct tonen!
+    setTimeout(() => { stamp.classList.add("visible"); }, 100);
+
+    // 2. Weg laten faden na 2 seconden
+    setTimeout(() => { stamp.classList.remove("visible"); }, 2000);
+  }
+
+  function closeTicket() {
+    document.getElementById("ticketOverlay").classList.remove("visible");
+    const stamp = document.getElementById("ticketStamp");
+    stamp.classList.remove("visible"); 
+  }
+
+  // Handle Form Submits
+  document.getElementById("passengerForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const first = document.getElementById("paxFirst").value;
+    const last = document.getElementById("paxLast").value;
+    const routeId = document.getElementById("paxRoute").value;
+    const cabin = document.getElementById("paxCabin").value;
+    const dateVal = document.getElementById("paxDate").value; 
+    const mealVal = document.getElementById("paxMeal").value;
+    
+    openTicket({
+      route: routeId,
+      name: first + " " + last,
+      date: dateVal || new Date().toLocaleDateString(), 
+      details: cabin + " Class",
+      seat: selectedSeat || "Gate",
+      meal: mealVal,
+      img: PAX_PIC
+    });
+  });
+
+  document.getElementById("cargoForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const sender = document.getElementById("cargoSender").value;
+    const routeId = document.getElementById("cargoRoute").value;
+    const date = document.getElementById("cargoDate").value || "Direct";
+    const type = document.getElementById("cargoType").value;
+    
+    let detailText, imgUrl;
+    
+    if(type === 'package') {
+      const w = document.getElementById("weightSlider").value;
+      detailText = "Package (" + w + "kg)";
+      imgUrl = CARGO_PIC;
+    } else {
+      const animal = document.getElementById("animalSelect").value;
+      detailText = "Live Animal (VIPet)";
+      imgUrl = ANIMAL_PICS[animal] || CARGO_PIC;
+    }
+
+    openTicket({
+      route: routeId,
+      name: sender,
+      date: date,
+      details: detailText,
+      seat: selectedCargoZone || "General",
+      img: imgUrl,
+      meal: null // Geen menu voor cargo (behalve de capybara)
+    });
+  });
+
+  // VIP FORM HANDLER
+  document.getElementById('vipForm').onsubmit = (e) => {
+    e.preventDefault();
+    if(!selectedJetName) { alert("Selecteer eerst een jet!"); return; }
+    openTicket({
+      route: document.getElementById('vipDest').value,
+      name: document.getElementById('vipName').value,
+      date: document.getElementById('vipDate').value || "Direct",
+      details: "ROYAL CLASS",
+      seat: selectedJetName,
+      meal: document.getElementById('vipFood').value,
+      img: selectedJetImg || 'prive_luiz1.png'
+    });
+  };
+
+  init();
+</script>
+</body>
+</html>

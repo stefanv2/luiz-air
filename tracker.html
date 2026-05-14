@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TACTICAL ETA TRACKER - LUIZ-DEFENSE</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Black+Ops+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sec-neon: #00ff00;
+      --sec-orange: #ff4d00;
+      --sec-red: #ff0000;
+      --sec-blue: #00e5ff;
+      --bg: #0a0a0a;
+      --card-bg: #111111;
+      --border: #333;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Courier Prime', monospace;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+      color: var(--sec-neon);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: #000;
+      border-bottom: 2px solid var(--sec-neon);
+      padding: 16px 0;
+      position: sticky; top: 0; z-index: 100;
+    }
+    
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--sec-neon); font-family: 'Black Ops One', cursive; font-size: 24px; letter-spacing: 2px; }
+    .logo-badge {
+      width: 50px; height: 50px; background: #000; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid var(--sec-neon); filter: grayscale(100%) sepia(1) hue-rotate(80deg);
+    }
+    .logo-badge img { width: 70%; }
+
+    nav a { 
+      color: #888; text-decoration: none; padding: 8px 12px; 
+      border-radius: 8px; font-weight: bold; border: 1px solid #333; transition: 0.3s; 
+    }
+    nav a:hover { border-color: var(--sec-neon); color: var(--sec-neon); }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 30px; margin-top: 40px; border: 1px solid var(--border); border-left: 4px solid var(--sec-blue); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05); }
+
+    h2 { font-family: 'Black Ops One'; font-size: 32px; margin-top: 0; text-align: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); color: var(--sec-blue); }
+    
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; letter-spacing: 1px; color: #888; }
+    
+    select {
+      width: 100%; padding: 15px; border-radius: 4px; border: 1px solid var(--sec-blue); 
+      background: #050505; color: var(--sec-blue); font-family: 'Courier Prime', monospace; font-size: 16px;
+      outline: none; transition: 0.3s;
+    }
+    select:focus { box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+
+    .btn-primary { 
+      padding: 15px; border-radius: 4px; border: 1px solid var(--sec-blue); cursor: pointer; font-size: 18px; width: 100%;
+      background: rgba(0, 229, 255, 0.1); color: var(--sec-blue); font-family: 'Black Ops One'; letter-spacing: 2px; transition: 0.2s; 
+    }
+    .btn-primary:hover { background: var(--sec-blue); color: black; box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
+
+    /* UI voor Tracker Display */
+    .tracker-display {
+      background: #000; border: 2px solid var(--sec-blue); padding: 20px; margin-top: 30px;
+      border-radius: 8px; text-align: center; box-shadow: inset 0 0 30px rgba(0, 229, 255, 0.1);
+      position: relative; overflow: hidden; display: none;
+    }
+
+    .t-minus-clock {
+      font-family: 'Black Ops One'; font-size: 40px; color: var(--sec-red); text-shadow: 0 0 15px var(--sec-red);
+      margin: 10px 0; letter-spacing: 4px;
+    }
+
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; font-size: 14px; color: var(--sec-blue);
+    }
+    .info-box { border: 1px dashed var(--sec-blue); padding: 10px; background: rgba(0,229,255,0.05); }
+    .info-box span { display: block; font-size: 20px; font-weight: bold; color: white; margin-top: 5px; }
+
+    /* KAART STIJLEN */
+    #mapContainer {
+      position: relative; width: 100%; height: 350px; margin-top: 20px; border: 2px solid var(--sec-blue); 
+      background-color: #00111a; border-radius: 4px; overflow: hidden;
+    }
+    #worldMap {
+      width: 100%; height: 100%; opacity: 0.4;
+      filter: invert(1) sepia(1) saturate(5) hue-rotate(130deg); 
+    }
+    #flightCanvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+    }
+
+    .scanline {
+      position: absolute; width: 100%; height: 2px; background: var(--sec-blue); top: 0; left: 0;
+      box-shadow: 0 0 10px var(--sec-blue); opacity: 0.5; animation: scan 3s linear infinite; pointer-events: none;
+    }
+    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap header-content">
+      <div class="brand">
+        <div class="logo-badge"><img src="capybara-vector3.png" alt="Logo" onerror="this.style.display='none'"></div>
+        LUIZ-DEFENSE
+      </div>
+      <nav style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+        <a href="security.html">⬅ TERUG NAAR COMMANDO</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2>TACTICAL ETA TRACKER</h2>
+      <p style="text-align: center; margin-bottom: 30px; font-size: 14px; color: #888;">
+        [ SATELLITE LINK ACTIVE ] SELECT ORIGIN, DESTINATION AND AIRCRAFT FOR REAL-TIME FLIGHT DATA.
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label>ORIGIN (VERTREK)</label>
+          <select id="originSelect"></select>
+        </div>
+        <div>
+          <label>TARGET (BESTEMMING)</label>
+          <select id="targetSelect"></select>
+        </div>
+      </div>
+
+      <label>SELECT AIRCRAFT (KIES VLIEGTUIG)</label>
+      <select id="aircraftSelect" style="margin-bottom: 25px;">
+        <option value="3500">SR-71 Blackbird (Top Secret) - 3500 km/u</option>
+        <option value="2410">F-22 Raptor (Fighter) - 2410 km/u</option>
+        <option value="900">IL-76 Command - 900 km/u</option>
+        <option value="870">A330 Cargo Heavy - 870 km/u</option>
+        <option value="850">C-5M Super Galaxy - 850 km/u</option>
+        <option value="590">C-130 Hercules (Tactical) - 590 km/u</option>
+        <option value="500">V-22 Osprey (VTOL) - 500 km/u</option>
+        <option value="294">UH-60 Blackhawk (Heli) - 294 km/u</option>
+      </select>
+
+      <button class="btn-primary" onclick="initiateTracking()">LOCK TRAJECTORY</button>
+
+      <div class="tracker-display" id="trackerDisplay">
+        <div class="scanline"></div>
+        
+        <div id="mapContainer">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg" id="worldMap" alt="World Map">
+          <canvas id="flightCanvas"></canvas>
+        </div>
+
+        <div style="font-weight: bold; letter-spacing: 2px; margin-top: 20px;">ESTIMATED TIME OF ARRIVAL</div>
+        <div class="t-minus-clock" id="clockDisplay">T-MINUS 00:00:00</div>
+        
+        <div class="info-grid">
+          <div class="info-box">CRUISE SPEED <span><span id="displaySpeed">0</span> KM/H</span></div>
+          <div class="info-box">DISTANCE <span><span id="displayDist">0</span> KM</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Stop eventuele spraak bij weggaan
+    window.addEventListener('beforeunload', () => { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); });
+
+    // DATABASE VAN GEHEIME LOCATIES MET ECHTE GPS COÖRDINATEN EN KAARTPOSITIES (X/Y)
+    const LOCATIONS = {
+      "AMS": { name: "Black Site 7 (Amsterdam)", lat: 52.36, lon: 4.90, x: 0.48, y: 0.22 }, // y kleiner gemaakt (meer naar boven)
+      "GRU": { name: "L.A. HQ Base (São Paulo)", lat: -23.55, lon: -46.63, x: 0.32, y: 0.70 },
+      "CME": { name: "Cheyenne Mountain (Colorado)", lat: 38.74, lon: -104.83, x: 0.16, y: 0.30 },
+      "A51": { name: "Area 51 (Nevada)", lat: 37.23, lon: -115.81, x: 0.13, y: 0.31 },
+      "MOS": { name: "Kremlin (Moscow)", lat: 55.75, lon: 37.61, x: 0.58, y: 0.19 },
+      "DGA": { name: "Diego Garcia Base (Indian Ocean)", lat: -7.31, lon: 72.42, x: 0.69, y: 0.60 },
+      "GTMO":{ name: "Guantanamo Bay (Cuba)", lat: 19.90, lon: -75.15, x: 0.25, y: 0.44 },
+      "BEI": { name: "Beijing Command (China)", lat: 39.90, lon: 116.40, x: 0.78, y: 0.30 }
+    };
+
+    // Vul de dropdowns met deze locaties
+    const originSel = document.getElementById('originSelect');
+    const targetSel = document.getElementById('targetSelect');
+    
+    for (const [code, data] of Object.entries(LOCATIONS)) {
+      originSel.innerHTML += `<option value="${code}">${data.name}</option>`;
+      targetSel.innerHTML += `<option value="${code}">${data.name}</option>`;
+    }
+    // Zet doelwit standaard op een andere locatie
+    targetSel.selectedIndex = 1;
+
+    // Haversine Wiskunde Formule (Berekent echte afstanden op aarde in KM!)
+    function calcRealDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Straal van de aarde in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c);
+    }
+
+    let countdownInterval;
+    let animationFrame;
+
+    function initiateTracking() {
+      const originCode = originSel.value;
+      const targetCode = targetSel.value;
+      
+      if (originCode === targetCode) {
+        alert("ERROR: ORIGIN AND TARGET CANNOT BE THE SAME.");
+        return;
+      }
+
+      const locA = LOCATIONS[originCode];
+      const locB = LOCATIONS[targetCode];
+
+      // 1. Bereken de ECHTE afstand
+      const distance = calcRealDistance(locA.lat, locA.lon, locB.lat, locB.lon);
+      
+      // 2. Tijd berekenen
+      const speed = parseFloat(document.getElementById('aircraftSelect').value);
+      const selectElement = document.getElementById('aircraftSelect');
+      const planeName = selectElement.options[selectElement.selectedIndex].text.split('-')[0].trim();
+
+      const totalHours = distance / speed;
+      let hours = Math.floor(totalHours);
+      let minutes = Math.floor((totalHours - hours) * 60);
+      let seconds = Math.floor((((totalHours - hours) * 60) - minutes) * 60);
+
+      // Het totale aantal seconden dat de reis duurt (voor de animatie-procenten)
+      const totalSecondsFlight = Math.max(1, Math.floor(totalHours * 3600)); 
+      let currentSecondsElapsed = 0;
+
+      // Update de UI
+      document.getElementById('trackerDisplay').style.display = 'block';
+      document.getElementById('displaySpeed').innerText = speed;
+      document.getElementById('displayDist').innerText = distance;
+
+      // Stop oude timers en animaties
+      if (countdownInterval) clearInterval(countdownInterval);
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+
+      // Spraakbericht
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let speechMsg = `Trajectory locked. Origin: ${locA.name}. Destination: ${locB.name}. Distance: ${distance} kilometers. ${planeName} en route.`;
+        let u = new SpeechSynthesisUtterance(speechMsg);
+        u.lang = 'en-US'; u.pitch = 0.8; u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+
+      // Start the live countdown
+      countdownInterval = setInterval(() => {
+        if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById('clockDisplay').innerText = "TARGET REACHED";
+          document.getElementById('clockDisplay').style.color = "#00ff00"; 
+          currentSecondsElapsed = totalSecondsFlight; // Zorg dat het vliegtuig aankomt op de kaart
+          return;
+        }
+
+        currentSecondsElapsed++; // Voor de map animatie
+
+        seconds--;
+        if (seconds < 0) {
+          seconds = 59;
+          minutes--;
+          if (minutes < 0) { minutes = 59; hours--; }
+        }
+
+        const h = hours < 10 ? "0" + hours : hours;
+        const m = minutes < 10 ? "0" + minutes : minutes;
+        const s = seconds < 10 ? "0" + seconds : seconds;
+
+        document.getElementById('clockDisplay').style.color = "var(--sec-red)";
+        document.getElementById('clockDisplay').innerText = `T-MINUS ${h}:${m}:${s}`;
+      }, 1000);
+
+      // --- START MAP ANIMATIE ---
+      const canvas = document.getElementById('flightCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      function drawMap() {
+        // Maak canvas precies zo groot als de container (responsive)
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Reken percentages om naar pixels op de kaart
+        const startX = locA.x * canvas.width;
+        const startY = locA.y * canvas.height;
+        const endX = locB.x * canvas.width;
+        const endY = locB.y * canvas.height;
+
+        // Maak een boog voor de route
+        const controlX = (startX + endX) / 2;
+        const controlY = Math.min(startY, endY) - 80; // Buig omhoog
+
+        // Teken de stippellijn (de volledige route)
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.quadraticCurveTo(controlX, controlY, endX, endY);
+        ctx.setLineDash([5, 10]);
+        ctx.strokeStyle = "rgba(0, 229, 255, 0.4)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset line dash
+
+        // Teken locaties als stipjes
+        ctx.fillStyle = "white";
+        ctx.beginPath(); ctx.arc(startX, startY, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(endX, endY, 4, 0, Math.PI * 2); ctx.fill();
+
+        // Teken het bewegende vliegtuig (een oplichtend stipje)
+        // Omdat uren duren heel lang is, maken we de animatie voor het OOG iets sneller 
+        // We laten hem in 10 seconden over de lijn vliegen, en herhalen dat,
+        // (Of we maken het realtime gebaseerd op de clock, maar dat beweegt zo langzaam dat je het niet ziet).
+        // Laten we hem voor het gave effect gewoon blijven loopen als radar-blip!
+        
+        let visualProgress = (Date.now() % 4000) / 4000; // Loopt elke 4 seconden van 0 tot 1
+        
+        // Stop de loop als het echt is aangekomen!
+        if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+          visualProgress = 1;
+        }
+
+        const currentX = (1 - visualProgress) * (1 - visualProgress) * startX + 2 * (1 - visualProgress) * visualProgress * controlX + visualProgress * visualProgress * endX;
+        const currentY = (1 - visualProgress) * (1 - visualProgress) * startY + 2 * (1 - visualProgress) * visualProgress * controlY + visualProgress * visualProgress * endY;
+
+        ctx.fillStyle = "var(--sec-blue)";
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "var(--sec-blue)";
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset
+
+        animationFrame = requestAnimationFrame(drawMap);
+      }
+
+      drawMap();
+    }
+  </script>
+</body>
+</html>

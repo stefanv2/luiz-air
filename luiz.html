@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LUIZ-AIR ✈️ Boek je ticket</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111a2e; --text:#e8eefc; --muted:#a9b4d0;
+      --green:#10b981; --yellow:#f59e0b; --blue:#3b82f6; --line:#233252;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1200px 700px at 10% 0%, #16244b 0%, var(--bg) 55%);color:var(--text)}
+    header{border-bottom:1px solid var(--line);background:rgba(10,16,30,.65);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
+    .wrap{max-width:1050px;margin:0 auto;padding:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:42px;height:42px;border-radius:12px;
+      background:conic-gradient(from 210deg, var(--green), var(--yellow), var(--blue), var(--green));
+      box-shadow:0 10px 30px rgba(16,185,129,.15);
+      position:relative;
+    }
+    .logo:after{content:"✈️";position:absolute;inset:0;display:grid;place-items:center;font-size:20px}
+    nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;border:1px solid transparent}
+    nav a:hover{color:var(--text);border-color:var(--line);background:rgba(255,255,255,.03)}
+    .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;padding:26px 0}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:18px}
+    .kicker{color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+    h1{margin:8px 0 6px;font-size:34px;line-height:1.1}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+    .field input,.field select{
+      width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);
+      background:#0c1529;color:var(--text);outline:none
+    }
+    .field input:focus,.field select:focus{border-color:rgba(59,130,246,.6);box-shadow:0 0 0 4px rgba(59,130,246,.15)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:12px 14px;border-radius:14px;border:1px solid rgba(16,185,129,.35);
+      background:linear-gradient(180deg, rgba(16,185,129,.22), rgba(16,185,129,.10));
+      color:var(--text);cursor:pointer;font-weight:650
+    }
+    .btn:hover{filter:brightness(1.06)}
+    .btn.secondary{border-color:var(--line);background:rgba(255,255,255,.04);color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+    th{color:var(--muted);font-weight:600}
+    .tag{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:12px}
+    .ok{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.10);color:#c8ffe7}
+    .warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10);color:#ffe7bf}
+    footer{color:var(--muted);padding:24px 0}
+    @media (max-width: 900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="kicker">Brazil vibes • Friendly skies</div>
+        <div style="font-size:18px;font-weight:800;letter-spacing:.02em">LUIZ-AIR</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#flights">Vluchten & prijzen</a>
+      <a href="#book">Ticket boeken</a>
+      <a href="#mybookings">Mijn boekingen</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="home" class="hero">
+<img
+  src="luiz-air-777.png"
+  alt="LUIZ-AIR Boeing 777 in Braziliaanse kleuren met smile"
+  style="width:100%;border-radius:16px;border:1px solid #233252;margin:0 0 14px;display:block"
+/>
+
+<h2 style="margin-top:10px">🎬 LUIZ-AIR Promo</h2>
+
+<video
+  controls
+  autoplay
+  muted
+  loop
+  playsinline
+  style="width:100%;border-radius:16px;border:1px solid #233252;display:block"
+  poster="luiz-air-777.png"
+>
+  <source src="promo.mp4" type="video/mp4">
+  Je browser ondersteunt deze video niet.
+</video>
+
+<p style="color:#a9b4d0;font-size:14px;margin-top:6px">
+  ✈️ Vlieg mee met LUIZ-AIR – Smile in the sky!
+</p>
+    <div class="card">
+      <div class="pill">😊 Smile under the nose • ✈️ Boeing 777 style</div>
+      <h1>Welkom bij LUIZ-AIR</h1>
+      <p style="color:var(--muted);max-width:58ch">
+        Boek in 1 minuut een ticket. Dit is een demo-boekingssite: je krijgt een boekingscode en alles wordt lokaal bewaard op je apparaat.
+        Later kunnen we betaling, echte e-tickets en mailbevestiging toevoegen.
+      </p>
+      <div class="row">
+        <a class="btn" href="#book">Boek nu ✨</a>
+        <button class="btn secondary" id="prefill">Vul voorbeeld in</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="kicker">Snelle info</div>
+      <div style="margin-top:10px;display:grid;gap:10px">
+        <div class="tag ok">✅ Direct boekingscode</div>
+        <div class="tag warn">⚠️ Demo: geen echte betaling</div>
+        <div class="tag">🌎 Routes: AMS ↔ São Paulo / Rio</div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <div style="color:var(--muted);font-size:14px">
+        Tip: wil je dit online zetten? Dan kun je dit bestand hosten op GitHub Pages of Netlify.
+      </div>
+    </div>
+  </section>
+
+  <section id="flights" class="card">
+    <h2 style="margin:0 0 10px">Vluchten & prijzen</h2>
+    <p style="margin:0 0 14px;color:var(--muted)">Voorbeeldprijzen (later maken we dit dynamisch per datum/klasse).</p>
+    <table>
+      <thead>
+        <tr><th>Route</th><th>Economy</th><th>Business</th><th>Vluchtnr</th></tr>
+      </thead>
+      <tbody id="routeTable"></tbody>
+    </table>
+  </section>
+
+  <section id="book" class="card" style="margin-top:18px">
+    <h2 style="margin:0 0 10px">Ticket boeken</h2>
+    <form id="bookingForm">
+      <div class="grid">
+        <div class="field">
+          <label>Voornaam</label>
+          <input required name="firstName" placeholder="Luiz" />
+        </div>
+        <div class="field">
+          <label>Achternaam</label>
+          <input required name="lastName" placeholder="Silva" />
+        </div>
+
+        <div class="field">
+          <label>E-mail</label>
+          <input required type="email" name="email" placeholder="luiz@example.com" />
+        </div>
+        <div class="field">
+          <label>Telefoon (optioneel)</label>
+          <input name="phone" placeholder="+31..." />
+        </div>
+
+        <div class="field">
+          <label>Route</label>
+          <select required name="route" id="routeSelect"></select>
+        </div>
+        <div class="field">
+          <label>Klasse</label>
+          <select required name="cabin">
+            <option>Economy</option>
+            <option>Business</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Vertrekdatum</label>
+          <input required type="date" name="date" />
+        </div>
+        <div class="field">
+          <label>Aantal passagiers</label>
+          <input required type="number" min="1" max="9" value="1" name="pax" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button class="btn" type="submit">Boek ticket ✅</button>
+        <button class="btn secondary" type="button" id="clearBookings">Wis alle boekingen</button>
+        <span id="priceHint" style="color:var(--muted)"></span>
+      </div>
+    </form>
+
+    <div id="confirm" style="display:none;margin-top:14px" class="card">
+      <div class look="kicker">Boeking bevestigd</div>
+      <div id="confirmText" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <section id="mybookings" class="card" style="margin-top:18px">
+    <h2 style="margin:0 0 10px">Mijn boekingen</h2>
+    <p style="margin:0 0 14px;color:var(--muted)">Deze lijst staat lokaal in je browser (alleen op dit apparaat).</p>
+    <div id="bookingList"></div>
+  </section>
+
+  <footer class="wrap">
+    © <span id="year"></span> LUIZ-AIR • Demo-site • Made with ✈️ & 😊
+  </footer>
+</main>
+
+<script>
+  const ROUTES = [
+  { id:"LA100", label:"Amsterdam (AMS) → São Paulo (GRU)", economy:399, business:1299 },
+  { id:"LA110", label:"Amsterdam (AMS) → Rio de Janeiro (GIG)", economy:429, business:1399 },
+  { id:"LA120", label:"Amsterdam (AMS) → Brasília (BSB)", economy:419, business:1349 },
+  { id:"LA130", label:"Amsterdam (AMS) → Salvador (SSA)", economy:449, business:1449 },
+  { id:"LA140", label:"Amsterdam (AMS) → Recife (REC)", economy:459, business:1499 },
+  { id:"LA150", label:"Amsterdam (AMS) → Fortaleza (FOR)", economy:469, business:1549 },
+
+  // (optioneel) retourvluchten:
+  { id:"LA101", label:"São Paulo (GRU) → Amsterdam (AMS)", economy:399, business:1299 },
+  { id:"LA111", label:"Rio de Janeiro (GIG) → Amsterdam (AMS)", economy:429, business:1399 },
+  { id:"LA121", label:"Brasília (BSB) → Amsterdam (AMS)", economy:419, business:1349 },
+  { id:"LA131", label:"Salvador (SSA) → Amsterdam (AMS)", economy:449, business:1449 },
+  { id:"LA141", label:"Recife (REC) → Amsterdam (AMS)", economy:459, business:1499 },
+  { id:"LA151", label:"Fortaleza (FOR) → Amsterdam (AMS)", economy:469, business:1549 },
+];
+
+  const $ = (sel) => document.querySelector(sel);
+  const storeKey = "luizair_bookings_v1";
+
+  function euro(n){ return "€" + Number(n).toFixed(0); }
+  function bookingCode(){
+    const part = Math.random().toString(36).slice(2,7).toUpperCase();
+    return "LA-" + part + "-" + new Date().getFullYear();
+  }
+
+  function loadBookings(){
+    try { return JSON.parse(localStorage.getItem(storeKey) || "[]"); }
+    catch { return []; }
+  }
+  function saveBookings(list){ localStorage.setItem(storeKey, JSON.stringify(list)); }
+
+  function renderRoutes(){
+    $("#routeTable").innerHTML = ROUTES.map(r =>
+      `<tr><td>${r.label}</td><td>${euro(r.economy)}</td><td>${euro(r.business)}</td><td>${r.id}</td></tr>`
+    ).join("");
+    $("#routeSelect").innerHTML = ROUTES.map(r =>
+      `<option value="${r.id}">${r.label} (${r.id})</option>`
+    ).join("");
+  }
+
+  function calcPrice(routeId, cabin, pax){
+    const r = ROUTES.find(x => x.id === routeId);
+    if(!r) return 0;
+    const base = cabin === "Business" ? r.business : r.economy;
+    return base * pax;
+  }
+
+  function renderBookings(){
+    const list = loadBookings();
+    if(list.length === 0){
+      $("#bookingList").innerHTML = `<div class="tag">Nog geen boekingen gemaakt.</div>`;
+      return;
+    }
+    $("#bookingList").innerHTML = `
+      <table>
+        <thead><tr><th>Code</th><th>Naam</th><th>Route</th><th>Datum</th><th>Pax</th><th>Klasse</th><th>Prijs</th></tr></thead>
+        <tbody>
+          ${list.map(b => {
+            const route = ROUTES.find(r => r.id === b.routeId)?.label || b.routeId;
+            return `<tr>
+              <td><strong>${b.code}</strong></td>
+              <td>${b.firstName} ${b.lastName}</td>
+              <td>${route}</td>
+              <td>${b.date}</td>
+              <td>${b.pax}</td>
+              <td>${b.cabin}</td>
+              <td>${euro(b.totalPrice)}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function updatePriceHint(){
+    const routeId = $("#routeSelect").value;
+    const cabin = document.querySelector('[name="cabin"]').value;
+    const pax = Number(document.querySelector('[name="pax"]').value || 1);
+    const total = calcPrice(routeId, cabin, pax);
+    $("#priceHint").textContent = total ? `Totaalprijs: ${euro(total)} (demo)` : "";
+  }
+
+  // Init
+  renderRoutes();
+  renderBookings();
+  $("#year").textContent = new Date().getFullYear();
+  document.querySelector('[name="date"]').valueAsDate = new Date(Date.now() + 7*24*3600*1000);
+
+  // Events
+  $("#bookingForm").addEventListener("input", updatePriceHint);
+  $("#bookingForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const routeId = fd.get("route");
+    const cabin = fd.get("cabin");
+    const pax = Number(fd.get("pax"));
+    const totalPrice = calcPrice(routeId, cabin, pax);
+
+    const booking = {
+      code: bookingCode(),
+      firstName: fd.get("firstName").trim(),
+      lastName: fd.get("lastName").trim(),
+      email: fd.get("email").trim(),
+      phone: fd.get("phone").trim(),
+      routeId,
+      cabin,
+      date: fd.get("date"),
+      pax,
+      totalPrice,
+      createdAt: new Date().toISOString()
+    };
+
+    const list = loadBookings();
+    list.unshift(booking);
+    saveBookings(list);
+    renderBookings();
+
+    $("#confirm").style.display = "block";
+    const routeLabel = ROUTES.find(r => r.id===routeId)?.label || routeId;
+    $("#confirmText").innerHTML = `
+      <div class="tag ok">Boekingscode: <strong style="margin-left:6px">${booking.code}</strong></div>
+      <p style="color:var(--muted);margin:10px 0 0">
+        ${booking.firstName}, je ticket voor <strong>${routeLabel}</strong> op <strong>${booking.date}</strong>
+        (${booking.pax}x ${booking.cabin}) is geregistreerd. Totaal: <strong>${euro(totalPrice)}</strong>.
+      </p>
+    `;
+    updatePriceHint();
+    location.hash = "#mybookings";
+  });
+
+  $("#clearBookings").addEventListener("click", () => {
+    if(confirm("Alle demo-boekingen wissen?")){
+      saveBookings([]);
+      renderBookings();
+      $("#confirm").style.display = "none";
+    }
+  });
+
+  $("#prefill").addEventListener("click", () => {
+    document.querySelector('[name="firstName"]').value = "Luiz";
+    document.querySelector('[name="lastName"]').value = "Airman";
+    document.querySelector('[name="email"]').value = "luizair@demo.nl";
+    document.querySelector('[name="pax"]').value = 1;
+    updatePriceHint();
+    location.hash = "#book";
+  });
+
+  updatePriceHint();
+</script>
+</body>
+</html>

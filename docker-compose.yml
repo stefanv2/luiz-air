@@ -1,0 +1,9 @@
+services:
+  luiz-air:
+    image: luiz-air-site
+    build: .
+    container_name: luiz-air
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+

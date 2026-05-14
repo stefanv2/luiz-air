@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>LUIZ-AIR | Emergency Game</title>
+    <style>
+        :root {
+            --bg: #050a0f; --panel: #101a24; --accent: #00ff88; --danger: #ff4d4d;
+        }
+        body { background: var(--bg); color: #e0e6ed; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .game-container { width: 600px; background: var(--panel); padding: 30px; border-radius: 20px; border: 2px solid #233445; text-align: center; }
+        
+        .screen { background: #000; height: 150px; border-radius: 10px; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; border: 2px solid #333; }
+        #display-text { font-size: 2rem; font-weight: bold; color: var(--accent); letter-spacing: 2px; }
+        #timer-bar { height: 5px; background: var(--danger); width: 0%; transition: width 0.1s linear; }
+
+        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { padding: 20px; border: 1px solid #444; background: #1a2a3a; color: white; cursor: pointer; font-weight: bold; border-radius: 8px; }
+        .btn:hover { background: #253a50; }
+        .btn:active { transform: scale(0.98); }
+
+        .score-board { margin-top: 20px; font-size: 1.2rem; color: var(--accent); }
+        .start-btn { background: var(--accent); color: #000; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; margin-top: 20px; cursor: pointer; border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>LUIZ-AIR TRAINER</h1>
+    
+    <div class="screen">
+        <div id="display-text">READY?</div>
+        <div id="display-sub">Druk op START voor de simulatie</div>
+        <div id="timer-bar"></div>
+    </div>
+
+    <div class="button-grid">
+        <button class="btn" onclick="checkAnswer('pullup')">PULL UP</button>
+        <button class="btn" onclick="checkAnswer('stall')">STALL</button>
+        <button class="btn" onclick="checkAnswer('windshear')">WINDSHEAR</button>
+        <button class="btn" onclick="checkAnswer('overspeed')">OVERSPEED</button>
+    </div>
+
+    <div class="score-board">Score: <span id="score">0</span> | Level: <span id="level">1</span></div>
+    <button id="main-action" class="start-btn" onclick="startGame()">START FLIGHT</button>
+</div>
+
+<audio id="snd-pullup" src="sounds/pull-up.mp3"></audio>
+<audio id="snd-stall" src="sounds/stall.mp3"></audio>
+<audio id="snd-windshear" src="sounds/windshear.mp3"></audio>
+<audio id="snd-overspeed" src="sounds/overspeed.mp3"></audio>
+<audio id="snd-fail" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+<script>
+    let score = 0;
+    let level = 1;
+    let activeAlert = null;
+    let gameTimer = null;
+    let timeLeft = 3000; // 3 seconden om te reageren
+    let isPlaying = false;
+
+    const displayText = document.getElementById('display-text');
+    const displaySub = document.getElementById('display-sub');
+    const scoreEl = document.getElementById('score');
+    const levelEl = document.getElementById('level');
+    const timerBar = document.getElementById('timer-bar');
+
+    const alerts = [
+        { id: 'pullup', msg: 'GPWS WARNING!', sub: 'Grond komt te dichtbij!', snd: 'snd-pullup' },
+        { id: 'stall', msg: 'STALL, STALL!', sub: 'Snelheid te laag!', snd: 'snd-stall' },
+        { id: 'windshear', msg: 'WINDSHEAR!', sub: 'Plotselinge windverandering!', snd: 'snd-windshear' },
+        { id: 'overspeed', msg: 'OVERSPEED!', sub: 'Maximale snelheid overschreden!', snd: 'snd-overspeed' }
+    ];
+
+    function startGame() {
+        score = 0;
+        level = 1;
+        isPlaying = true;
+        document.getElementById('main-action').style.display = 'none';
+        nextRound();
+    }
+
+    function nextRound() {
+        if (!isPlaying) return;
+        
+        // Reset scherm
+        timerBar.style.width = '0%';
+        activeAlert = alerts[Math.floor(Math.random() * alerts.length)];
+        
+        displayText.innerText = "ATTENTION!";
+        displaySub.innerText = "Wacht op signaal...";
+        
+        // Random pauze tussen rondes
+        setTimeout(() => {
+            if(!isPlaying) return;
+            startChallenge();
+        }, 1000 + Math.random() * 2000);
+    }
+
+    function startChallenge() {
+        displayText.innerText = activeAlert.msg;
+        displaySub.innerText = activeAlert.sub;
+        displayText.style.color = 'var(--danger)';
+        
+        // Speel geluid
+        const audio = document.getElementById(activeAlert.snd);
+        audio.currentTime = 0;
+        audio.play();
+
+        // Start timer
+        let start = Date.now();
+        timeLeft = 3000 - (level * 200); // Wordt moeilijker per level
+        if (timeLeft < 800) timeLeft = 800; // Niet onmogelijk maken
+
+        gameTimer = setInterval(() => {
+            let passed = Date.now() - start;
+            let percent = (passed / timeLeft) * 100;
+            timerBar.style.width = percent + '%';
+
+            if (passed >= timeLeft) {
+                endGame("TE LAAT! Het vliegtuig is neergestort.");
+            }
+        }, 50);
+    }
+
+    function checkAnswer(id) {
+        if (!gameTimer) return; // Geen actieve challenge
+
+        clearInterval(gameTimer);
+        gameTimer = null;
+
+        if (id === activeAlert.id) {
+            score += 10;
+            if (score % 30 === 0) level++;
+            
+            scoreEl.innerText = score;
+            levelEl.innerText = level;
+            displayText.innerText = "CORRECT RECOVERY";
+            displayText.style.color = 'var(--accent)';
+            displaySub.innerText = "+10 punten";
+            
+            setTimeout(nextRound, 1500);
+        } else {
+            endGame("VERKEERDE KNOP! Verkeerde procedure gestart.");
+        }
+    }
+
+    function endGame(msg) {
+        isPlaying = false;
+        clearInterval(gameTimer);
+        gameTimer = null;
+        
+        document.getElementById('snd-fail').play();
+        displayText.innerText = "GAME OVER";
+        displaySub.innerText = msg;
+        document.getElementById('main-action').style.display = 'inline-block';
+        document.getElementById('main-action').innerText = 'RESTART FLIGHT';
+    }
+</script>
+
+</body>
+</html>

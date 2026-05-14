@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>LUIZ-AIR | Flight Simulator v3.0</title>
+  <style>
+    :root {
+      --bg: #020508;
+      --panel: #050a0f;
+      --line: #173234;
+      --hud: #00ff88;
+      --hud-dim: rgba(0,255,136,0.6);
+      --danger: #ff4545;
+      --warn: #ffc400;
+      --ice: #4fc3ff;
+      --ok: #85ff9e;
+      --text-dim: #446655;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(0,255,136,0.06), transparent 35%),
+        linear-gradient(180deg, #020508 0%, #03080c 100%);
+      color: var(--hud);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-transform: uppercase;
+    }
+
+    .app {
+      width: min(1200px, 96vw);
+      display: grid;
+      grid-template-columns: 260px 1fr 280px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(5, 10, 15, 0.96);
+      border: 1px solid var(--line);
+      box-shadow: 0 0 40px rgba(0,255,136,0.08), inset 0 0 25px rgba(0,255,136,0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.02) 0,
+        rgba(255,255,255,0.02) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      opacity: 0.25;
+    }
+
+    .side {
+      padding: 12px;
+      min-height: 760px;
+    }
+
+    .titlebar {
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      color: var(--ok);
+      font-size: 13px;
+      border-bottom: 1px solid rgba(0,255,136,0.15);
+      padding-bottom: 10px;
+    }
+
+    .sub {
+      color: var(--hud-dim);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .data-block {
+      margin: 12px 0;
+      padding: 10px;
+      border: 1px solid rgba(0,255,136,0.12);
+      background: rgba(0,255,136,0.03);
+      position: relative;
+      z-index: 1;
+    }
+
+    .data-label {
+      color: var(--hud-dim);
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .big {
+      font-size: 22px;
+      color: var(--ok);
+      text-shadow: 0 0 10px rgba(0,255,136,0.35);
+    }
+
+    .small-list {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--hud-dim);
+      white-space: pre-line;
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #081117;
+      border: 1px solid rgba(0,255,136,0.15);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, rgba(0,255,136,0.4), rgba(0,255,136,0.9));
+      box-shadow: 0 0 10px rgba(0,255,136,0.35);
+    }
+
+    .center-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .header {
+      padding: 12px 14px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header .muted { color: var(--hud-dim); font-size: 11px; }
+
+    #sim-container {
+      position: relative;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 0 60px rgba(0,255,136,0.09);
+    }
+
+    #flightCanvas {
+      background: #0a0f14;
+      display: block;
+      width: 100%;
+      max-width: 720px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border: 1px solid rgba(0,255,136,0.08);
+      margin: 0 auto;
+    }
+
+    .hud-text {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      pointer-events: none;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--hud-dim);
+      z-index: 20;
+      text-shadow: 0 0 10px rgba(0,255,136,0.2);
+    }
+
+    .warning-box {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      min-width: 180px;
+      text-align: center;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,69,69,0.35);
+      background: rgba(255,69,69,0.08);
+      color: #ff7c7c;
+      font-size: 12px;
+      display: none;
+      z-index: 20;
+      animation: pulseWarn 0.5s infinite;
+      box-shadow: 0 0 20px rgba(255,69,69,0.15);
+    }
+
+    @keyframes pulseWarn {
+      50% { opacity: 0.35; transform: scale(0.99); }
+    }
+
+    .mission-box {
+      position: absolute;
+      left: 24px;
+      bottom: 24px;
+      z-index: 20;
+      max-width: 280px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,255,136,0.16);
+      background: rgba(0,255,136,0.04);
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--hud-dim);
+    }
+
+    .boss-indicator {
+      position: absolute;
+      top: 74px;
+      right: 20px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--warn);
+      border: 1px solid rgba(255,196,0,0.25);
+      background: rgba(255,196,0,0.08);
+      display: none;
+      z-index: 20;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: rgba(0,0,0,0.82);
+      z-index: 40;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .overlay h1 {
+      margin: 0;
+      font-size: 34px;
+      color: var(--ok);
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px rgba(0,255,136,0.25);
+    }
+
+    .overlay p {
+      color: var(--hud-dim);
+      max-width: 650px;
+      line-height: 1.7;
+      font-size: 13px;
+      margin: 14px 0;
+    }
+
+    .overlay .keys {
+      font-size: 12px;
+      color: var(--hud-dim);
+      margin-top: 10px;
+      line-height: 1.8;
+    }
+
+    button {
+      background: linear-gradient(180deg, rgba(0,255,136,0.9), rgba(0,170,90,0.9));
+      color: #02190e;
+      border: none;
+      padding: 12px 18px;
+      margin-top: 18px;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,255,136,0.15);
+    }
+
+    .event-log {
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--hud-dim);
+      min-height: 180px;
+      max-height: 250px;
+      overflow: auto;
+      white-space: pre-line;
+      padding-right: 4px;
+    }
+
+    .event-log::-webkit-scrollbar,
+    .small-list::-webkit-scrollbar { width: 8px; }
+    .event-log::-webkit-scrollbar-thumb,
+    .small-list::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.15); }
+
+    .footer-strip {
+      padding: 10px 14px;
+      color: var(--text-dim);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-align: center;
+      border-top: 1px solid rgba(0,255,136,0.1);
+    }
+
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0.25; } }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+        width: min(96vw, 860px);
+      }
+      .side { min-height: auto; }
+      #flightCanvas { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel side">
+      <div class="titlebar">LUIZ-AIR SYSTEM STATUS<div class="sub">Flight operations / tactical display</div></div>
+
+      <div class="data-block">
+        <div class="data-label">Hull integrity</div>
+        <div class="big" id="integrityValue">100%</div>
+        <div class="bar"><div class="bar-fill" id="integrityBar"></div></div>
+      </div>
+
+      <div class="data-block">
+        <div class="data-label">Fuel reserve</div>
+        <div class="big" id="fuelValue">100%</div>
+        <div class="bar"><div class="bar-fill" id="fuelBar"></div></div>
+      </div>
+
+      <div class="data-block">
+        <div class="data-label">Mission goals</div>
+        <div class="small-list" id="missionList"></div>
+      </div>
+
+      <div class="data-block">
+        <div class="data-label">Audio events</div>
+        <div class="small-list">
+          CLOSE TRAFFIC ALERT
+          ENGINE DAMAGE TONE
+          DOCKING CHIME
+          BOSS APPROACH WARNING
+          LOW FUEL PULSE
+        </div>
+      </div>
+    </aside>
+
+    <main class="center-wrap">
+      <div class="panel header">
+        <button onclick="window.location.href='https://luiz-air.voorbij.duckdns.org/'" style="margin-right:10px;background:rgba(0,255,136,0.15);color:#00ff88;border:1px solid rgba(0,255,136,0.3);padding:6px 10px;cursor:pointer;">← BACK</button>
+        <div>LUIZ-AIR FLIGHT SYSTEMS - ACTIVE</div>
+        <div class="muted">PILOT: CAPYBARA // SECTOR: BRAVO-7 // MODE: ARCADE SIM</div>
+      </div>
+
+      <div id="sim-container">
+        <div class="hud-text" id="hud"></div>
+        <div class="warning-box" id="warningBox">WARNING: TRAFFIC CLOSE</div>
+        <div class="boss-indicator" id="bossIndicator">HEAVY TRAFFIC UNIT DETECTED</div>
+        <div class="mission-box" id="missionBox">MISSION: REACH THE TERMINAL ZONE.</div>
+        <canvas id="flightCanvas" width="720" height="720"></canvas>
+
+        <div class="overlay" id="startScreen" style="display:flex;">
+          <h1>LUIZ-AIR // FLIGHT SIMULATOR V3.0</h1>
+          <p>
+            Survive runway traffic, avoid storm zones, manage fuel, complete mission objectives,
+            and defeat the final heavy-traffic sector. Each successful docking increases the difficulty.
+          </p>
+          <div class="keys">
+            ARROW KEYS = MOVE<br>
+            SHIFT = BOOST<br>
+            M = TOGGLE RADAR PING<br>
+            R = RESTART AFTER GAME OVER<br>
+            ENTER = START MISSION
+          </div>
+          <button id="startBtn">START MISSION</button>
+        </div>
+
+        <div class="overlay" id="gameOverScreen">
+          <h1 id="gameOverTitle">MISSION FAILED</h1>
+          <p id="gameOverText">Systems offline.</p>
+          <button id="restartBtn">RESTART SIMULATOR</button>
+        </div>
+      </div>
+
+      <div class="panel footer-strip">SYSTEMS CHECK: OK | RADAR GRID: ONLINE | LUIZ-AIR TRAINING COMMAND</div>
+    </main>
+
+    <aside class="panel side">
+      <div class="titlebar">TACTICAL CONSOLE<div class="sub">Radar + event stream</div></div>
+
+      <div class="data-block">
+        <div class="data-label">Mini radar</div>
+        <canvas id="radarCanvas" width="240" height="240" style="width:100%;background:#081117;border:1px solid rgba(0,255,136,0.12);"></canvas>
+      </div>
+
+      <div class="data-block">
+        <div class="data-label">Mission statistics</div>
+        <div class="small-list" id="statsPanel"></div>
+      </div>
+
+      <div class="data-block">
+        <div class="data-label">Event log</div>
+        <div class="event-log" id="eventLog"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('flightCanvas');
+    const ctx = canvas.getContext('2d');
+    const radarCanvas = document.getElementById('radarCanvas');
+    const rctx = radarCanvas.getContext('2d');
+
+    const hud = document.getElementById('hud');
+    const warningBox = document.getElementById('warningBox');
+    const bossIndicator = document.getElementById('bossIndicator');
+    const missionBox = document.getElementById('missionBox');
+    const eventLog = document.getElementById('eventLog');
+    const statsPanel = document.getElementById('statsPanel');
+    const missionList = document.getElementById('missionList');
+    const integrityValue = document.getElementById('integrityValue');
+    const integrityBar = document.getElementById('integrityBar');
+    const fuelValue = document.getElementById('fuelValue');
+    const fuelBar = document.getElementById('fuelBar');
+
+    const startScreen = document.getElementById('startScreen');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const gameOverTitle = document.getElementById('gameOverTitle');
+    const gameOverText = document.getElementById('gameOverText');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    const assets = {
+      pilot: new Image(),
+      p1: new Image(),
+      p2: new Image(),
+      p3: new Image(),
+      boss: new Image()
+    };
+
+    assets.pilot.src = 'capybara-vector3.png';
+    assets.p1.src = 'vliegtuig-rood.png';
+    assets.p2.src = 'vliegtuig-blauw.png';
+    assets.p3.src = 'vliegtuig-geel.png';
+    assets.boss.src = 'vliegtuig-rood.png';
+
+    const grid = 60;
+    const maxLevel = 6;
+
+    let player;
+    let traffic = [];
+    let stormZones = [];
+    let fuelCells = [];
+    let boss = null;
+    let keys = {};
+    let particles = [];
+    let eventLines = [];
+    let lastTime = 0;
+    let elapsed = 0;
+    let missionStarted = false;
+    let gameOver = false;
+    let radarPing = true;
+    let warningActive = false;
+    let audioCtx = null;
+
+    let state = {
+      lives: 3,
+      score: 0,
+      level: 1,
+      integrity: 100,
+      fuel: 100,
+      dockings: 0,
+      nearMisses: 0,
+      collisions: 0,
+      startTimestamp: 0,
+      missionTime: 0,
+      bestTime: null,
+      objectiveTimer: 30,
+      objectiveDone: false
+    };
+
+    function addLog(text) {
+      const t = new Date();
+      const stamp = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+      eventLines.unshift(`[${stamp}] ${text}`);
+      eventLines = eventLines.slice(0, 16);
+      eventLog.textContent = eventLines.join('\n');
+    }
+
+    function safeAudioInit() {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+    }
+
+    function beep(type = 'ok') {
+      if (!audioCtx) return;
+      const oscillator = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      oscillator.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      let freq = 520;
+      let duration = 0.08;
+      let volume = 0.035;
+      oscillator.type = 'square';
+
+      if (type === 'warn') { freq = 190; duration = 0.12; volume = 0.045; oscillator.type = 'sawtooth'; }
+      if (type === 'danger') { freq = 120; duration = 0.2; volume = 0.055; oscillator.type = 'square'; }
+      if (type === 'dock') { freq = 780; duration = 0.14; volume = 0.04; oscillator.type = 'triangle'; }
+      if (type === 'fuel') { freq = 240; duration = 0.07; volume = 0.03; oscillator.type = 'triangle'; }
+      if (type === 'boss') { freq = 90; duration = 0.22; volume = 0.06; oscillator.type = 'sawtooth'; }
+
+      const now = audioCtx.currentTime;
+      oscillator.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      oscillator.start(now);
+      oscillator.stop(now + duration);
+    }
+
+    function resetPlayer() {
+      player = {
+        x: 6 * grid,
+        y: 11 * grid,
+        w: 44,
+        h: 44,
+        baseSpeed: 220,
+        boostSpeed: 330,
+        currentSpeed: 220,
+        flicker: 0,
+        invulnerable: 0
+      };
+    }
+
+    function makeTrafficRow(row, speed, img, gap, offset = 0) {
+      const items = [];
+      for (let i = 0; i < 12; i += gap) {
+        items.push({
+          x: (i * grid) + offset,
+          y: row * grid,
+          speed,
+          img,
+          w: 78,
+          h: 48,
+          type: 'normal'
+        });
+      }
+      return items;
+    }
+
+    function createLevel(level) {
+      traffic = [];
+      stormZones = [];
+      fuelCells = [];
+      boss = null;
+      particles = [];
+      state.objectiveDone = false;
+      state.objectiveTimer = Math.max(16, 32 - (level * 2));
+
+      const mul = 1 + (level - 1) * 0.18;
+
+      traffic.push(...makeTrafficRow(9, 1.8 * mul, 'p3', 3));
+      traffic.push(...makeTrafficRow(8, -1.45 * mul, 'p3', 4, 40));
+      traffic.push(...makeTrafficRow(6, 2.5 * mul, 'p1', 4, 20));
+      traffic.push(...makeTrafficRow(5, -3.0 * mul, 'p1', 3));
+      traffic.push(...makeTrafficRow(3, 3.7 * mul, 'p2', 5, 60));
+      traffic.push(...makeTrafficRow(2, -4.4 * mul, 'p2', 4, 20));
+
+      if (level >= 2) {
+        stormZones.push({ x: 120, y: 420, w: 180, h: 60, drift: 0.35, phase: Math.random() * 1000 });
+      }
+      if (level >= 3) {
+        stormZones.push({ x: 360, y: 240, w: 220, h: 60, drift: 0.55, phase: Math.random() * 1000 });
+      }
+      if (level >= 4) {
+        stormZones.push({ x: 180, y: 120, w: 250, h: 60, drift: 0.75, phase: Math.random() * 1000 });
+      }
+
+      fuelCells.push({ x: 60, y: 7 * grid + 8, w: 40, h: 40, collected: false });
+      if (level >= 3) fuelCells.push({ x: 600, y: 4 * grid + 8, w: 40, h: 40, collected: false });
+
+      if (level === maxLevel) {
+        boss = {
+          x: -180,
+          y: 6 * grid - 10,
+          w: 170,
+          h: 80,
+          speed: 2.5,
+          hp: 8,
+          active: true,
+          direction: 1,
+          cooldown: 0
+        };
+        bossIndicator.style.display = 'block';
+        addLog('Heavy traffic unit entered sector.');
+        beep('boss');
+      } else {
+        bossIndicator.style.display = 'none';
+      }
+
+      updateMissionText();
+      addLog(`Sector ${level} loaded.`);
+    }
+
+    function initGame() {
+      state.lives = 3;
+      state.score = 0;
+      state.level = 1;
+      state.integrity = 100;
+      state.fuel = 100;
+      state.dockings = 0;
+      state.nearMisses = 0;
+      state.collisions = 0;
+      state.missionTime = 0;
+      state.startTimestamp = performance.now();
+      eventLines = [];
+      warningActive = false;
+      gameOver = false;
+      resetPlayer();
+      createLevel(state.level);
+      updatePanels();
+      addLog('Systems online. Awaiting launch.');
+    }
+
+    function updateMissionText() {
+      let mission = `MISSION: REACH TERMINAL WITHIN ${Math.ceil(state.objectiveTimer)} SECONDS.`;
+      if (state.level >= 3) mission += ` COLLECT FUEL IF LOW.`;
+      if (state.level === maxLevel) mission = 'MISSION: SURVIVE AND DOCK WHILE HEAVY TRAFFIC UNIT CONTROLS THE CENTER LANE.';
+      missionBox.textContent = mission;
+
+      const lines = [
+        `Sector ${state.level} clearance`,
+        `Docking timer: ${Math.ceil(state.objectiveTimer)}s`,
+        `Avoid direct runway impact`,
+        state.level >= 3 ? 'Optional: collect fuel cells' : 'Optional: near-miss bonus',
+        state.level === maxLevel ? 'Heavy traffic threat active' : 'Final sector not yet active'
+      ];
+      missionList.textContent = lines.join('\n');
+    }
+
+    function startMission() {
+      safeAudioInit();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      missionStarted = true;
+      startScreen.style.display = 'none';
+      state.startTimestamp = performance.now();
+      lastTime = performance.now();
+      addLog('Mission started.');
+      beep('ok');
+      requestAnimationFrame(loop);
+    }
+
+    function endGame(success = false) {
+      gameOver = true;
+      missionStarted = false;
+      gameOverScreen.style.display = 'flex';
+
+      if (success) {
+        gameOverTitle.textContent = 'MISSION COMPLETE';
+        gameOverText.textContent = `Total score: ${state.score} | Dockings: ${state.dockings} | Near misses: ${state.nearMisses} | Integrity: ${Math.max(0, Math.round(state.integrity))}%`;
+        addLog('Mission complete. Returning to command.');
+        beep('dock');
+      } else {
+        gameOverTitle.textContent = 'MISSION FAILED';
+        gameOverText.textContent = `Score: ${state.score} | Collisions: ${state.collisions} | Sector reached: ${state.level}`;
+        addLog('Mission failure recorded.');
+        beep('danger');
+      }
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function rectsOverlap(a, b) {
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    function spawnBurst(x, y, color = '#00ff88', count = 12) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
+          life: 0.8 + Math.random() * 0.7,
+          size: 2 + Math.random() * 3,
+          color
+        });
+      }
+    }
+
+    function handleInput(dt) {
+      player.currentSpeed = keys.Shift ? player.boostSpeed : player.baseSpeed;
+
+      let speed = player.currentSpeed;
+      if (inStormZone(player)) speed *= 0.55;
+      if (state.fuel <= 10) speed *= 0.85;
+
+      let dx = 0, dy = 0;
+      if (keys.ArrowUp) dy -= speed * dt;
+      if (keys.ArrowDown) dy += speed * dt;
+      if (keys.ArrowLeft) dx -= speed * dt;
+      if (keys.ArrowRight) dx += speed * dt;
+
+      player.x = clamp(player.x + dx, 0, canvas.width - player.w);
+      player.y = clamp(player.y + dy, 0, canvas.height - player.h);
+    }
+
+    function inStormZone(entity) {
+      return stormZones.some(zone => rectsOverlap(entity, zone));
+    }
+
+    function updateStorms(dt) {
+      stormZones.forEach(zone => {
+        zone.phase += dt * zone.drift;
+        zone.x += Math.sin(zone.phase) * 0.4;
+        zone.x = clamp(zone.x, 40, canvas.width - zone.w - 40);
+      });
+    }
+
+    function updateTraffic(dt) {
+      let close = false;
+
+      traffic.forEach(obj => {
+        obj.x += obj.speed * 60 * dt;
+        if (obj.x > canvas.width + 100) obj.x = -obj.w - 40;
+        if (obj.x < -obj.w - 120) obj.x = canvas.width + 40;
+
+        const hitbox = { x: obj.x + 10, y: obj.y + 6, w: obj.w - 20, h: obj.h - 10 };
+        const nearbox = { x: obj.x - 14, y: obj.y - 10, w: obj.w + 28, h: obj.h + 20 };
+
+        if (rectsOverlap(player, nearbox) && !rectsOverlap(player, hitbox)) close = true;
+
+        if (player.invulnerable <= 0 && rectsOverlap(player, hitbox)) {
+          takeDamage(16, 'Runway collision detected.');
+          state.collisions++;
+          player.invulnerable = 1.3;
+          player.flicker = 1.3;
+          resetPlayer();
+          spawnBurst(player.x + 20, player.y + 20, '#ff4545', 18);
+          beep('danger');
+        }
+      });
+
+      if (boss && boss.active) {
+        updateBoss(dt, close);
+      }
+
+      if (close && !warningActive) {
+        warningActive = true;
+        state.nearMisses++;
+        state.score += 10;
+        addLog('Close traffic pass recorded. Bonus awarded.');
+        beep('warn');
+      }
+      if (!close) warningActive = false;
+
+      warningBox.style.display = close ? 'block' : 'none';
+    }
+
+    function updateBoss(dt, close) {
+      boss.x += boss.speed * boss.direction * 60 * dt;
+      if (boss.x > canvas.width - boss.w - 10) boss.direction = -1;
+      if (boss.x < 10) boss.direction = 1;
+
+      boss.cooldown -= dt;
+      if (boss.cooldown <= 0) {
+        boss.cooldown = 1.8;
+        spawnBurst(boss.x + boss.w / 2, boss.y + boss.h / 2, '#ffc400', 10);
+      }
+
+      const bossHit = { x: boss.x + 8, y: boss.y + 10, w: boss.w - 16, h: boss.h - 18 };
+      const bossNear = { x: boss.x - 20, y: boss.y - 14, w: boss.w + 40, h: boss.h + 28 };
+
+      if (rectsOverlap(player, bossNear) && !rectsOverlap(player, bossHit)) close = true;
+
+      if (player.invulnerable <= 0 && rectsOverlap(player, bossHit)) {
+        takeDamage(24, 'Heavy traffic impact. Structural damage critical.');
+        state.collisions++;
+        player.invulnerable = 1.5;
+        player.flicker = 1.5;
+        resetPlayer();
+        spawnBurst(player.x + 20, player.y + 20, '#ffc400', 22);
+        beep('danger');
+      }
+    }
+
+    function takeDamage(amount, text) {
+      state.integrity -= amount;
+      state.score = Math.max(0, state.score - 20);
+      addLog(text);
+      if (state.integrity <= 0) {
+        state.lives--;
+        state.integrity = 100;
+        addLog(`Hull lost. Life remaining: ${state.lives}.`);
+        if (state.lives <= 0) endGame(false);
+      }
+    }
+
+    function updateFuel(dt) {
+      const drain = keys.Shift ? 4.3 : 2.2;
+      state.fuel -= drain * dt;
+      if (state.fuel < 25 && Math.floor(performance.now() / 500) % 2 === 0) beep('fuel');
+      if (state.fuel <= 0) {
+        state.fuel = 0;
+        takeDamage(12 * dt, 'Fuel depleted. Emergency systems active.');
+      }
+
+      fuelCells.forEach(cell => {
+        if (!cell.collected && rectsOverlap(player, cell)) {
+          cell.collected = true;
+          state.fuel = clamp(state.fuel + 30, 0, 100);
+          state.score += 25;
+          addLog('Fuel cell collected. Reserves increased.');
+          spawnBurst(cell.x + 20, cell.y + 20, '#4fc3ff', 14);
+          beep('dock');
+        }
+      });
+    }
+
+    function checkDocking(dt) {
+      state.objectiveTimer -= dt;
+      if (state.objectiveTimer <= 0 && !state.objectiveDone) {
+        state.objectiveDone = true;
+        takeDamage(22, 'Docking deadline missed. Sector threat increased.');
+        addLog('Objective timer expired.');
+      }
+
+      if (player.y <= 14) {
+        state.dockings++;
+        state.score += 100 + Math.max(0, Math.ceil(state.objectiveTimer) * 3);
+        state.level++;
+        state.integrity = clamp(state.integrity + 10, 0, 100);
+        state.fuel = clamp(state.fuel + 15, 0, 100);
+        const sectorTime = ((performance.now() - state.startTimestamp) / 1000).toFixed(1);
+        addLog(`Successful docking in ${sectorTime}s.`);
+        spawnBurst(player.x + 20, player.y + 20, '#00ff88', 18);
+        beep('dock');
+
+        if (state.bestTime === null || Number(sectorTime) < state.bestTime) {
+          state.bestTime = Number(sectorTime);
+        }
+
+        if (state.level > maxLevel) {
+          endGame(true);
+          return;
+        }
+
+        resetPlayer();
+        createLevel(state.level);
+        state.startTimestamp = performance.now();
+      }
+    }
+
+    function updateParticles(dt) {
+      particles = particles.filter(p => p.life > 0);
+      particles.forEach(p => {
+        p.x += p.vx * 60 * dt;
+        p.y += p.vy * 60 * dt;
+        p.life -= dt;
+      });
+    }
+
+    function updateTimers(dt) {
+      state.missionTime += dt;
+      if (player.invulnerable > 0) player.invulnerable -= dt;
+      if (player.flicker > 0) player.flicker -= dt;
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      sky.addColorStop(0, '#09131b');
+      sky.addColorStop(1, '#050a0f');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawRunwayGrid();
+      drawSafeZones();
+      drawTerminal();
+      drawStorms();
+      drawFuelCells();
+      drawTraffic();
+      if (boss && boss.active) drawBoss();
+      drawPlayer();
+      drawParticles();
+      drawVignette();
+      drawScanlines();
+    }
+
+    function drawRunwayGrid() {
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      for (let r = 0; r < 12; r++) {
+        ctx.strokeRect(0, r * grid, canvas.width, grid);
+        for (let x = 20; x < canvas.width; x += 80) {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fillRect(x, r * grid + 28, 36, 4);
+        }
+      }
+    }
+
+    function drawSafeZones() {
+      ctx.fillStyle = '#0d171f';
+      [10, 7, 4, 1].forEach(r => ctx.fillRect(0, r * grid, canvas.width, (r === 10 ? 2 : 1) * grid));
+    }
+
+    function drawTerminal() {
+      ctx.fillStyle = 'rgba(0,255,136,0.18)';
+      ctx.fillRect(0, 0, canvas.width, grid);
+      for (let x = 0; x < canvas.width; x += 50) {
+        ctx.fillStyle = `rgba(0,255,136,${0.18 + Math.sin((elapsed * 2) + x * 0.1) * 0.06})`;
+        ctx.fillRect(x + 6, 16, 24, 8);
+      }
+    }
+
+    function drawStorms() {
+      stormZones.forEach(zone => {
+        const grad = ctx.createLinearGradient(zone.x, zone.y, zone.x + zone.w, zone.y + zone.h);
+        grad.addColorStop(0, 'rgba(79,195,255,0.14)');
+        grad.addColorStop(1, 'rgba(79,195,255,0.04)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(zone.x, zone.y, zone.w, zone.h);
+        ctx.strokeStyle = 'rgba(79,195,255,0.25)';
+        ctx.strokeRect(zone.x, zone.y, zone.w, zone.h);
+
+        for (let i = 0; i < 8; i++) {
+          const px = zone.x + (i * zone.w / 8);
+          ctx.strokeStyle = 'rgba(79,195,255,0.18)';
+          ctx.beginPath();
+          ctx.moveTo(px, zone.y + 8);
+          ctx.lineTo(px + Math.sin(elapsed * 4 + i) * 10, zone.y + zone.h - 8);
+          ctx.stroke();
+        }
+      });
+    }
+
+    function drawFuelCells() {
+      fuelCells.forEach(cell => {
+        if (cell.collected) return;
+        ctx.fillStyle = 'rgba(79,195,255,0.15)';
+        ctx.fillRect(cell.x, cell.y, cell.w, cell.h);
+        ctx.strokeStyle = 'rgba(79,195,255,0.45)';
+        ctx.strokeRect(cell.x, cell.y, cell.w, cell.h);
+        ctx.fillStyle = '#4fc3ff';
+        ctx.fillRect(cell.x + 12, cell.y + 8, 16, 24);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillRect(cell.x + 17, cell.y + 4, 6, 4);
+      });
+    }
+
+    function drawTraffic() {
+      traffic.forEach(obj => {
+        ctx.save();
+        if (obj.speed < 0) {
+          ctx.translate(obj.x + obj.w / 2, obj.y + obj.h / 2);
+          ctx.scale(-1, 1);
+          drawAircraft(obj.img, -obj.w / 2, -obj.h / 2, obj.w, obj.h);
+        } else {
+          drawAircraft(obj.img, obj.x, obj.y + 6, obj.w, obj.h);
+        }
+        ctx.restore();
+      });
+    }
+
+    function drawBoss() {
+      if (!boss) return;
+      ctx.save();
+      ctx.shadowBlur = 24;
+      ctx.shadowColor = 'rgba(255,196,0,0.45)';
+      drawAircraft('boss', boss.x, boss.y, boss.w, boss.h);
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,196,0,0.5)';
+      ctx.strokeRect(boss.x - 4, boss.y - 4, boss.w + 8, boss.h + 8);
+      ctx.restore();
+    }
+
+    function drawAircraft(assetKey, x, y, w, h) {
+      const img = assets[assetKey];
+      if (img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, x, y, w, h);
+      } else {
+        ctx.fillStyle = assetKey === 'boss' ? '#ffc400' : '#6ef7b7';
+        ctx.beginPath();
+        ctx.moveTo(x, y + h / 2);
+        ctx.lineTo(x + 20, y + 8);
+        ctx.lineTo(x + w - 12, y + 8);
+        ctx.lineTo(x + w, y + h / 2);
+        ctx.lineTo(x + w - 12, y + h - 8);
+        ctx.lineTo(x + 20, y + h - 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    function drawPlayer() {
+      if (player.flicker > 0 && Math.floor(performance.now() / 80) % 2 === 0) return;
+
+      ctx.save();
+      ctx.shadowBlur = 16;
+      ctx.shadowColor = '#00ff88';
+      if (assets.pilot.complete && assets.pilot.naturalWidth > 0) {
+        ctx.drawImage(assets.pilot, player.x + 2, player.y + 2, player.w, player.h);
+      } else {
+        ctx.fillStyle = '#00ff88';
+        ctx.beginPath();
+        ctx.arc(player.x + player.w / 2, player.y + player.h / 2, 18, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function drawVignette() {
+      const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 180, canvas.width/2, canvas.height/2, 460);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(1, 'rgba(0,0,0,0.45)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawScanlines() {
+      for (let y = 0; y < canvas.height; y += 4) {
+        ctx.fillStyle = 'rgba(255,255,255,0.012)';
+        ctx.fillRect(0, y, canvas.width, 1);
+      }
+    }
+
+    function updatePanels() {
+      const spd = Math.round((keys.Shift ? player.boostSpeed : player.baseSpeed) * (inStormZone(player) ? 0.55 : 1));
+      const alt = Math.max(0, Math.round(14000 - (player.y / canvas.height) * 14000));
+      const mach = (spd / 420).toFixed(2);
+      const status = warningActive ? 'TRAFFIC ALERT' : inStormZone(player) ? 'TURBULENCE' : state.fuel < 20 ? 'LOW FUEL' : 'STABLE';
+      const sectorTime = ((performance.now() - state.startTimestamp) / 1000).toFixed(1);
+
+      hud.innerHTML = `ALT: ${alt}FT<br>SPD: MACH ${mach}<br>STATUS: ${status}<br>SCORE: ${state.score}<br>LIVES: ${state.lives}<br>LEVEL: ${state.level}/${maxLevel}<br>SECTOR TIME: ${sectorTime}S`;
+
+      statsPanel.textContent = [
+        `Score: ${state.score}`,
+        `Lives: ${state.lives}`,
+        `Integrity: ${Math.round(state.integrity)}%`,
+        `Fuel: ${Math.round(state.fuel)}%`,
+        `Dockings: ${state.dockings}`,
+        `Near misses: ${state.nearMisses}`,
+        `Collisions: ${state.collisions}`,
+        `Best sector: ${state.bestTime ?? '--'}s`,
+        `Threat level: ${state.level === maxLevel ? 'Critical' : state.level >= 4 ? 'High' : 'Moderate'}`
+      ].join('\n');
+
+      integrityValue.textContent = `${Math.round(state.integrity)}%`;
+      integrityBar.style.width = `${clamp(state.integrity, 0, 100)}%`;
+      integrityBar.style.background = state.integrity < 30
+        ? 'linear-gradient(90deg, rgba(255,69,69,0.6), rgba(255,69,69,1))'
+        : 'linear-gradient(90deg, rgba(0,255,136,0.4), rgba(0,255,136,0.9))';
+
+      fuelValue.textContent = `${Math.round(state.fuel)}%`;
+      fuelBar.style.width = `${clamp(state.fuel, 0, 100)}%`;
+      fuelBar.style.background = state.fuel < 25
+        ? 'linear-gradient(90deg, rgba(255,196,0,0.6), rgba(255,69,69,0.95))'
+        : 'linear-gradient(90deg, rgba(79,195,255,0.5), rgba(79,195,255,1))';
+
+      if (state.fuel < 20) fuelValue.classList.add('blink');
+      else fuelValue.classList.remove('blink');
+
+      updateMissionText();
+      drawRadar();
+    }
+
+    function drawRadar() {
+      rctx.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+      rctx.fillStyle = '#081117';
+      rctx.fillRect(0, 0, radarCanvas.width, radarCanvas.height);
+
+      const cx = radarCanvas.width / 2;
+      const cy = radarCanvas.height / 2;
+
+      rctx.strokeStyle = 'rgba(0,255,136,0.16)';
+      for (let i = 1; i <= 4; i++) {
+        rctx.beginPath();
+        rctx.arc(cx, cy, i * 26, 0, Math.PI * 2);
+        rctx.stroke();
+      }
+      rctx.beginPath(); rctx.moveTo(cx, 0); rctx.lineTo(cx, radarCanvas.height); rctx.stroke();
+      rctx.beginPath(); rctx.moveTo(0, cy); rctx.lineTo(radarCanvas.width, cy); rctx.stroke();
+
+      if (radarPing) {
+        const pingAngle = elapsed * 2.5;
+        rctx.strokeStyle = 'rgba(0,255,136,0.32)';
+        rctx.beginPath();
+        rctx.moveTo(cx, cy);
+        rctx.lineTo(cx + Math.cos(pingAngle) * 120, cy + Math.sin(pingAngle) * 120);
+        rctx.stroke();
+      }
+
+      function mapPos(x, y) {
+        return {
+          x: (x / canvas.width) * radarCanvas.width,
+          y: (y / canvas.height) * radarCanvas.height
+        };
+      }
+
+      stormZones.forEach(zone => {
+        const p = mapPos(zone.x, zone.y);
+        const w = (zone.w / canvas.width) * radarCanvas.width;
+        const h = (zone.h / canvas.height) * radarCanvas.height;
+        rctx.fillStyle = 'rgba(79,195,255,0.16)';
+        rctx.fillRect(p.x, p.y, w, h);
+      });
+
+      traffic.forEach(obj => {
+        const p = mapPos(obj.x, obj.y);
+        rctx.fillStyle = 'rgba(255,80,80,0.85)';
+        rctx.fillRect(p.x, p.y, 4, 4);
+      });
+
+      fuelCells.forEach(cell => {
+        if (cell.collected) return;
+        const p = mapPos(cell.x, cell.y);
+        rctx.fillStyle = '#4fc3ff';
+        rctx.fillRect(p.x, p.y, 5, 5);
+      });
+
+      if (boss && boss.active) {
+        const p = mapPos(boss.x, boss.y);
+        rctx.fillStyle = '#ffc400';
+        rctx.fillRect(p.x, p.y, 10, 8);
+      }
+
+      const pp = mapPos(player.x, player.y);
+      rctx.fillStyle = '#00ff88';
+      rctx.beginPath();
+      rctx.arc(pp.x + 4, pp.y + 4, 4, 0, Math.PI * 2);
+      rctx.fill();
+    }
+
+    function loop(now) {
+      if (!missionStarted || gameOver) return;
+      const dt = Math.min(0.033, (now - lastTime) / 1000 || 0.016);
+      lastTime = now;
+      elapsed += dt;
+
+      handleInput(dt);
+      updateStorms(dt);
+      updateTraffic(dt);
+      updateFuel(dt);
+      checkDocking(dt);
+      updateParticles(dt);
+      updateTimers(dt);
+      drawScene();
+      updatePanels();
+
+      if (!gameOver) requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('keydown', e => {
+      keys[e.key] = true;
+      if (e.key === 'm' || e.key === 'M') radarPing = !radarPing;
+      if (e.key === 'Enter' && !missionStarted && !gameOver) startMission();
+      if ((e.key === 'r' || e.key === 'R') && gameOver) {
+        gameOverScreen.style.display = 'none';
+        initGame();
+        startMission();
+      }
+    });
+
+    window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+    startBtn.addEventListener('click', () => startMission());
+    restartBtn.addEventListener('click', () => {
+      gameOverScreen.style.display = 'none';
+      initGame();
+      startMission();
+    });
+
+    initGame();
+    drawScene();
+    updatePanels();
+  </script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CLASSIFIED - LUIZ-AIR SECURITY</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Black+Ops+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sec-neon: #00ff00; 
+      --sec-orange: #ff4d00;
+      --sec-red: #ff0000;
+      --sec-blue: #00e5ff;
+      --bg: #0a0a0a;
+      --card-bg: #111111;
+      --border: #333;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Courier Prime', monospace;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+      color: var(--sec-neon);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.2s;
+    }
+
+    body.purge-active { animation: alert-flash 0.5s infinite; }
+    @keyframes alert-flash {
+      0% { background-color: var(--sec-red); color: black; }
+      50% { background-color: #000; color: var(--sec-red); }
+      100% { background-color: var(--sec-red); color: black; }
+    }
+
+    header { background-color: #000; border-bottom: 2px solid var(--sec-neon); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--sec-neon); font-family: 'Black Ops One', cursive; font-size: 24px; letter-spacing: 2px; }
+    .logo-badge { width: 50px; height: 50px; background: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--sec-neon); filter: grayscale(100%) sepia(1) hue-rotate(80deg); }
+    .logo-badge img { width: 70%; }
+
+    nav a { color: #888; text-decoration: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; border: 1px solid #333; transition: 0.3s; }
+    nav a:hover { border-color: var(--sec-neon); color: var(--sec-neon); }
+
+    .tracker-box { background: #000; padding: 10px 20px; border-radius: 8px; margin-top: 20px; border: 1px solid var(--sec-neon); display: flex; align-items: center; gap: 15px; font-weight: bold; text-shadow: 0 0 5px var(--sec-neon); }
+    .tracker-dot { width: 10px; height: 10px; background: var(--sec-neon); border-radius: 50%; animation: blink 1s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 24px; margin-top: 24px; border: 1px solid var(--border); border-left: 4px solid var(--sec-neon); box-shadow: inset 0 0 20px rgba(0,255,0,0.05); }
+    
+    .hero-img-container { width: 100%; height: 350px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #000; position: relative; border: 2px solid var(--sec-neon); box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); }
+    .hero-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
+    .hero-img-container::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,255,0,0.015) 0px, rgba(0,255,0,0.015) 1px, transparent 1px, transparent 4px); pointer-events: none; }
+
+    .dispatch-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    @media (max-width: 768px) { .dispatch-layout { grid-template-columns: 1fr; } }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; letter-spacing: 1px; }
+    
+    select, input[type="text"], input[type="date"], input[type="time"] { width: 100%; padding: 12px; border-radius: 4px; border: 1px solid var(--sec-neon); background: #050505; color: var(--sec-neon); font-family: 'Courier Prime', monospace; font-size: 16px; }
+    input:focus, select:focus { outline: none; box-shadow: 0 0 10px rgba(0,255,0,0.3); }
+
+    input[type="date"], input[type="time"] { color-scheme: dark; }
+    input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(1) sepia(1) saturate(5) hue-rotate(90deg); }
+
+    .weather-widget { background: rgba(0, 255, 0, 0.05); border: 1px dashed var(--sec-neon); padding: 10px; margin-top: 15px; font-size: 13px; border-radius: 4px; }
+    .weather-widget strong { color: white; }
+
+    .radar-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #050505; border-radius: 12px; padding: 20px; border: 1px solid #113311; box-shadow: inset 0 0 20px rgba(0,255,0,0.05); height: 100%; }
+    .radar { position: relative; width: 220px; height: 220px; border-radius: 50%; border: 2px solid var(--sec-neon); background-color: #001100; overflow: hidden; box-shadow: 0 0 15px rgba(0, 255, 0, 0.2), inset 0 0 15px rgba(0, 255, 0, 0.2); }
+    .radar-map { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 160%; opacity: 0.2; filter: invert(1) sepia(1) saturate(5) hue-rotate(80deg); }
+    .radar::before, .radar::after { content: ''; position: absolute; background: rgba(0, 255, 0, 0.3); }
+    .radar::before { top: 0; left: 50%; width: 1px; height: 100%; }
+    .radar::after { top: 50%; left: 0; width: 100%; height: 1px; }
+    .radar-rings { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 66%; height: 66%; border-radius: 50%; border: 1px solid rgba(0, 255, 0, 0.3); }
+    .radar-rings::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50%; height: 50%; border-radius: 50%; border: 1px solid rgba(0, 255, 0, 0.3); }
+    .radar-beam { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, transparent 75%, rgba(0, 255, 0, 0.5) 100%); animation: scan 4s linear infinite; }
+    @keyframes scan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .blip { position: absolute; width: 6px; height: 6px; background: var(--sec-neon); border-radius: 50%; box-shadow: 0 0 10px var(--sec-neon), 0 0 20px var(--sec-neon); opacity: 0; animation: ping 4s infinite; }
+    @keyframes ping { 0% { opacity: 1; transform: scale(1.5); } 20% { opacity: 0; transform: scale(1); } 100% { opacity: 0; } }
+    .blip-1 { top: 30%; left: 70%; animation-delay: 0.5s; }
+    .blip-2 { top: 75%; left: 65%; animation-delay: 1.5s; }
+    .blip-3 { top: 60%; left: 20%; animation-delay: 2.5s; }
+    .blip-4 { top: 20%; left: 30%; animation-delay: 3.5s; }
+
+    .btn-primary { padding: 16px 24px; border-radius: 4px; border: 1px solid var(--sec-neon); cursor: pointer; width: 100%; font-size: 18px; background: rgba(0,255,0,0.1); color: var(--sec-neon); font-family: 'Black Ops One'; letter-spacing: 2px; transition: 0.2s; }
+    .btn-primary:hover { background: var(--sec-neon); color: black; box-shadow: 0 0 20px rgba(0,255,0,0.5); }
+    
+    .btn-danger { background: #330000; color: var(--sec-red); border: 2px solid var(--sec-red); padding: 15px; width: 100%; font-family: 'Black Ops One'; font-size: 20px; cursor: pointer; transition: 0.3s; border-radius: 8px; margin-top: 40px; }
+    .btn-danger:hover { background: var(--sec-red); color: white; box-shadow: 0 0 30px red; }
+
+    .jet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; }
+    @media (max-width: 900px) { .jet-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .jet-grid { grid-template-columns: 1fr; } }
+
+    .jet-card { background: #000; border: 2px solid #333; border-radius: 8px; overflow: hidden; cursor: pointer; transition: 0.3s; color: white; opacity: 0.6; }
+    .jet-card:hover { border-color: var(--sec-neon); transform: translateY(-5px); opacity: 1; }
+    .jet-card.selected { border-color: var(--sec-neon); opacity: 1; box-shadow: 0 0 15px rgba(0,255,0,0.3); background: #0a1a0a; }
+    .jet-card img { width: 100%; height: 120px; object-fit: cover; filter: sepia(1) hue-rotate(80deg) saturate(2); }
+    .jet-info { padding: 12px; text-align: left; }
+    .spec-line { font-size: 11px; margin-top: 4px; color: var(--sec-neon); border-bottom: 1px dashed #004400; padding-bottom: 2px; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+    .access-card { background: #050505; border: 2px solid var(--sec-orange); padding: 40px; border-radius: 10px; text-align: center; color: var(--sec-orange); width: 400px; }
+    .pin-input { width: 100%; padding: 15px; margin: 20px 0; background: #000; border: 1px solid var(--sec-orange); color: var(--sec-orange); text-align: center; font-size: 24px; outline: none; text-transform: uppercase;}
+    
+    .terminal-text { width: 80%; max-width: 800px; font-size: 20px; line-height: 1.8; text-shadow: 0 0 5px var(--sec-neon); }
+    .purge-text { font-family: 'Black Ops One'; font-size: 80px; color: red; text-align: center; text-shadow: 0 0 20px red; }
+    .easter-egg-text { text-align: center; color: var(--sec-neon); }
+
+    .dossier-card { background: #0a0a0a; border: 2px solid var(--sec-neon); padding: 30px; width: 500px; max-width: 90%; color: var(--sec-neon); box-shadow: 0 0 30px rgba(0,255,0,0.2); position: relative; }
+    .dossier-header { border-bottom: 2px dashed var(--sec-neon); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+    .dossier-header h2 { font-family: 'Black Ops One'; margin: 0; font-size: 28px; }
+    .dossier-row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #113311; padding-bottom: 4px; }
+    
+    /* QR Code styling */
+    .qr-container { text-align: center; margin-top: 20px; }
+    .qr-container img { border: 4px solid var(--sec-neon); padding: 5px; background: white; border-radius: 4px; width: 120px; height: 120px; }
+
+    #mainInterface { display: none; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div id="securityModal" class="modal-overlay">
+    <div class="access-card">
+      <div style="font-size: 50px; margin-bottom: 10px;">⚠️</div>
+      <h2 style="font-family: 'Black Ops One'; margin: 0;">TOP SECRET</h2>
+      <p style="font-size: 12px; margin-top: 5px; color: #888;">ENTER CLEARANCE CODE</p>
+      <input type="password" id="securityPin" class="pin-input" placeholder="Wachtwoord">
+      <button class="btn-primary" style="background: var(--sec-orange); color: black; border: none;" onclick="checkSecurityCode()">AUTHORIZE</button>
+      <a href="index.html" style="display:block; margin-top:20px; color:#666; font-size:12px; text-decoration:none;">[ RETURN TO CIVIL AVIATION ]</a>
+    </div>
+  </div>
+
+  <div id="bootScreen" class="modal-overlay hidden">
+    <div class="terminal-text" id="terminalLines"></div>
+  </div>
+
+  <div id="easterEggScreen" class="modal-overlay hidden">
+    <div class="easter-egg-text">
+      <h1 style="font-family: 'Black Ops One'; font-size: 40px; color: yellow;">OPERATION: GIANT RODENT</h1>
+      <img src="Capybara-vector2.png" alt="Agent Capybara" style="width: 200px; filter: drop-shadow(0 0 20px yellow); margin: 20px 0;">
+      <p>TOP SECRET VIPET AUTHORIZED.</p>
+      <button class="btn-primary" style="width: 200px; margin-top: 20px;" onclick="location.reload()">REBOOT SYSTEM</button>
+    </div>
+  </div>
+
+  <div id="purgeScreen" class="modal-overlay hidden" style="background: rgba(20,0,0,0.95);">
+    <div class="purge-text">
+      SYSTEM PURGE<br>
+      <span id="countdownText" style="font-size: 120px; color: white;">3</span>
+    </div>
+  </div>
+
+  <div id="mainInterface">
+    <header>
+      <div class="wrap header-content">
+        <div class="brand">
+          <div class="logo-badge"><img src="Capybara-vector3.png" alt="Logo" onerror="this.style.display='none'"></div>
+          LUIZ-DEFENSE
+        </div>
+        <nav style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+          <a href="surveillance.html" style="color: #000; background: var(--sec-orange); border-color: var(--sec-orange); text-shadow: none;">🛰️ LIVE SATELLIET</a>
+          <a href="tracker.html" style="color: var(--bg); background: var(--sec-blue); border-color: var(--sec-blue); text-shadow: none;">⏱️ ETA TRACKER</a>
+          <a href="decoder.html" style="color: #000; background: var(--sec-neon); border-color: var(--sec-neon); text-shadow: none;">🕵️ ENIGMA DECODER</a>
+          <a href="index.html">⬅ TERUG NAAR LUIZ-AIR</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="tracker-box">
+        <a href="wargames.html" title="???"><div class="tracker-dot"></div></a>
+        <div id="trackerText">LA-SEC-01: SECURE UPLINK ESTABLISHED. WAITING FOR DISPATCH COMMAND. 📡</div>
+      </div>
+    </div>
+
+    <main class="wrap" style="padding-bottom: 60px;">
+      <section class="card" style="padding:0; border:none; margin-top: 20px;">
+        <div class="hero-img-container">
+          <img id="heroImage" src="vliegtuig1.png" alt="Command Aircraft" onerror="this.src='https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=1000&q=80'">
+        </div>
+      </section>
+
+      <section class="card">
+        <div style="border-bottom: 2px solid var(--sec-neon); padding-bottom: 10px; margin-bottom: 20px;">
+          <h2 style="font-family: 'Black Ops One'; margin:0; font-size: 28px;">MISSION DISPATCH FORM</h2>
+          <div style="font-size: 12px; font-weight: bold; margin-top: 5px;">AUTHORIZATION REQUIRED TO GENERATE MANIFEST</div>
+        </div>
+
+        <div class="dispatch-layout">
+          <div class="dispatch-form-area">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>ORIGIN (VERTREK)</label>
+                <select id="routeOrigin">
+                  <option value="L.A. HQ Base (São Paulo)">L.A. HQ Base (São Paulo)</option>
+                  <option value="Black Site 7 (Amsterdam)">Black Site 7 (Amsterdam)</option>
+                  <option value="Fort Knox Vault (Kentucky)">Fort Knox Vault (Kentucky)</option>
+                  <option value="Area 51 (Nevada)">Area 51 (Nevada)</option>
+                  <option value="Guantanamo Bay (Cuba)">Guantanamo Bay (Cuba)</option>
+                  <option value="Offshore Platform Echo (North Sea)">Offshore Platform Echo (Noordzee)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>TARGET (BESTEMMING)</label>
+                <select id="routeDest" onchange="updateWeather()">
+                  <option value="Black Site 7 (Amsterdam)">Black Site 7 (Amsterdam)</option>
+                  <option value="L.A. HQ Base (São Paulo)">L.A. HQ Base (São Paulo)</option>
+                  <option value="Fort Knox Vault (Kentucky)">Fort Knox Vault (Kentucky)</option>
+                  <option value="Area 51 (Nevada)">Area 51 (Nevada)</option>
+                  <option value="Guantanamo Bay (Cuba)">Guantanamo Bay (Cuba)</option>
+                  <option value="Offshore Platform Echo (North Sea)">Offshore Platform Echo (Noordzee)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>DATE OF OPERATION</label>
+                <input type="date" id="routeDate">
+              </div>
+              <div class="form-group">
+                <label>TIME (T-MINUS)</label>
+                <input type="time" id="routeTime" value="03:00">
+              </div>
+            </div>
+
+            <div class="weather-widget">
+              <strong>TACTICAL WEATHER SCAN (TARGET):</strong><br>
+              Visibility: <span id="w-vis">Scanning...</span> | Wind: <span id="w-wind">--</span> | Temp: <span id="w-temp">--</span>
+            </div>
+
+            <div class="form-grid" style="margin-top: 15px;">
+              <div class="form-group">
+                <label>MISSION TYPE</label>
+                <select id="missionType">
+                  <option>HIGH-VALUE ASSETS (Gold / Silver / Diamonds)</option>
+                  <option>HIGH-RISK PRISONER (Supermax Transport)</option>
+                  <option>PMC DEPLOYMENT (Private Military / Troops)</option>
+                  <option>VIP EXTRACTION (Hostile Environment)</option>
+                  <option>BLACK OPS (Classified Payload)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>THREAT LEVEL</label>
+                <select id="threatLevel">
+                  <option>DEFCON 5 (Low Risk)</option>
+                  <option>DEFCON 4 (Standard Escort)</option>
+                  <option>DEFCON 3 (Armed Guards Required)</option>
+                  <option>DEFCON 2 (Fighter Jet Escort)</option>
+                  <option>DEFCON 1 (Full Military Protocol)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="radar-wrapper">
+            <h3 style="font-family: 'Black Ops One'; font-size: 16px; margin-top:0; letter-spacing: 1px;">GLOBAL THREAT SCANNER</h3>
+            <div class="radar">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg" class="radar-map" alt="World Map">
+              <div class="radar-rings"></div>
+              <div class="radar-beam"></div>
+              <div class="blip blip-1"></div>
+              <div class="blip blip-2"></div>
+              <div class="blip blip-3"></div>
+              <div class="blip blip-4"></div>
+            </div>
+            <div style="font-size: 11px; margin-top: 15px; margin-bottom: 15px; text-align: center; opacity: 0.8;">
+              <span style="color: var(--sec-neon);">[ACTIVE SATELLITE UPLINK]</span><br>MONITORING AIRSPACE
+            </div>
+            
+            <button onclick="window.location.href='tracker.html'" style="width: 100%; padding: 10px; background: rgba(0, 229, 255, 0.1); border: 1px solid #00e5ff; color: #00e5ff; font-family: 'Black Ops One', cursive; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: 0.3s; border-radius: 4px;" onmouseover="this.style.background='#00e5ff'; this.style.color='#000'; this.style.boxShadow='0 0 15px #00e5ff';" onmouseout="this.style.background='rgba(0, 229, 255, 0.1)'; this.style.color='#00e5ff'; this.style.boxShadow='none';">
+              🛰️ OPEN ETA TRACKER
+            </button>
+<button onclick="window.location.href='surveillance.html'" style="width: 100%; margin-top: 10px; padding: 10px; background: rgba(255, 77, 0, 0.1); border: 1px solid var(--sec-orange); color: var(--sec-orange); font-family: 'Black Ops One', cursive; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: 0.3s; border-radius: 4px;" onmouseover="this.style.background='var(--sec-orange)'; this.style.color='#000'; this.style.boxShadow='0 0 15px var(--sec-orange)';" onmouseout="this.style.background='rgba(255, 77, 0, 0.1)'; this.style.color='var(--sec-orange)'; this.style.boxShadow='none';">
+              🎥 OPEN SATELLITE FEED
+            </button>
+          </div>
+        </div>
+
+        <h3 style="font-family: 'Black Ops One'; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">SELECT DEFENSE AIRCRAFT</h3>
+        <div id="securityFleetGrid" class="jet-grid"></div>
+
+        <button class="btn-primary" style="margin-top: 30px;" onclick="generateDossier()">INITIATE LAUNCH SEQUENCE</button>
+      </section>
+
+      <button class="btn-danger" onclick="initiatePurge()">[ INITIATE EMERGENCY PURGE ]</button>
+
+    </main>
+  </div>
+
+  <div id="dossierModal" class="modal-overlay hidden">
+    <div class="dossier-card">
+      <div class="dossier-header">
+        <div style="font-size: 40px; margin-bottom: -10px;">🦅</div>
+        <h2>MISSION DOSSIER</h2>
+        <div style="font-size: 10px; margin-top: 5px;">TOP SECRET // EYES ONLY</div>
+      </div>
+      
+      <div class="dossier-row"><span>OPERATOR ID:</span> <span id="dosOpId"></span></div>
+      <div class="dossier-row"><span>MISSION DATE:</span> <span id="dosDate" style="color: white;"></span></div>
+      <div class="dossier-row"><span>DEPARTURE:</span> <span id="dosOrigin" style="color: white; text-align: right;"></span></div>
+      <div class="dossier-row"><span>DESTINATION:</span> <span id="dosDest" style="color: white; text-align: right;"></span></div>
+      
+      <div style="margin: 20px 0; border: 1px solid var(--sec-neon); padding: 10px; background: rgba(0,255,0,0.05);">
+        <div class="dossier-row" style="border:none;"><span>AIRCRAFT:</span> <strong id="dosPlane"></strong></div>
+        <div class="dossier-row" style="border:none;"><span>PAYLOAD:</span> <strong id="dosType"></strong></div>
+        <div class="dossier-row" style="border:none; margin-bottom: 0;"><span>THREAT:</span> <strong id="dosThreat"></strong></div>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px;">
+        <div style="color: red; font-family: 'Black Ops One'; font-size: 20px; transform: rotate(-10deg); border: 3px solid red; display: inline-block; padding: 5px 15px;">AUTHORIZED</div>
+      </div>
+
+      <div class="qr-container">
+        <img id="qrCodeImage" src="" alt="Geheime QR Code" style="display: none;">
+        <div style="font-size: 10px; margin-top: 5px;">SCAN FOR DIGITAL SECURE MANIFEST</div>
+      </div>
+      
+      <button class="btn-primary" style="margin-top: 20px; padding: 10px;" onclick="closeDossier()">ACKNOWLEDGE & CLOSE</button>
+      <button onclick="window.print()" style="width: 100%; background: transparent; border: 1px dashed var(--sec-neon); color: var(--sec-neon); padding: 10px; margin-top: 10px; cursor: pointer; font-family: 'Courier Prime';">PRINT DOSSIER</button>
+    </div>
+  </div>
+
+  <script>
+    // Audio stoppen bij wegklikken
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+    window.addEventListener('beforeunload', function() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+
+    const SECURITY_FLEET = [
+      { id: 1, name: "IL-76 COMMAND", img: "vliegtuig1.png", specs: ["Armor: Level V", "Role: Mobile Headquarters"] },
+      { id: 2, name: "A330 CARGO HEAVY", img: "vliegtuig2.png", specs: ["Vault: 50 Ton Capacity", "Role: Gold & Vehicles"] },
+      { id: 3, name: "A340 LONG HAUL", img: "vliegtuig3.png", specs: ["Range: 14,000 km", "Role: Global Deployment"] },
+      { id: 4, name: "A321 TACTICAL", img: "vliegtuig4.png", specs: ["Internal: Supermax Cells", "Role: Prison Transfer"] },
+      { id: 5, name: "IL-80 COMMAND", img: "vliegtuig5.png", specs: ["Armor: Level V", "Role: Mobile Headquarters"] },
+      { id: 6, name: "C-130 HERCULES", img: "vliegtuig6.png", specs: ["Landing: Unpaved Roads", "Role: Tactical Airlift"] },
+      { id: 7, name: "C-5M Super Galaxy", img: "vliegtuig7.png", specs: ["Next Gen Command", "Role: Strategic Mobility"] },
+      { id: 8, name: "V-22 Osprey", img: "vliegtuig8.png", specs: ["Armament: Miniguns", "Role: Special forces"] }
+    ];
+
+    let selectedPlaneName = "IL-76 COMMAND";
+
+    function checkSecurityCode() {
+      const pin = document.getElementById('securityPin').value.trim().toUpperCase();
+      if (pin === 'LUIZ') {
+        startBootSequence();
+      } else if (pin === 'CAPYBARA' || pin === 'VIPET') {
+        showEasterEgg();
+      } else if (pin === 'WARGAMES' || pin === 'JOSHUA') {
+        window.location.href = 'wargames.html';
+      } else {
+        alert("ACCESS DENIED. INTRUDER LOGGED.");
+        document.getElementById('securityPin').value = '';
+      }
+    }
+
+    document.getElementById('securityPin').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') checkSecurityCode();
+    });
+
+    function startBootSequence() {
+      document.getElementById('securityModal').classList.add('hidden');
+      document.getElementById('bootScreen').classList.remove('hidden');
+      
+      const lines = [
+        "> INITIALIZING LUIZ-DEFENSE MAINFRAME...",
+        "> BYPASSING CIVILIAN FIREWALLS... [OK]",
+        "> ESTABLISHING SECURE SATELLITE UPLINK... [OK]",
+        "> DECRYPTING OPERATOR CLEARANCE... [OK]",
+        "> ACCESS GRANTED. WELCOME, COMMANDER."
+      ];
+      
+      const term = document.getElementById('terminalLines');
+      term.innerHTML = "";
+      let delay = 0;
+
+      lines.forEach(line => {
+        setTimeout(() => { term.innerHTML += line + "<br>"; }, delay);
+        delay += 600; 
+      });
+
+      setTimeout(() => {
+        document.getElementById('bootScreen').classList.add('hidden');
+        document.getElementById('mainInterface').style.display = 'block';
+        document.getElementById('routeDate').valueAsDate = new Date();
+        renderSecurityFleet();
+        updateWeather(); 
+      }, delay + 1000);
+    }
+
+    function showEasterEgg() {
+      document.getElementById('securityModal').classList.add('hidden');
+      document.getElementById('easterEggScreen').classList.remove('hidden');
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance("Operation Giant Rodent authorized. Target capybara secured."));
+      }
+    }
+
+    const weatherConditions = [
+      { vis: "LOW (Heavy Fog)", wind: "45 knots (Crosswind)", temp: "-12°C" },
+      { vis: "CLEAR (Optimal)", wind: "10 knots", temp: "22°C" },
+      { vis: "ZERO (Sandstorm)", wind: "60 knots", temp: "45°C" },
+      { vis: "MODERATE (Rainstorm)", wind: "25 knots", temp: "8°C" },
+      { vis: "POOR (Blizzard)", wind: "50 knots", temp: "-25°C" }
+    ];
+
+    function updateWeather() {
+      const rand = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+      document.getElementById('w-vis').innerText = rand.vis;
+      document.getElementById('w-wind').innerText = rand.wind;
+      document.getElementById('w-temp').innerText = rand.temp;
+    }
+
+    function initiatePurge() {
+      if(!confirm("WARNING: Are you sure you want to PURGE the system? All data will be destroyed.")) return;
+
+      document.getElementById('mainInterface').style.display = 'none';
+      document.body.classList.add('purge-active'); 
+      document.getElementById('purgeScreen').classList.remove('hidden');
+
+      let count = 3;
+      
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let utterance = new SpeechSynthesisUtterance("Emergency purge initiated. Three. Two. One.");
+        utterance.lang = 'en-US'; utterance.pitch = 0.5;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          document.getElementById('countdownText').innerText = count;
+        } else {
+          clearInterval(countdownInterval);
+          window.location.href = 'index.html'; 
+        }
+      }, 1000);
+    }
+
+    function selectPlane(name, imgSrc) {
+      selectedPlaneName = name;
+      document.getElementById('heroImage').src = imgSrc;
+      renderSecurityFleet(); 
+    }
+
+    function renderSecurityFleet() {
+      const container = document.getElementById('securityFleetGrid');
+      container.innerHTML = SECURITY_FLEET.map(plane => `
+        <div class="jet-card ${plane.name === selectedPlaneName ? 'selected' : ''}" onclick="selectPlane('${plane.name}', '${plane.img}')">
+          <img src="${plane.img}" alt="${plane.name}" onerror="this.src='https://via.placeholder.com/400x200/111/0f0?text=CLASSIFIED'">
+          <div class="jet-info">
+            <div style="font-weight:bold; font-size: 14px; margin-bottom: 8px; color: var(--sec-neon);">${plane.name}</div>
+            ${plane.specs.map(spec => `<div class="spec-line">> ${spec}</div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function playRadioComms(opId, date, time, origin, dest, aircraft, payload, threat, vis, wind, temp) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); 
+        const speechText = `HQ, this is Luiz-Air Alpha. Mission authorized. Operator ID: ${opId}. Departure: ${origin}. Target: ${dest}. Tactical weather scan at target: Visibility ${vis}. Wind ${wind}. Temperature ${temp}. Aircraft: ${aircraft}. Payload: ${payload}. Threat level: ${threat}. We are good to go.`;
+        const msg = new SpeechSynthesisUtterance(speechText);
+        msg.lang = 'en-US'; msg.pitch = 0.8; msg.rate = 1.1;     
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    function generateDossier() {
+      const origin = document.getElementById('routeOrigin').value;
+      const dest = document.getElementById('routeDest').value;
+      const date = document.getElementById('routeDate').value || "TBA";
+      const time = document.getElementById('routeTime').value || "00:00";
+      
+      const vis = document.getElementById('w-vis').innerText;
+      const wind = document.getElementById('w-wind').innerText;
+      const temp = document.getElementById('w-temp').innerText;
+
+      const typeFull = document.getElementById('missionType').value;
+      const threatFull = document.getElementById('threatLevel').value;
+      
+      const payloadShort = typeFull.split('(')[0].trim();
+      const threatShort = threatFull.split('(')[0].trim();
+      
+      const opId = "LUIZ-ACT-" + Math.floor(Math.random() * 9000 + 1000);
+
+      playRadioComms(opId, date, time, origin, dest, selectedPlaneName, payloadShort, threatShort, vis, wind, temp);
+
+      // --- TEXT UPDATE ---
+      document.getElementById('dosDate').innerText = `${date} @ ${time} HRS`;
+      document.getElementById('dosOrigin').innerText = origin.toUpperCase();
+      document.getElementById('dosDest').innerText = dest.toUpperCase();
+      document.getElementById('dosPlane').innerText = selectedPlaneName;
+      document.getElementById('dosType').innerText = payloadShort;
+      document.getElementById('dosThreat').innerText = threatFull;
+      document.getElementById('dosOpId').innerText = opId;
+
+      // --- QR CODE GENERATIE ---
+      // We bouwen een tekstblok op met alle data die in de QR code moet komen
+      const qrText = `*** LUIZ-DEFENSE MISSION DOSSIER ***\n\nOP-ID: ${opId}\nDATE: ${date} ${time}\nFROM: ${origin}\nTO: ${dest}\nAIRCRAFT: ${selectedPlaneName}\nPAYLOAD: ${payloadShort}\nTHREAT: ${threatShort}\nSTATUS: AUTHORIZED`;
+      
+      // We gebruiken de gratis QR-server API om een plaatje te genereren
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrText)}&color=000000&bgcolor=ffffff`;
+      
+      const qrImgElement = document.getElementById('qrCodeImage');
+      qrImgElement.src = qrImageUrl;
+      qrImgElement.style.display = "inline-block";
+
+      document.getElementById('dossierModal').classList.remove('hidden');
+    }
+
+    function closeDossier() {
+      document.getElementById('dossierModal').classList.add('hidden');
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
+  </script>
+</body>
+</html>

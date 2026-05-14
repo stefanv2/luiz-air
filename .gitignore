@@ -1,0 +1,24 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# logs/temp
+*.log
+tmp/
+*.tmp
+
+# local env/secrets
+.env
+.env.*
+!.env.example
+
+# oude backups
+*.old
+*.old*
+new_index.html
+
+# large local media
+media2.mp4
+*.mp4

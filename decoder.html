@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ENIGMA DECODER - LUIZ-DEFENSE</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Black+Ops+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sec-neon: #00ff00;
+      --sec-orange: #ff4d00;
+      --bg: #0a0a0a;
+      --card-bg: #111111;
+      --border: #333;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Courier Prime', monospace;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+      color: var(--sec-neon);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: #000;
+      border-bottom: 2px solid var(--sec-neon);
+      padding: 16px 0;
+      position: sticky; top: 0; z-index: 100;
+    }
+    
+    .wrap { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--sec-neon); font-family: 'Black Ops One', cursive; font-size: 24px; letter-spacing: 2px; }
+    .logo-badge {
+      width: 50px; height: 50px; background: #000; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid var(--sec-neon); filter: grayscale(100%) sepia(1) hue-rotate(80deg);
+    }
+    .logo-badge img { width: 70%; }
+
+    nav a { 
+      color: #888; text-decoration: none; padding: 8px 12px; 
+      border-radius: 8px; font-weight: bold; border: 1px solid #333; transition: 0.3s; 
+    }
+    nav a:hover { border-color: var(--sec-neon); color: var(--sec-neon); }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 30px; margin-top: 40px; border: 1px solid var(--border); border-left: 4px solid var(--sec-neon); box-shadow: inset 0 0 20px rgba(0,255,0,0.05); }
+
+    h2 { font-family: 'Black Ops One'; font-size: 32px; margin-top: 0; text-align: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,255,0,0.5); }
+    
+    label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; letter-spacing: 1px; color: #888; }
+    
+    textarea, input[type="number"] {
+      width: 100%; padding: 15px; border-radius: 4px; border: 1px solid var(--sec-neon); 
+      background: #050505; color: var(--sec-neon); font-family: 'Courier Prime', monospace; font-size: 18px;
+      margin-bottom: 20px; outline: none; transition: 0.3s;
+    }
+    textarea:focus, input[type="number"]:focus { box-shadow: 0 0 15px rgba(0,255,0,0.3); }
+    textarea { height: 120px; resize: none; }
+
+    .controls { display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 15px; margin-bottom: 20px; }
+    
+    .btn-primary { 
+      padding: 15px; border-radius: 4px; border: 1px solid var(--sec-neon); cursor: pointer; font-size: 18px; 
+      background: rgba(0,255,0,0.1); color: var(--sec-neon); font-family: 'Black Ops One'; letter-spacing: 2px; transition: 0.2s; 
+    }
+    .btn-primary:hover { background: var(--sec-neon); color: black; box-shadow: 0 0 20px rgba(0,255,0,0.5); }
+    
+    .btn-danger { border-color: var(--sec-orange); color: var(--sec-orange); background: rgba(255,77,0,0.1); }
+    .btn-danger:hover { background: var(--sec-orange); color: black; box-shadow: 0 0 20px var(--sec-orange); }
+
+    .output-box {
+      background: #000; border: 2px dashed var(--sec-neon); padding: 20px; min-height: 120px; 
+      font-size: 20px; word-wrap: break-word; position: relative;
+    }
+
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--sec-neon);
+      color: var(--sec-neon); cursor: pointer; font-family: 'Courier Prime'; padding: 5px 10px; font-size: 12px;
+    }
+    .copy-btn:hover { background: var(--sec-neon); color: black; }
+
+    /* Glitch text effect for decoding */
+    .glitch-text { animation: text-flicker 0.1s infinite; opacity: 0.8; }
+    @keyframes text-flicker {
+      0% { opacity: 0.9; } 50% { opacity: 0.4; } 100% { opacity: 0.9; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap header-content">
+      <div class="brand">
+        <div class="logo-badge"><img src="capybara-vector3.png" alt="Logo" onerror="this.style.display='none'"></div>
+        LUIZ-DEFENSE
+      </div>
+      <nav>
+        <a href="security.html">⬅ TERUG NAAR COMMANDO</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2>ENIGMA CRYPTOGRAPHY</h2>
+      <p style="text-align: center; margin-bottom: 30px; font-size: 14px; color: #888;">
+        [ TOP SECRET ] INTERCEPTED MESSAGES PROTOCOL.<br>ENTER TEXT AND SHIFT KEY TO ENCRYPT OR DECRYPT.
+      </p>
+
+      <label>INPUT MESSAGE (BERICHT)</label>
+      <textarea id="inputText" placeholder="Typ hier de geheime tekst..."></textarea>
+
+      <div class="controls">
+        <div>
+          <label>KEY (SLEUTEL)</label>
+          <input type="number" id="shiftKey" value="3" min="1" max="25">
+        </div>
+        <div style="display: flex; align-items: flex-end; padding-bottom: 20px;">
+          <button class="btn-primary" style="width: 100%;" onclick="processText('encrypt')">ENCRYPT (VERSLEUTEL)</button>
+        </div>
+        <div style="display: flex; align-items: flex-end; padding-bottom: 20px;">
+          <button class="btn-primary btn-danger" style="width: 100%;" onclick="processText('decrypt')">DECRYPT (ONTCIJFER)</button>
+        </div>
+      </div>
+
+      <label>OUTPUT (RESULTAAT)</label>
+      <div class="output-box">
+        <button class="copy-btn" onclick="copyResult()">COPY TEXT</button>
+        <div id="outputText">...</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Stop eventuele spraak bij weggaan
+    window.addEventListener('beforeunload', () => { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); });
+
+    // Caesar Cipher logica
+    function caesarCipher(str, shift, decrypt = false) {
+      if (decrypt) shift = (26 - shift) % 26;
+      
+      let result = '';
+      for (let i = 0; i < str.length; i++) {
+        let char = str[i];
+        if (char.match(/[a-z]/i)) {
+          let code = str.charCodeAt(i);
+          // Hoofdletters (65-90)
+          if (code >= 65 && code <= 90) {
+            char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+          }
+          // Kleine letters (97-122)
+          else if (code >= 97 && code <= 122) {
+            char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+          }
+        }
+        result += char;
+      }
+      return result;
+    }
+
+    function processText(mode) {
+      const input = document.getElementById('inputText').value;
+      let shift = parseInt(document.getElementById('shiftKey').value);
+      const outputBox = document.getElementById('outputText');
+
+      if (!input) {
+        outputBox.innerText = "NO DATA DETECTED...";
+        return;
+      }
+
+      // Voice feedback
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let msg = mode === 'encrypt' ? "Encrypting message." : "Decrypting transmission.";
+        let u = new SpeechSynthesisUtterance(msg);
+        u.lang = 'en-US'; u.pitch = 0.5; u.rate = 1.1;
+        window.speechSynthesis.speak(u);
+      }
+
+      // Animatie effect!
+      const finalResult = caesarCipher(input, shift, mode === 'decrypt');
+      outputBox.classList.add('glitch-text');
+      
+      let counter = 0;
+      const gibberishInterval = setInterval(() => {
+        let gibberish = "";
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+        for(let i=0; i<finalResult.length; i++) {
+          gibberish += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        outputBox.innerText = gibberish;
+        counter++;
+        
+        if(counter > 15) { // Na ~750ms
+          clearInterval(gibberishInterval);
+          outputBox.classList.remove('glitch-text');
+          outputBox.innerText = finalResult;
+        }
+      }, 50);
+    }
+
+    function copyResult() {
+      const text = document.getElementById('outputText').innerText;
+      if(text && text !== "...") {
+        navigator.clipboard.writeText(text);
+        alert("MESSAGE COPIED TO CLIPBOARD!");
+      }
+    }
+  </script>
+</body>
+</html>

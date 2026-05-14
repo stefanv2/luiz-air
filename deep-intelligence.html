@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DEEP INTEL - LUIZ-DEFENSE</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cyber-green: #00ff41;
+      --cyber-red: #ff003c;
+      --cyber-blue: #00e5ff;
+      --bg-black: #050505;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Share Tech Mono', monospace;
+      background-color: var(--bg-black);
+      color: var(--cyber-green);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    header { 
+      border-bottom: 1px solid var(--cyber-green); 
+      padding: 10px 20px; 
+      background: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 50px;
+    }
+
+    .brand { font-family: 'Black Ops One'; font-size: 18px; color: var(--cyber-green); text-decoration: none; }
+    .nav-back { color: #555; text-decoration: none; font-size: 12px; border: 1px solid #333; padding: 4px 12px; border-radius: 4px; }
+
+    /* HOOFD GRID */
+    .intel-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      grid-template-rows: 1fr 350px;
+      gap: 15px;
+      padding: 15px;
+      height: calc(100vh - 50px);
+    }
+
+    .intel-box {
+      background: rgba(0, 20, 0, 0.4);
+      border: 1px solid #1a331a;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .box-header {
+      background: rgba(0, 255, 65, 0.1);
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: bold;
+      border-bottom: 1px solid #1a331a;
+      display: flex;
+      justify-content: space-between;
+      text-transform: uppercase;
+      z-index: 20;
+    }
+
+    /* ONDERSTE RIJ: TRIPLE SECTOR */
+    .bottom-triple { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr 1fr; 
+      gap: 15px; 
+      height: 100%; 
+    }
+    
+    /* IFRAME FILTERS */
+    .p2000-frame { filter: invert(0.95) hue-rotate(180deg) brightness(0.8) contrast(1.2); border: none; width: 100%; height: 100%; }
+    .traffic-frame { filter: invert(0.9) hue-rotate(150deg) saturate(1.2) brightness(0.8); border: none; width: 100%; height: 100%; }
+
+    /* RAIL HACK (Menu verbergen) */
+    .rail-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
+    .rail-frame { 
+      position: absolute; 
+      top: 0; 
+      left: -280px; 
+      width: calc(100% + 280px); 
+      height: 100%; 
+      border: none; 
+      /* Nieuwe filter: minder donker, meer contrast */
+      filter: invert(0.85) hue-rotate(190deg) brightness(1.2) contrast(1.5); 
+    }
+
+    /* RECHTER STACK */
+    .right-stack { 
+      grid-column: 2; 
+      grid-row: 1 / span 2; 
+      display: grid; 
+      grid-template-rows: 1.5fr 120px 80px 120px; 
+      gap: 15px; 
+    }
+
+    /* METEO FIX (Geen uitrekking) */
+    .weather-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; }
+    .weather-frame { filter: invert(0.9) hue-rotate(90deg) brightness(1.1); width: 100%; height: 100%; object-fit: contain; border: none; }
+
+    .terminal-content { padding: 8px; font-size: 10px; color: var(--cyber-blue); line-height: 1.2; overflow: hidden; }
+
+    .scan-line {
+      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: rgba(0, 255, 65, 0.4);
+      animation: scan 4s linear infinite;
+      pointer-events: none;
+      z-index: 10;
+    }
+    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+    .alert-active { border-color: var(--cyber-red) !important; animation: alert-flash 1.5s infinite; }
+    @keyframes alert-flash { 0%, 100% { box-shadow: inset 0 0 20px rgba(255,0,60,0); } 50% { box-shadow: inset 0 0 40px rgba(255,0,60,0.2); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="surveillance.html" class="brand">LUIZ-DEFENSE // DEEP INTEL</a>
+    <div style="display:flex; gap:10px;">
+        <button onclick="toggleAlert()" style="background:none; border:1px solid var(--cyber-red); color:var(--cyber-red); font-family:'Share Tech Mono'; cursor:pointer; font-size:10px; padding: 2px 8px;">🚨 DEFCON</button>
+        <a href="surveillance.html" class="nav-back">⬅ BACK</a>
+    </div>
+  </header>
+
+  <main class="intel-grid">
+    
+    <div class="intel-box" id="main-alert-box">
+      <div class="box-header"><span>GLOBAL THREAT OVERLAY</span><span id="defcon-status">NOMINAL</span></div>
+      <iframe src="https://cybermap.kaspersky.com/en/widget/dynamic/dark" style="width:100%; height:100%; border:none; filter: brightness(0.8) hue-rotate(90deg);"></iframe>
+      <div class="scan-line"></div>
+    </div>
+
+    <div class="bottom-triple">
+      <div class="intel-box">
+        <div class="box-header"><span>DISPATCH // HAARLEM</span></div>
+        <iframe src="https://monitor.p2000alarm.nl/plaats/Haarlem" class="p2000-frame"></iframe>
+      </div>
+      <div class="intel-box">
+        <div class="box-header"><span>ROAD // LIVE TRAFFIC</span></div>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d156064.652134444!2d4.8970!3d52.3702!3m2!1i1024!2i768!4f13.1!5e1!3m2!1snl!2snl!4v1615812345678!5m2!1snl!2snl&layer=t" class="traffic-frame"></iframe>
+      </div>
+      <div class="intel-box">
+        <div class="box-header"><span>RAIL // TRAIN UPLINK</span></div>
+        <div class="rail-wrapper">
+            <iframe src="https://treinenradar.nl/" class="rail-frame" scrolling="no"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-stack">
+      
+      <div class="intel-box">
+        <div class="box-header"><span>METEO // STRATEGIC RADAR</span></div>
+        <div class="weather-container">
+            <iframe src="https://api.buienradar.nl/image/1.0/RadarMapNL?w=350&h=350" class="weather-frame" scrolling="no"></iframe>
+        </div>
+      </div>
+
+      <div class="intel-box" style="padding: 5px;">
+        <div class="box-header"><span>SIGINT ANALYZER</span></div>
+        <div style="height: 30px; background: url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxVfFfUK09O/giphy.gif'); background-size: cover; opacity: 0.3; margin: 5px;"></div>
+        <div style="text-align: center; font-size: 14px; color: var(--cyber-blue);" id="freq-display">144.800 MHz</div>
+      </div>
+
+      <div class="intel-box">
+        <div class="box-header"><span>ENCRYPTION BREAKER</span></div>
+        <div id="crypto-key" style="text-align:center; font-size:18px; color:var(--cyber-red); margin-top:10px;">A7-X9-ZZ</div>
+      </div>
+
+      <div class="intel-box">
+        <div class="box-header"><span>DATA INTERCEPT LOG</span></div>
+        <div id="terminal" class="terminal-content"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const logs = ["Establishing tunnel...", "Bypassing firewalls...", "Intercepting AIS...", "Signal verified.", "Syncing Haarlem node...", "Monitoring NS-Rail telemetry..."];
+    const term = document.getElementById('terminal');
+    function addLog() {
+      const line = document.createElement('div');
+      line.innerText = "> " + logs[Math.floor(Math.random() * logs.length)];
+      term.appendChild(line);
+      if (term.childNodes.length > 6) term.removeChild(term.firstChild);
+    }
+    setInterval(addLog, 2500);
+
+    let alertOn = false;
+    function toggleAlert() {
+        alertOn = !alertOn;
+        const boxes = document.querySelectorAll('.intel-box');
+        const status = document.getElementById('defcon-status');
+        boxes.forEach(b => alertOn ? b.classList.add('alert-active') : b.classList.remove('alert-active'));
+        status.innerText = alertOn ? "DEFCON 2 ALERT" : "NOMINAL";
+        status.style.color = alertOn ? "var(--cyber-red)" : "var(--cyber-green)";
+        if(alertOn) speak("Warning. Defcon 2 authorized. Beware for threads Luiz.");
+    }
+
+    setInterval(() => {
+      const chars = "ABCDEF0123456789";
+      let key = "";
+      for(let i=0; i<6; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+      document.getElementById('crypto-key').innerText = key.match(/.{1,2}/g).join('-');
+    }, 120);
+
+    setInterval(() => {
+      const freq = (Math.random() * (450 - 140) + 140).toFixed(3);
+      document.getElementById('freq-display').innerText = freq + " MHz";
+    }, 4000);
+
+    function speak(t) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let u = new SpeechSynthesisUtterance(t);
+        u.lang = 'en-US'; u.pitch = 0.6; u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    window.onload = () => { speak("Deep Intel Systems Online."); };
+  </script>
+</body>
+</html>

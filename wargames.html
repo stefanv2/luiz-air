@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>W.O.P.R. MAINFRAME</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0; background-color: #000; color: #00ff00; 
+      font-family: 'Courier Prime', monospace; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+      background-image: repeating-linear-gradient(0deg, rgba(0,255,0,0.03) 0px, rgba(0,255,0,0.03) 1px, transparent 1px, transparent 3px);
+    }
+
+    .cursor::after { content: '█'; animation: blink 1s step-start infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    body.defcon-1 { animation: nuke-flash 0.3s infinite; color: #ff0000; }
+    @keyframes nuke-flash { 0% { background-color: #330000; } 50% { background-color: #000; } 100% { background-color: #330000; } }
+
+    /* GLITCH EFFECT TIJDENS OORLOG */
+    body.glitch-mode { animation: glitch-anim 0.2s infinite; }
+    @keyframes glitch-anim {
+      0% { transform: translate(0) skew(0deg); filter: hue-rotate(0deg); }
+      20% { transform: translate(-2px, 1px) skew(-2deg); filter: hue-rotate(10deg); }
+      40% { transform: translate(2px, -1px) skew(2deg); filter: hue-rotate(-10deg); }
+      60% { transform: translate(-1px, 2px) skew(0deg); filter: hue-rotate(20deg); }
+      80% { transform: translate(1px, -2px) skew(1deg); filter: hue-rotate(-20deg); }
+      100% { transform: translate(0) skew(0deg); filter: hue-rotate(0deg); }
+    }
+
+    #terminal { width: 90%; max-width: 800px; font-size: 24px; line-height: 1.6; text-shadow: 0 0 10px rgba(0,255,0,0.8); }
+    .menu-item { cursor: pointer; opacity: 0; transition: 0.2s; }
+    .menu-item:hover { background: #00ff00; color: #000; }
+    .hidden { display: none !important; }
+
+    #gameInterface { width: 100%; max-width: 900px; text-align: center; }
+    #mapContainer { position: relative; width: 100%; margin-top: 20px; border: 2px solid #00ff00; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+    #worldMap { width: 100%; display: block; filter: invert(1) sepia(1) saturate(5) hue-rotate(80deg) opacity(0.3); }
+    #missileCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    
+    #statusAlert {
+      position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+      font-size: 30px; font-weight: bold; color: yellow; text-shadow: 0 0 10px red;
+      z-index: 10; opacity: 0; transition: 0.2s;
+    }
+
+    .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+    select, button { background: #000; color: #00ff00; border: 1px solid #00ff00; padding: 10px 20px; font-family: 'Courier Prime'; font-size: 16px; font-weight: bold; }
+    button { cursor: pointer; text-transform: uppercase; }
+    button:hover { background: #00ff00; color: #000; }
+    #btnLaunch { border-color: red; color: red; }
+    #btnLaunch:hover { background: red; color: black; box-shadow: 0 0 20px red; }
+
+    /* Einde - Code Matrix & Tic-Tac-Toe */
+    #calcScreen { font-size: 12px; line-height: 1.2; text-align: left; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; overflow: hidden; color: #00ff00; opacity: 0.8; white-space: pre; padding: 10px; box-sizing: border-box; text-shadow: 0 0 5px #00ff00; }
+    #conclusion { font-size: 32px; text-align: center; z-index: 10; font-weight: bold; text-shadow: 0 0 20px #00ff00; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%;}
+    
+    /* Tic Tac Toe Bord CSS */
+    #ttt-board {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px);
+      gap: 5px; background-color: #00ff00; border: 5px solid #00ff00; z-index: 5; opacity: 0.8;
+    }
+    .ttt-cell { background-color: #000; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; color: #00ff00; }
+  </style>
+</head>
+<body>
+
+  <div id="terminal">
+    <div id="textOutput"></div>
+    <div id="gameMenu" class="hidden" style="margin-top: 30px;">
+      <div class="menu-item">1. CHESS</div>
+      <div class="menu-item">2. POKER</div>
+      <div class="menu-item">3. FIGHTER COMBAT</div>
+      <div class="menu-item">4. DESERT WARFARE</div>
+      <div class="menu-item" style="color: yellow; text-shadow: 0 0 10px yellow;" onclick="startWarGame()">5. GLOBAL THERMONUCLEAR WAR</div>
+    </div>
+  </div>
+
+  <div id="gameInterface" class="hidden">
+    <h2>W.O.P.R. STRATEGIC COMMAND</h2>
+    <div id="mapContainer">
+      <div id="statusAlert"></div>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg" id="worldMap" alt="World Map">
+      <canvas id="missileCanvas"></canvas>
+    </div>
+    
+    <div class="controls">
+      <select id="origin">
+        <option value="0.2,0.35">NORAD (COLORADO)</option>
+        <option value="0.32,0.70">L.A. HQ (SÃO PAULO)</option>
+      </select>
+      <span style="padding-top:10px;">TO</span>
+      <select id="target">
+        <option value="0.60,0.25">KREMLIN (MOSCOW)</option>
+        <option value="0.75,0.40">BEIJING COMMAND</option>
+        <option value="0.49,0.30">BLACK SITE 7 (AMSTERDAM)</option>
+      </select>
+      <button id="btnLaunch" onclick="initiateFirstStrike()">LAUNCH</button>
+      <button onclick="window.location.href='security.html'">ABORT</button>
+    </div>
+  </div>
+
+  <div id="calcScreen" class="hidden"></div>
+  
+  <div id="ttt-board" class="hidden">
+    <div class="ttt-cell" id="c0"></div><div class="ttt-cell" id="c1"></div><div class="ttt-cell" id="c2"></div>
+    <div class="ttt-cell" id="c3"></div><div class="ttt-cell" id="c4"></div><div class="ttt-cell" id="c5"></div>
+    <div class="ttt-cell" id="c6"></div><div class="ttt-cell" id="c7"></div><div class="ttt-cell" id="c8"></div>
+  </div>
+
+  <div id="conclusion" class="hidden"></div>
+
+  <script>
+    window.addEventListener('beforeunload', () => { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); });
+
+    // --- FASE 1: TERMINAL TYPEN ---
+    const introText = "GREETINGS PROFESSOR FALKEN.\n\nSHALL WE PLAY A GAME?";
+    const outputDiv = document.getElementById('textOutput');
+    let i = 0;
+
+    function typeWriter() {
+      if (i < introText.length) {
+        outputDiv.innerHTML = introText.substring(0, i+1).replace(/\n/g, "<br>") + '<span class="cursor"></span>';
+        i++; setTimeout(typeWriter, 100);
+      } else {
+        outputDiv.innerHTML = introText.replace(/\n/g, "<br>");
+        setTimeout(showMenu, 1000); 
+      }
+    }
+
+    function showMenu() {
+      document.getElementById('gameMenu').classList.remove('hidden');
+      const items = document.querySelectorAll('.menu-item');
+      items.forEach((item, index) => { setTimeout(() => { item.style.opacity = 1; }, index * 400); });
+    }
+
+    setTimeout(() => {
+      if ('speechSynthesis' in window) {
+        let u = new SpeechSynthesisUtterance("Greetings Professor Falken. Shall we play a game?");
+        u.lang = 'en-US'; u.pitch = 0.4; u.rate = 0.9; window.speechSynthesis.speak(u);
+      }
+      typeWriter();
+    }, 1000);
+
+    // --- FASE 2: HET SPEL & MEERDERE RAKETTEN ---
+    function startWarGame() {
+      document.getElementById('terminal').classList.add('hidden');
+      document.getElementById('gameInterface').classList.remove('hidden');
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); 
+        let u = new SpeechSynthesisUtterance("Global Thermonuclear War selected.");
+        u.lang = 'en-US'; u.pitch = 0.4; window.speechSynthesis.speak(u);
+      }
+    }
+
+    // Variabelen voor de raketten-engine
+    let missiles = [];
+    let isWarActive = false;
+    let canvas, ctx;
+    let warTimer;
+
+    function setStatus(text, color) {
+      const alertBox = document.getElementById('statusAlert');
+      alertBox.innerText = text;
+      alertBox.style.color = color;
+      alertBox.style.opacity = 1;
+    }
+
+    function initiateFirstStrike() {
+      document.getElementById('btnLaunch').disabled = true;
+      document.body.classList.add('defcon-1'); 
+      setStatus("FIRST STRIKE DETECTED", "red");
+      
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let u = new SpeechSynthesisUtterance("Warning. First strike detected. Defcon 1.");
+        u.lang = 'en-US'; u.pitch = 0.4; window.speechSynthesis.speak(u);
+      }
+
+      canvas = document.getElementById('missileCanvas');
+      ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      const originVals = document.getElementById('origin').value.split(',');
+      const targetVals = document.getElementById('target').value.split(',');
+
+      // Voeg de eerste speler-raket toe
+      missiles.push({
+        sx: parseFloat(originVals[0]) * canvas.width,
+        sy: parseFloat(originVals[1]) * canvas.height,
+        ex: parseFloat(targetVals[0]) * canvas.width,
+        ey: parseFloat(targetVals[1]) * canvas.height,
+        progress: 0,
+        speed: 0.006,
+        isFirst: true,
+        exploded: false
+      });
+
+      isWarActive = true;
+      requestAnimationFrame(renderWar);
+    }
+
+    function startGlobalRetaliation() {
+      setStatus("MASSIVE RETALIATION INITIATED", "yellow");
+      document.body.classList.add('glitch-mode'); // Start scherm glitch!
+
+      if ('speechSynthesis' in window) {
+        let u = new SpeechSynthesisUtterance("Massive retaliation detected. Multiple impacts imminent.");
+        u.lang = 'en-US'; u.pitch = 0.4; window.speechSynthesis.speak(u);
+      }
+
+      // Spawnt willekeurige raketten over heel de wereldkaart
+      warTimer = setInterval(() => {
+        for(let i=0; i<3; i++) { // 3 raketten per tik
+          missiles.push({
+            sx: Math.random() * canvas.width,
+            sy: Math.random() * canvas.height,
+            ex: Math.random() * canvas.width,
+            ey: Math.random() * canvas.height,
+            progress: 0,
+            speed: 0.008 + (Math.random() * 0.01), // Verschillende snelheden
+            isFirst: false,
+            exploded: false
+          });
+        }
+      }, 300);
+
+      // Na 6 seconden totale chaos stopt de oorlog en gaan we naar de code
+      setTimeout(() => {
+        clearInterval(warTimer);
+        isWarActive = false;
+        triggerImpact();
+      }, 6000);
+    }
+
+    function renderWar() {
+      if (!isWarActive) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      let allExploded = true;
+
+      for(let i = missiles.length - 1; i >= 0; i--) {
+        let m = missiles[i];
+        
+        if (m.progress >= 1) {
+          if (!m.exploded) {
+            m.exploded = true;
+            // Als de allereerste raket inslaat, start de wereldwijde oorlog!
+            if (m.isFirst) startGlobalRetaliation();
+          }
+          // Teken explosie
+          ctx.fillStyle = "orange";
+          ctx.beginPath();
+          ctx.arc(m.ex, m.ey, Math.random() * 15 + 10, 0, Math.PI * 2);
+          ctx.fill();
+          continue;
+        }
+
+        allExploded = false;
+        m.progress += m.speed;
+        
+        const controlX = (m.sx + m.ex) / 2;
+        const controlY = Math.min(m.sy, m.ey) - 100; 
+
+        ctx.beginPath();
+        ctx.moveTo(m.sx, m.sy);
+        const currentX = (1 - m.progress) * (1 - m.progress) * m.sx + 2 * (1 - m.progress) * m.progress * controlX + m.progress * m.progress * m.ex;
+        const currentY = (1 - m.progress) * (1 - m.progress) * m.sy + 2 * (1 - m.progress) * m.progress * controlY + m.progress * m.progress * m.ey;
+        
+        ctx.quadraticCurveTo(controlX, controlY, currentX, currentY);
+        ctx.strokeStyle = m.isFirst ? "red" : "yellow"; // Eerste is rood, rest is geel
+        ctx.lineWidth = m.isFirst ? 3 : 1;
+        ctx.stroke();
+
+        // Teken raketkop
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderWar);
+    }
+
+    // --- FASE 3: TIC-TAC-TOE & CONCLUSIE ---
+    function triggerImpact() {
+      document.getElementById('gameInterface').classList.add('hidden');
+      document.body.classList.remove('defcon-1', 'glitch-mode'); 
+      document.getElementById('calcScreen').classList.remove('hidden');
+      
+      const tttBoard = document.getElementById('ttt-board');
+      tttBoard.classList.remove('hidden');
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let u = new SpeechSynthesisUtterance("Evaluating all possible outcomes. Please stand by.");
+        u.lang = 'en-US'; u.pitch = 0.4; u.rate = 1.0; window.speechSynthesis.speak(u);
+      }
+
+      const scenarios = [
+        "U.S. FIRST STRIKE", "USSR SECOND STRIKE", "NATO COUNTERFORCE",
+        "GLOBAL BIOLOGICAL", "MUTUALLY ASSURED DESTRUCTION", "TACTICAL ESCALATION"
+      ];
+      const hex = "0123456789ABCDEF";
+      const xo = ["X", "O", ""];
+
+      // Genereer computercode + Knipperend Tic-Tac-Toe bord
+      const calcInterval = setInterval(() => {
+        let codeScreen = "";
+        // Achtergrond Code
+        for(let i = 0; i < 40; i++) {
+          let randScen = scenarios[Math.floor(Math.random() * scenarios.length)];
+          let cas = Math.floor(Math.random() * 80) + 20; 
+          let hexStr = ""; for(let j=0; j<8; j++) hexStr += hex[Math.floor(Math.random() * 16)];
+          let binStr = ""; for(let j=0; j<16; j++) binStr += Math.random() > 0.5 ? "1" : "0";
+          codeScreen += `[0x${hexStr}] STRATEGY: ${randScen.padEnd(30, ' ')} | DATA: ${binStr} | CASUALTIES: ${cas} MIL | WINNER: NONE\n`;
+        }
+        document.getElementById('calcScreen').innerText = codeScreen;
+
+        // Flashy Tic-Tac-Toe
+        for(let c=0; c<9; c++) {
+          document.getElementById('c'+c).innerText = xo[Math.floor(Math.random() * 3)];
+        }
+      }, 60);
+
+      // NA 10 SECONDEN STOPPEN WE DE BEREKENING
+      setTimeout(() => {
+        clearInterval(calcInterval);
+        document.getElementById('calcScreen').innerText = ""; 
+        tttBoard.classList.add('hidden'); // Verberg boter, kaas en eieren
+        
+        const conc = document.getElementById('conclusion');
+        conc.classList.remove('hidden');
+        conc.innerHTML = "A STRANGE GAME.<br><br>THE ONLY WINNING MOVE IS<br>NOT TO PLAY.";
+
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          let u = new SpeechSynthesisUtterance("A strange game. The only winning move, is not to play.");
+          u.lang = 'en-US'; u.pitch = 0.3; u.rate = 0.8;
+          window.speechSynthesis.speak(u);
+        }
+
+        setTimeout(() => {
+          conc.innerHTML += "<br><br><button onclick=\"window.location.href='security.html'\" style='border-color:#00ff00; color:#00ff00;'>RETURN TO LUIZ-DEFENSE</button>";
+        }, 5000);
+
+      }, 10000);
+    }
+  </script>
+</body>
+</html>
