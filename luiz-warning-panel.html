@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>LUIZ-AIR // Landing Career Simulator</title>
 
-  <link rel="preload" href="cockpit.jpg" as="image">
-  <link rel="preload" href="plane.png" as="image">
-  <link rel="preload" href="plane-gear.png" as="image">
-  <link rel="preload" href="schiphol.png" as="image">
-  <link rel="preload" href="innsbruck.png" as="image">
-  <link rel="preload" href="kaitak.png" as="image">
+  <link rel="preload" href="assets/images/cockpit.jpg" as="image">
+  <link rel="preload" href="assets/images/plane1.png" as="image">
+  <link rel="preload" href="assets/images/plane-gear.png" as="image">
+  <link rel="preload" href="assets/images/schiphol.png" as="image">
+  <link rel="preload" href="assets/images/innsbruck.png" as="image">
+  <link rel="preload" href="assets/images/kaitak.png" as="image">
 
   <style>
     :root {
@@ -44,7 +44,7 @@
       background-image:
         linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.84)),
         radial-gradient(circle at 50% 30%, rgba(0,162,255,.18), transparent 42%),
-        url('cockpit.jpg');
+        url('assets/images/cockpit.jpg');
       background-size: cover;
       background-position: center bottom;
       background-attachment: fixed;
@@ -458,7 +458,7 @@
       padding: 14px 0 18px;
       background-image:
         linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42)),
-        url('schiphol.png');
+        url('assets/images/schiphol.png');
       background-size: cover;
       background-position: center;
       transition: background-image .5s ease-in-out;
@@ -1099,12 +1099,12 @@
 
           <div class="chaos-panel" id="chaos-panel">
             <div class="radar-images">
-              <img src="radar1.png" alt="Radar display 1">
-              <img src="radar2.png" alt="Radar display 2">
+              <img src="assets/images/radar1.png" alt="Radar display 1">
+              <img src="assets/images/radar2.png" alt="Radar display 2">
             </div>
           </div>
 
-          <img src="plane.png" id="plane-display" alt="Aircraft">
+          <img src="assets/images/plane1.png" id="plane-display" alt="Aircraft">
           <div id="alt-display">----</div>
           <div id="msg-display">READY FOR ILS</div>
         </div>
@@ -1155,9 +1155,9 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
 
     // --- LEVEL INSTELLINGEN INCLUSIEF WEER & WIND AUDIO ---
     const levelSettings = {
-        1: { speed: 1500, crashChance: 0.05, warnChance: 0.05, img: 'schiphol.png', name: 'Schiphol', weather: 'none', windSound: 'sounds/wind-calm.mp3' },
-        2: { speed: 900, crashChance: 0.20, warnChance: 0.15, img: 'innsbruck.png', name: 'Innsbruck', weather: 'weather-snow', windSound: 'sounds/wind-strong.mp3' },
-        3: { speed: 600, crashChance: 0.40, warnChance: 0.30, img: 'kaitak.png', name: 'Kai Tak', weather: 'weather-rain', windSound: 'sounds/wind-storm.mp3' }
+        1: { speed: 1500, crashChance: 0.05, warnChance: 0.05, img: 'assets/images/schiphol.png', name: 'Schiphol', weather: 'none', windSound: 'sounds/wind-calm.mp3' },
+        2: { speed: 900, crashChance: 0.20, warnChance: 0.15, img: 'assets/images/innsbruck.png', name: 'Innsbruck', weather: 'weather-snow', windSound: 'sounds/wind-strong.mp3' },
+        3: { speed: 600, crashChance: 0.40, warnChance: 0.30, img: 'assets/images/kaitak.png', name: 'Kai Tak', weather: 'weather-rain', windSound: 'sounds/wind-storm.mp3' }
     };
 
     function selectLevel(l) {
@@ -1257,7 +1257,7 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
         }
 
         const plane = document.getElementById('plane-display');
-        plane.src = 'plane.png';
+        plane.src = 'assets/images/plane1.png';
         plane.style.display = 'block';
         plane.classList.add('plane-normal');
 
@@ -1347,7 +1347,7 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
                 gearStatus = 'down'; 
                 document.getElementById('gear-lever').className = 'gear-lever glass-panel btn-green'; 
                 document.getElementById('gear-lever').innerHTML = "3 GREEN"; 
-                document.getElementById('plane-display').src = 'plane-gear.png';
+                document.getElementById('plane-display').src = 'assets/images/plane-gear.png';
             } 
         }, 8000);
     }
