@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LUIZ-DEFENSE // OPS BRIEFING CENTER</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #00ff66;
+      --green-dim: rgba(0, 255, 102, .15);
+      --blue: #00d9ff;
+      --orange: #ffb400;
+      --red: #ff375f;
+      --bg: #020403;
+      --panel: rgba(5, 18, 13, .84);
+      --panel-strong: rgba(2, 10, 6, .95);
+      --border: rgba(0,255,102,.16);
+      --text: #ddffe8;
+      --muted: #8fcaa5;
+      --shadow: rgba(0, 0, 0, .42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(0,217,255,.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,180,0,.055), transparent 28%),
+        linear-gradient(180deg, #020403 0%, #061006 55%, #020403 100%);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(18, 255, 115, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 255, 115, .018) 1px, transparent 1px);
+      background-size: 34px 34px;
+      pointer-events: none;
+      z-index: 100;
+      mask-image: radial-gradient(circle at center, black 0 65%, transparent 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(to bottom, rgba(255,255,255,.018) 0 1px, rgba(0,0,0,.12) 2px 4px),
+        radial-gradient(circle at center, transparent 55%, rgba(0,0,0,.55) 100%);
+      pointer-events: none;
+      z-index: 101;
+      mix-blend-mode: screen;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(0,0,0,.78);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 14px 32px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,255,102,.28);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,255,102,.20), transparent 27%),
+        conic-gradient(from 0deg, transparent 0 12%, rgba(0,217,255,.55) 13% 16%, transparent 17% 45%, rgba(255,180,0,.50) 46% 49%, transparent 50% 75%, rgba(0,255,102,.52) 76% 80%, transparent 81% 100%),
+        #020805;
+      box-shadow: 0 0 24px rgba(0,255,102,.10);
+      position: relative;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border: 1px solid rgba(0,255,102,.25);
+      border-radius: 50%;
+    }
+
+    .brand-title {
+      font-family: 'Black Ops One', cursive;
+      color: var(--green);
+      font-size: clamp(21px, 2vw, 30px);
+      line-height: 1;
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(0,255,102,.22);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 5px;
+      letter-spacing: .8px;
+      opacity: .85;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill, .btn {
+      border: 1px solid rgba(0,217,255,.24);
+      color: var(--blue);
+      background: rgba(0,217,255,.055);
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      text-decoration: none;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .btn {
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(0,217,255,.10);
+      box-shadow: 0 0 18px rgba(0,217,255,.11);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(360px, 1.2fr) minmax(320px, .9fr) minmax(320px, .95fr);
+      grid-template-rows: minmax(315px, .98fr) minmax(255px, 1fr) minmax(210px, .72fr);
+      gap: 14px;
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .panel {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 0;
+      box-shadow: inset 0 0 34px rgba(0,255,102,.035), 0 16px 32px rgba(0,0,0,.36);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 18%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .panel-header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(0,255,102,.105);
+      background: linear-gradient(90deg, rgba(0,255,102,.075), rgba(0,217,255,.035), transparent);
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 11px;
+    }
+
+    .panel-tag { color: var(--blue); font-size: 10px; }
+
+    .panel-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .hero {
+      grid-column: 1 / span 2;
+      grid-row: 1;
+      background:
+        radial-gradient(circle at 78% 40%, rgba(0,217,255,.13), transparent 26%),
+        radial-gradient(circle at 18% 50%, rgba(0,255,102,.13), transparent 30%),
+        rgba(3,10,6,.9);
+    }
+
+    .briefing-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .briefing-copy {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+      overflow: auto;
+      min-height: 0;
+    }
+
+    .briefing-title {
+      font-family: 'Black Ops One', cursive;
+      font-size: clamp(26px, 4vw, 52px);
+      color: var(--green);
+      line-height: .95;
+      text-shadow: 0 0 26px rgba(0,255,102,.2);
+    }
+
+    .briefing-text {
+      line-height: 1.55;
+      color: #caffdb;
+      max-width: 760px;
+      font-size: 14px;
+    }
+
+    .mission-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .mini-stat {
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(0,255,102,.10);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 74px;
+    }
+
+    .mini-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .mini-value { color: var(--green); font-family: 'Orbitron', sans-serif; font-size: 20px; margin-top: 8px; }
+    .mini-sub { color: var(--blue); font-size: 10px; margin-top: 5px; }
+
+    .mini-desc {
+      margin-top: 9px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0,255,102,.075);
+      color: #b7f7cb;
+      font-size: 10px;
+      line-height: 1.42;
+      opacity: .88;
+    }
+
+    .briefing-help {
+      margin-top: 2px;
+      padding: 11px 12px;
+      border: 1px solid rgba(0,217,255,.12);
+      border-left: 3px solid var(--blue);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,217,255,.055), rgba(0,255,102,.025));
+      color: #d8ffe7;
+      font-size: 11px;
+      line-height: 1.48;
+    }
+
+    .briefing-help strong {
+      color: var(--green);
+    }
+
+    .map-stage {
+      position: relative;
+      overflow: hidden;
+      border-left: 1px solid rgba(0,255,102,.08);
+      background: radial-gradient(circle at center, rgba(0,255,102,.04), transparent 70%);
+      min-height: 220px;
+    }
+
+    #opsMap {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-overlay {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      gap: 8px;
+      font-size: 10px;
+    }
+
+    .chip {
+      width: fit-content;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid rgba(0,255,102,.16);
+      background: rgba(0,0,0,.42);
+      color: var(--blue);
+      padding: 7px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(0,255,102,.65);
+    }
+
+    .weather .panel-body,
+    .space .panel-body,
+    .events .panel-body,
+    .links .panel-body,
+    .log-panel .panel-body,
+    .radio .panel-body,
+    .system .panel-body {
+      padding: 14px;
+      overflow: auto;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      height: 100%;
+      align-content: start;
+    }
+
+    .data-card {
+      background: rgba(0,0,0,.24);
+      border: 1px solid rgba(0,255,102,.09);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 86px;
+      box-shadow: inset 0 0 16px rgba(0,255,102,.025);
+    }
+
+    .data-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 7px;
+    }
+
+    .data-value {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--green);
+      font-size: 24px;
+    }
+
+    .data-note {
+      color: var(--blue);
+      margin-top: 6px;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .measure-desc {
+      margin-top: 9px;
+      padding-top: 9px;
+      border-top: 1px solid rgba(0,255,102,.08);
+      color: #b7f7cb;
+      font-size: 10.5px;
+      line-height: 1.45;
+      opacity: .88;
+    }
+
+    .measure-desc strong {
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    .space-card-grid {
+      height: auto;
+    }
+
+    .weather-grid {
+      height: auto;
+    }
+
+    .weather-grid .data-card {
+      min-height: 104px;
+    }
+
+
+    .weather-controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 11px 12px;
+      border: 1px solid rgba(0,217,255,.12);
+      border-left: 3px solid var(--blue);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,217,255,.055), rgba(0,255,102,.025));
+    }
+
+    .weather-select-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .weather-select {
+      width: 100%;
+      border: 1px solid rgba(0,217,255,.32);
+      background: rgba(0,0,0,.46);
+      color: var(--blue);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-family: 'Share Tech Mono', monospace;
+      outline: none;
+    }
+
+    .weather-select:focus {
+      box-shadow: 0 0 16px rgba(0,217,255,.13);
+    }
+
+    .weather-node-note {
+      color: #b7f7cb;
+      font-size: 10.5px;
+      line-height: 1.42;
+      opacity: .9;
+    }
+
+    .space-explainer {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid rgba(0,217,255,.12);
+      border-left: 3px solid var(--blue);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,217,255,.055), rgba(0,255,102,.025));
+      color: #d8ffe7;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .space-explainer-title {
+      color: var(--blue);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .space-explainer strong {
+      color: var(--green);
+    }
+
+
+    .list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .list-item {
+      padding: 10px 11px;
+      border-left: 3px solid var(--orange);
+      background: rgba(255,255,255,.018);
+      border-radius: 0 10px 10px 0;
+      line-height: 1.35;
+      font-size: 12px;
+    }
+
+    .list-item strong { color: var(--green); }
+    .time { color: var(--blue); margin-right: 7px; }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .launch {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid rgba(0,217,255,.18);
+      background: linear-gradient(135deg, rgba(0,217,255,.08), rgba(0,255,102,.035));
+      border-radius: 14px;
+      padding: 13px;
+      min-height: 86px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(0,217,255,.12);
+    }
+
+    .launch strong {
+      color: var(--green);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: .8px;
+    }
+
+    .launch span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,255,102,.07);
+      padding: 9px 0;
+      font-size: 12px;
+    }
+
+    .status-row:first-child { padding-top: 0; }
+    .status-name { color: var(--muted); }
+    .status-val { color: var(--green); font-family: 'Orbitron', sans-serif; font-size: 12px; }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      border: 1px solid rgba(0,255,102,.10);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, var(--green), var(--orange));
+      box-shadow: 0 0 15px rgba(0,255,102,.2);
+      transition: width .4s ease;
+    }
+
+    .log-line {
+      font-size: 11px;
+      color: #d8ffe7;
+      border-left: 2px solid rgba(0,255,102,.15);
+      padding: 7px 0 7px 9px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,.012);
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 2px;
+      width: 100%;
+      background: rgba(0,255,102,.22);
+      animation: scan 6.5s linear infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes scan { from { transform: translateY(0); } to { transform: translateY(900px); } }
+
+    .pulse { animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+
+    .weather { grid-column: 3; grid-row: 1; }
+    .space { grid-column: 1; grid-row: 2; }
+    .events { grid-column: 2; grid-row: 2; }
+    .links { grid-column: 3; grid-row: 2; }
+    .radio { grid-column: 1; grid-row: 3; }
+    .system { grid-column: 2; grid-row: 3; }
+    .log-panel { grid-column: 3; grid-row: 3; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,.72);
+      color: #86ba98;
+      font-size: 10px;
+    }
+
+    .warn { color: var(--orange); }
+    .bad { color: var(--red); }
+    .good { color: var(--green); }
+
+    @media (max-width: 1180px) {
+      header { grid-template-columns: 1fr; }
+      .top-actions { justify-content: flex-start; }
+      main {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      .hero, .weather, .space, .events, .links, .radio, .system, .log-panel {
+        grid-column: auto;
+        grid-row: auto;
+      }
+      .hero { grid-column: 1 / -1; }
+      .briefing-grid { grid-template-columns: 1fr; }
+      .map-stage { min-height: 260px; border-left: 0; border-top: 1px solid rgba(0,255,102,.08); }
+    }
+
+    @media (max-width: 720px) {
+      main { grid-template-columns: 1fr; padding: 10px; }
+      header { padding: 12px; }
+      .brand-title { white-space: normal; }
+      .mission-points, .card-grid, .quick-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-title">LUIZ-DEFENSE // OPS BRIEFING</div>
+          <div class="brand-sub">GLOBAL SITUATION ROOM // WEATHER // SPACE // QUAKES // RF // QUICK LAUNCH</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="pill" id="clockLocal">LOCAL --:--:--</div>
+        <div class="pill" id="clockUtc">UTC --:--:--</div>
+        <div class="pill" id="sourceState">DATA: STARTING</div>
+        <button class="btn" onclick="refreshAll()">↻ REFRESH</button>
+        <button class="btn" id="audioBtn" onclick="toggleAudio()">🔊 AUDIO: OFF</button>
+        <a class="btn" href="surveillance.html">SURVEILLANCE</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel hero">
+        <div class="panel-header">
+          <span>Daily Operational Briefing</span>
+          <span class="panel-tag" id="briefingTag">AUTO GENERATED</span>
+        </div>
+        <div class="panel-body briefing-grid">
+          <div class="briefing-copy">
+            <div class="briefing-title">GLOBAL<br>SITUATION<br>ROOM</div>
+            <div class="briefing-text" id="briefingText">
+              Initialiseren van weerdata, space-weather, aardbevingen en RF-status. Als externe feeds niet bereikbaar zijn, blijft deze console lokaal bruikbaar met fallback-statussen.
+            </div>
+            <div class="briefing-help" id="briefingExplain">
+              <strong>Wat meet deze briefing?</strong> Dit blok combineert lokale weerdata, ruimteweer, aardbevingen en RF-status tot één korte operationele samenvatting. Het is bedoeld als snelle situatiecheck, niet als officiële alarmbron.
+            </div>
+            <div class="mission-points">
+              <div class="mini-stat">
+                <div class="mini-label">Threat Level</div>
+                <div class="mini-value" id="threatLevel">LOW</div>
+                <div class="mini-sub" id="threatReason">Normal watch</div>
+                <div class="mini-desc" id="threatExplain">Samengestelde indicatie op basis van aardbevingen, Kp/ruimteweer en lokaal weer. LOW is normaal, ELEV vraagt aandacht, HIGH is prioriteitsbewaking.</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-label">Active Nodes</div>
+                <div class="mini-value">05</div>
+                <div class="mini-sub">AIR / SEA / RF / WX / SPACE</div>
+                <div class="mini-desc">Aantal ingeschakelde bewakingsmodules: lucht, zee, radiofrequenties, weer en ruimte. Dit zijn bronnen/modules, geen alarmen.</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-label">Briefing Age</div>
+                <div class="mini-value" id="briefingAge">00m</div>
+                <div class="mini-sub">Auto refresh ready</div>
+                <div class="mini-desc">Geeft aan hoe lang geleden de feeds zijn ververst. Hoe lager dit getal, hoe actueler de briefing. Gebruik REFRESH bij twijfel.</div>
+              </div>
+            </div>
+          </div>
+          <div class="map-stage">
+            <canvas id="opsMap" width="720" height="520"></canvas>
+            <div class="map-overlay">
+              <div class="chip"><span class="dot"></span><span>WORLD GRID ONLINE</span></div>
+              <div class="chip"><span class="dot" style="background: var(--blue); box-shadow:0 0 12px rgba(0,217,255,.65)"></span><span id="selectedWeatherChip">WX NODE: HAARLEM</span></div>
+              <div class="chip"><span class="dot" style="background: var(--orange); box-shadow:0 0 12px rgba(255,180,0,.65)"></span><span>LIVE FEEDS WHEN AVAILABLE</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="scan-line"></div>
+      </section>
+
+      <section class="panel weather">
+        <div class="panel-header">
+          <span id="weatherPanelTitle">Weather Node // Haarlem</span>
+          <span class="panel-tag" id="weatherState">OPEN-METEO</span>
+        </div>
+        <div class="panel-body">
+          <div class="weather-controls">
+            <div class="weather-select-label">Select Weather Node</div>
+            <select id="weatherNodeSelect" class="weather-select" onchange="changeWeatherNode()"></select>
+            <div class="weather-node-note" id="weatherNodeNote">Kies een wereldwijde weer-node. De metingen hieronder worden opnieuw opgehaald voor die locatie.</div>
+          </div>
+          <div class="card-grid weather-grid">
+            <div class="data-card">
+              <div class="data-label">Temperature</div>
+              <div class="data-value" id="tempValue">--°C</div>
+              <div class="data-note" id="weatherDesc">Loading conditions</div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">Wind</div>
+              <div class="data-value" id="windValue">--</div>
+              <div class="data-note" id="windNote">10m wind</div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">Pressure</div>
+              <div class="data-value" id="pressureValue">--</div>
+              <div class="data-note" id="pressureNote">Luchtdruk op zeeniveau</div>
+              <div class="measure-desc">
+                <strong>Wat meet dit?</strong> Luchtdruk wordt gemeten in hPa. Hoge druk geeft vaak rustiger weer; lage druk past vaker bij wind, regen en wisselvalligheid.
+              </div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">Rain</div>
+              <div class="data-value" id="rainValue">--</div>
+              <div class="data-note">Current precipitation</div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">Local Watch</div>
+              <div class="data-value" id="localWatch">OK</div>
+              <div class="data-note" id="localWatchNote">No local warning generated</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel space">
+        <div class="panel-header">
+          <span>Space Weather // HF Propagation</span>
+          <span class="panel-tag" id="spaceState">NOAA SWPC</span>
+        </div>
+        <div class="panel-body">
+          <div class="card-grid space-card-grid">
+            <div class="data-card">
+              <div class="data-label">Planetary Kp</div>
+              <div class="data-value" id="kpValue">--</div>
+              <div class="bar"><div id="kpBar"></div></div>
+              <div class="data-note" id="kpNote">Geomagnetic activity</div>
+              <div class="measure-desc">
+                <strong>Wat meet dit?</strong> De Kp-index geeft aan hoe onrustig het aardmagnetisch veld is. Schaal 0 tot 9. Vanaf Kp 5 spreken we meestal van stormcondities.
+              </div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">Solar Wind</div>
+              <div class="data-value" id="solarWind">--</div>
+              <div class="data-note" id="solarWindNote">km/s if feed available</div>
+              <div class="measure-desc">
+                <strong>Wat meet dit?</strong> De snelheid van geladen zonnedeeltjes richting aarde. Hogere snelheid kan meer storing geven, vooral als de Kp-index ook oploopt.
+              </div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">HF Radio</div>
+              <div class="data-value" id="hfStatus">WAIT</div>
+              <div class="data-note" id="hfNote">Propagation estimate</div>
+              <div class="measure-desc">
+                <strong>Wat betekent dit?</strong> Dit is een inschatting voor korte-golf/HF-radio. GOOD betekent waarschijnlijk bruikbaar; MIXED of NOISY betekent meer kans op ruis of wegvallende signalen.
+              </div>
+            </div>
+            <div class="data-card">
+              <div class="data-label">GPS / SAT</div>
+              <div class="data-value" id="satRisk">LOW</div>
+              <div class="data-note">Afgeleid van de Kp-trend</div>
+              <div class="measure-desc">
+                <strong>Wat betekent dit?</strong> Een risico-indicatie voor GPS- en satellietsignalen. Lage Kp is normaal rustig; hogere Kp kan nauwkeurigheid en signaalstabiliteit beïnvloeden.
+              </div>
+            </div>
+          </div>
+
+          <div class="space-explainer">
+            <div class="space-explainer-title">Korte uitleg voor Luiz-Defense</div>
+            <strong>Kort gezegd:</strong> dit frame kijkt naar ruimteweer. Als de zon veel geladen deeltjes richting aarde stuurt, kan het aardmagnetisch veld onrustig worden. Dat kan invloed hebben op HF-radio, GPS en satellietcommunicatie. Daarom combineert deze pagina Kp, zonnewind en een eenvoudige risico-inschatting.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel events">
+        <div class="panel-header">
+          <span>Global Event Feed // Earthquakes</span>
+          <span class="panel-tag" id="quakeState">USGS</span>
+        </div>
+        <div class="panel-body">
+          <div class="list" id="quakeList">
+            <div class="list-item">Loading USGS event feed...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel links">
+        <div class="panel-header">
+          <span>Quick Launch // Luiz Defense Network</span>
+          <span class="panel-tag">LOCAL ROUTER</span>
+        </div>
+        <div class="panel-body">
+          <div class="quick-grid">
+            <a class="launch" href="surveillance.html"><strong>GLOBAL SURVEILLANCE</strong><span>Satellite, air and maritime overview.</span></a>
+            <a class="launch" href="deep-intelligence.html"><strong>DEEP INTEL</strong><span>Threat overlays, dispatch, traffic, rail and meteo.</span></a>
+            <a class="launch" href="intel-signals.html"><strong>SIGINT OPS</strong><span>Radio, radar, orbital and event feeds.</span></a>
+            <a class="launch" href="security.html"><strong>SECURITY HOME</strong><span>Return to the primary Luiz-Defense hub.</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel radio">
+        <div class="panel-header">
+          <span>RF Watch // Priority Frequencies</span>
+          <span class="panel-tag">MANUAL TUNE</span>
+        </div>
+        <div class="panel-body">
+          <div class="list">
+            <div class="list-item"><strong>4625 USB/AM</strong><br>UVB-76 / “The Buzzer” watch frequency.</div>
+            <div class="list-item"><strong>5505 USB</strong><br>VOLMET aviation weather broadcasts.</div>
+            <div class="list-item"><strong>8992 USB</strong><br>Military aviation / emergency monitoring target.</div>
+            <div class="list-item"><strong>10051 USB</strong><br>Shannon Aeradio oceanic sector.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel system">
+        <div class="panel-header">
+          <span>System Health // Feed Status</span>
+          <span class="panel-tag">OPS CORE</span>
+        </div>
+        <div class="panel-body">
+          <div class="status-row"><span class="status-name">Weather Feed</span><span class="status-val" id="wxFeed">CHECKING</span></div>
+          <div class="status-row"><span class="status-name">Space Weather Feed</span><span class="status-val" id="swFeed">CHECKING</span></div>
+          <div class="status-row"><span class="status-name">Earthquake Feed</span><span class="status-val" id="eqFeed">CHECKING</span></div>
+          <div class="status-row"><span class="status-name">Local Clock</span><span class="status-val">ONLINE</span></div>
+          <div class="status-row"><span class="status-name">Browser Speech</span><span class="status-val" id="speechFeed">CHECKING</span></div>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <div class="panel-header">
+          <span>Rolling Intel Log</span>
+          <span class="panel-tag">AUTO FEED</span>
+        </div>
+        <div class="panel-body" id="opsLog"></div>
+      </section>
+    </main>
+
+    <footer>
+      <div>OPS BRIEFING CENTER // API-FRIENDLY DESIGN // LOW-IFRAME MODE</div>
+      <div class="warn" id="footerStatus">WAITING FOR LIVE DATA</div>
+    </footer>
+  </div>
+
+  <script>
+    const state = {
+      weatherOk: false,
+      spaceOk: false,
+      quakeOk: false,
+      lastRefresh: new Date(),
+      kp: null,
+      wind: null,
+      temp: null,
+      pressure: null,
+      weatherNode: 'HAARLEM',
+      quakeCount: 0,
+      maxMag: 0,
+      audio: false
+    };
+
+    const weatherCodeMap = {
+      0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+      45: 'Fog', 48: 'Depositing rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle',
+      61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow',
+      80: 'Slight rain showers', 81: 'Moderate rain showers', 82: 'Violent rain showers', 95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Severe thunderstorm with hail'
+    };
+
+
+    const WORLD_WEATHER_NODES = {
+      HAARLEM: { label: 'Haarlem / Nederland', short: 'Haarlem', lat: 52.3874, lon: 4.6462, timezone: 'Europe/Amsterdam', note: 'Lokale Luiz-Defense node voor Haarlem en omgeving.', fallback: { temp: 18, wind: 14, pressure: 1013 }, x: 355, y: 155 },
+      LONDON: { label: 'London / Verenigd Koninkrijk', short: 'London', lat: 51.5072, lon: -0.1276, timezone: 'Europe/London', note: 'West-Europa node voor Atlantisch weer richting UK/Nederland.', fallback: { temp: 16, wind: 18, pressure: 1012 }, x: 340, y: 156 },
+      REYKJAVIK: { label: 'Reykjavik / IJsland', short: 'Reykjavik', lat: 64.1466, lon: -21.9426, timezone: 'Atlantic/Reykjavik', note: 'Noord-Atlantische node; interessant voor stormbanen en luchtvaart.', fallback: { temp: 8, wind: 22, pressure: 1008 }, x: 308, y: 118 },
+      NEW_YORK: { label: 'New York / USA', short: 'New York', lat: 40.7128, lon: -74.0060, timezone: 'America/New_York', note: 'Noord-Amerikaanse oostkust node.', fallback: { temp: 22, wind: 16, pressure: 1011 }, x: 188, y: 182 },
+      SAO_PAULO: { label: 'São Paulo / Brazilië', short: 'São Paulo', lat: -23.5505, lon: -46.6333, timezone: 'America/Sao_Paulo', note: 'Zuid-Amerika node voor Brazilië en omgeving.', fallback: { temp: 23, wind: 12, pressure: 1015 }, x: 270, y: 338 },
+      DUBAI: { label: 'Dubai / UAE', short: 'Dubai', lat: 25.2048, lon: 55.2708, timezone: 'Asia/Dubai', note: 'Midden-Oosten node; vaak warm/droog en strategisch voor aviation routes.', fallback: { temp: 34, wind: 15, pressure: 1005 }, x: 455, y: 220 },
+      CAPE_TOWN: { label: 'Cape Town / Zuid-Afrika', short: 'Cape Town', lat: -33.9249, lon: 18.4241, timezone: 'Africa/Johannesburg', note: 'Zuidelijke Atlantische node voor wind en oceaanweer.', fallback: { temp: 17, wind: 20, pressure: 1014 }, x: 385, y: 380 },
+      SINGAPORE: { label: 'Singapore', short: 'Singapore', lat: 1.3521, lon: 103.8198, timezone: 'Asia/Singapore', note: 'Zuidoost-Azië node; nuttig voor maritieme routes en tropisch weer.', fallback: { temp: 29, wind: 10, pressure: 1009 }, x: 552, y: 282 },
+      TOKYO: { label: 'Tokyo / Japan', short: 'Tokyo', lat: 35.6762, lon: 139.6503, timezone: 'Asia/Tokyo', note: 'Oost-Azië node voor Pacific weer en tyfoon-watch.', fallback: { temp: 24, wind: 13, pressure: 1010 }, x: 630, y: 190 },
+      SYDNEY: { label: 'Sydney / Australië', short: 'Sydney', lat: -33.8688, lon: 151.2093, timezone: 'Australia/Sydney', note: 'Australië/Pacific node.', fallback: { temp: 20, wind: 17, pressure: 1016 }, x: 650, y: 390 }
+    };
+
+    function currentWeatherNode() {
+      return WORLD_WEATHER_NODES[state.weatherNode] || WORLD_WEATHER_NODES.HAARLEM;
+    }
+
+    function initWeatherSelect() {
+      const select = $('weatherNodeSelect');
+      if (!select) return;
+      select.innerHTML = Object.entries(WORLD_WEATHER_NODES)
+        .map(([key, node]) => `<option value="${key}">${node.label}</option>`)
+        .join('');
+      select.value = state.weatherNode;
+      updateWeatherNodeLabels();
+    }
+
+    function updateWeatherNodeLabels() {
+      const node = currentWeatherNode();
+      $('weatherPanelTitle').textContent = `Weather Node // ${node.short}`;
+      $('selectedWeatherChip').textContent = `WX NODE: ${node.short.toUpperCase()}`;
+      $('weatherNodeNote').textContent = node.note;
+    }
+
+    async function changeWeatherNode() {
+      const select = $('weatherNodeSelect');
+      state.weatherNode = select.value;
+      state.lastRefresh = new Date();
+      updateWeatherNodeLabels();
+      log(`Weather node switched to ${currentWeatherNode().label}.`);
+      await loadWeather();
+      updateThreatAndBriefing();
+      drawOpsMap();
+    }
+
+    function $(id) { return document.getElementById(id); }
+
+    function log(msg, cls = '') {
+      const wrap = $('opsLog');
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      const utc = new Date().toUTCString().split(' ')[4];
+      line.innerHTML = `<span class="time">[${utc}]</span>${msg}`;
+      if (cls) line.classList.add(cls);
+      wrap.prepend(line);
+      while (wrap.children.length > 12) wrap.lastChild.remove();
+    }
+
+    function setFeed(id, ok, labelOk = 'ONLINE', labelFail = 'FALLBACK') {
+      const el = $(id);
+      el.textContent = ok ? labelOk : labelFail;
+      el.className = ok ? 'status-val good' : 'status-val warn';
+    }
+
+    function updateClock() {
+      const now = new Date();
+      $('clockLocal').textContent = 'LOCAL ' + new Intl.DateTimeFormat('nl-NL', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }).format(now);
+      $('clockUtc').textContent = 'UTC ' + now.toUTCString().split(' ')[4];
+      const ageMin = Math.max(0, Math.floor((new Date() - state.lastRefresh) / 60000));
+      $('briefingAge').textContent = String(ageMin).padStart(2, '0') + 'm';
+    }
+
+    function updateSpeechStatus() {
+      const ok = 'speechSynthesis' in window;
+      $('speechFeed').textContent = ok ? 'ONLINE' : 'UNAVAILABLE';
+      $('speechFeed').className = ok ? 'status-val good' : 'status-val warn';
+    }
+
+    async function loadWeather() {
+      const node = currentWeatherNode();
+      updateWeatherNodeLabels();
+      try {
+        const params = new URLSearchParams({
+          latitude: String(node.lat),
+          longitude: String(node.lon),
+          current: 'temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,weather_code,pressure_msl',
+          timezone: node.timezone
+        });
+        const url = 'https://api.open-meteo.com/v1/forecast?' + params.toString();
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Weather HTTP ' + res.status);
+        const data = await res.json();
+        const c = data.current;
+        state.weatherOk = true;
+        state.temp = c.temperature_2m;
+        $('tempValue').textContent = Math.round(c.temperature_2m) + '°C';
+        $('weatherDesc').textContent = weatherCodeMap[c.weather_code] || 'Weather code ' + c.weather_code;
+        $('windValue').textContent = Math.round(c.wind_speed_10m) + ' km/h';
+        $('windNote').textContent = 'Direction ' + Math.round(c.wind_direction_10m) + '°';
+
+        const pressure = Number(c.pressure_msl);
+        state.pressure = Number.isFinite(pressure) ? pressure : null;
+        if (state.pressure !== null) {
+          $('pressureValue').textContent = Math.round(state.pressure) + ' hPa';
+          $('pressureValue').className = state.pressure < 1000 ? 'data-value warn' : state.pressure > 1020 ? 'data-value good' : 'data-value';
+          $('pressureNote').textContent =
+            state.pressure < 1000 ? 'Lage druk: kans op wisselvalliger weer' :
+            state.pressure > 1020 ? 'Hoge druk: meestal stabieler weerbeeld' :
+            'Normale luchtdruk rond zeeniveau';
+        } else {
+          $('pressureValue').textContent = '--';
+          $('pressureNote').textContent = 'Geen drukwaarde ontvangen';
+        }
+
+        $('rainValue').textContent = (c.precipitation ?? 0).toFixed(1) + ' mm';
+        const rough = c.wind_speed_10m > 45 || c.precipitation > 4 || (state.pressure !== null && state.pressure < 995);
+        $('localWatch').textContent = rough ? 'WATCH' : 'OK';
+        $('localWatch').className = rough ? 'data-value warn' : 'data-value good';
+        $('localWatchNote').textContent = rough
+          ? `Wind/rain/pressure elevated at ${node.short}`
+          : `No local weather issue generated for ${node.short}`;
+        $('weatherState').textContent = 'LIVE';
+        setFeed('wxFeed', true);
+        log(`Weather node ${node.short} refreshed successfully.`);
+      } catch (e) {
+        state.weatherOk = false;
+        state.temp = node.fallback.temp;
+        state.pressure = node.fallback.pressure;
+        $('tempValue').textContent = Math.round(node.fallback.temp) + '°C';
+        $('weatherDesc').textContent = `Fallback demo conditions for ${node.short}`;
+        $('windValue').textContent = Math.round(node.fallback.wind) + ' km/h';
+        $('windNote').textContent = 'Fallback wind estimate';
+        $('pressureValue').textContent = Math.round(node.fallback.pressure) + ' hPa';
+        $('pressureValue').className = 'data-value';
+        $('pressureNote').textContent = 'Fallback standaarddruk';
+        $('rainValue').textContent = '0.0 mm';
+        $('localWatch').textContent = 'SIM';
+        $('localWatchNote').textContent = `External weather feed unavailable for ${node.short}`;
+        $('weatherState').textContent = 'FALLBACK';
+        setFeed('wxFeed', false);
+        log(`Weather feed unavailable for ${node.short}; fallback values loaded.`, 'warn');
+      }
+    }
+
+    function latestArrayRow(arr) {
+      if (!Array.isArray(arr) || arr.length < 2) return null;
+      return arr[arr.length - 1];
+    }
+
+    async function loadSpaceWeather() {
+      let kpOk = false;
+      let solarOk = false;
+      try {
+        const kpRes = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json', { cache: 'no-store' });
+        if (!kpRes.ok) throw new Error('Kp HTTP ' + kpRes.status);
+        const kpData = await kpRes.json();
+        const row = latestArrayRow(kpData);
+        const kp = row ? Number(row[1]) : NaN;
+        if (!Number.isFinite(kp)) throw new Error('Kp parse failed');
+        state.kp = kp;
+        kpOk = true;
+      } catch (e) {
+        state.kp = 2 + Math.random();
+      }
+
+      try {
+        const swRes = await fetch('https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json', { cache: 'no-store' });
+        if (!swRes.ok) throw new Error('Solar wind HTTP ' + swRes.status);
+        const swData = await swRes.json();
+        const row = latestArrayRow(swData);
+        const speed = row ? Number(row[2]) : NaN;
+        if (!Number.isFinite(speed)) throw new Error('Solar wind parse failed');
+        state.wind = speed;
+        solarOk = true;
+      } catch (e) {
+        state.wind = 360 + Math.random() * 120;
+      }
+
+      state.spaceOk = kpOk || solarOk;
+      const kp = state.kp;
+      const speed = state.wind;
+      $('kpValue').textContent = kp.toFixed(1);
+      $('kpBar').style.width = Math.min(100, (kp / 9) * 100) + '%';
+      $('kpNote').textContent = kp >= 5 ? 'Geomagnetic storm watch' : kp >= 4 ? 'Unsettled geomagnetic conditions' : 'Quiet to moderate geomagnetic activity';
+      $('solarWind').textContent = Math.round(speed) + ' km/s';
+      $('solarWindNote').textContent = solarOk ? 'NOAA plasma feed' : 'Fallback estimate';
+      const hf = kp >= 5 ? 'NOISY' : kp >= 4 || speed > 550 ? 'MIXED' : 'GOOD';
+      $('hfStatus').textContent = hf;
+      $('hfStatus').className = hf === 'GOOD' ? 'data-value good' : hf === 'MIXED' ? 'data-value warn' : 'data-value bad';
+      $('hfNote').textContent = hf === 'GOOD' ? 'HF bands likely usable' : hf === 'MIXED' ? 'Expect variable propagation' : 'Possible HF disturbance';
+      $('satRisk').textContent = kp >= 5 ? 'ELEV' : 'LOW';
+      $('satRisk').className = kp >= 5 ? 'data-value warn' : 'data-value good';
+      $('spaceState').textContent = state.spaceOk ? 'LIVE' : 'FALLBACK';
+      setFeed('swFeed', state.spaceOk);
+      log(state.spaceOk ? 'Space weather telemetry refreshed.' : 'Space weather feed unavailable; fallback model active.', state.spaceOk ? '' : 'warn');
+    }
+
+    async function loadQuakes() {
+      try {
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson', { cache: 'no-store' });
+        if (!res.ok) throw new Error('USGS HTTP ' + res.status);
+        const data = await res.json();
+        const features = (data.features || [])
+          .sort((a,b) => (b.properties.mag || 0) - (a.properties.mag || 0))
+          .slice(0, 6);
+        state.quakeOk = true;
+        state.quakeCount = data.features ? data.features.length : 0;
+        state.maxMag = features[0]?.properties?.mag || 0;
+        const list = $('quakeList');
+        list.innerHTML = '';
+        if (features.length === 0) {
+          list.innerHTML = '<div class="list-item">No M2.5+ earthquakes reported in current day feed.</div>';
+        } else {
+          features.forEach(f => {
+            const p = f.properties;
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            const time = new Date(p.time).toUTCString().split(' ')[4];
+            item.innerHTML = `<span class="time">[${time}]</span><strong>M${Number(p.mag).toFixed(1)}</strong> ${p.place || 'Unknown location'}`;
+            list.appendChild(item);
+          });
+        }
+        $('quakeState').textContent = 'LIVE';
+        setFeed('eqFeed', true);
+        log(`USGS earthquake feed refreshed: ${state.quakeCount} events in day feed.`);
+      } catch (e) {
+        state.quakeOk = false;
+        state.quakeCount = 0;
+        state.maxMag = 0;
+        $('quakeState').textContent = 'FALLBACK';
+        setFeed('eqFeed', false);
+        $('quakeList').innerHTML = `
+          <div class="list-item"><strong>SIM M3.1</strong> North Atlantic Ridge</div>
+          <div class="list-item"><strong>SIM M2.8</strong> Mediterranean sector</div>
+          <div class="list-item"><strong>SIM M4.0</strong> Pacific ring watch</div>`;
+        log('Earthquake feed unavailable; simulation feed displayed.', 'warn');
+      }
+    }
+
+    function updateThreatAndBriefing() {
+      const risks = [];
+      let score = 0;
+      if (state.maxMag >= 5) { score += 2; risks.push('M5+ earthquake in global feed'); }
+      else if (state.maxMag >= 4) { score += 1; risks.push('M4+ earthquake in global feed'); }
+      if (state.kp >= 5) { score += 2; risks.push('geomagnetic storm conditions'); }
+      else if (state.kp >= 4) { score += 1; risks.push('unsettled space weather'); }
+      if (state.temp !== null && state.temp > 28) { score += 1; risks.push('high temperature at ' + currentWeatherNode().short); }
+
+      const level = score >= 3 ? 'HIGH' : score >= 1 ? 'ELEV' : 'LOW';
+      $('threatLevel').textContent = level;
+      $('threatLevel').className = level === 'HIGH' ? 'mini-value bad' : level === 'ELEV' ? 'mini-value warn' : 'mini-value good';
+      $('threatReason').textContent = risks.length ? risks.join(' / ') : 'Normal watch';
+      $('threatExplain').textContent = level === 'HIGH'
+        ? 'Meerdere risicosignalen tegelijk. Gebruik de detailpanelen om te zien of aardbevingen, ruimteweer of lokaal weer de verhoging veroorzaken.'
+        : level === 'ELEV'
+          ? 'Er is minimaal één verhoogde meetwaarde. Dit betekent opletten, maar niet direct paniek. Kijk naar de reden boven deze uitleg.'
+          : 'Geen duidelijke verhoogde signalen. De pagina blijft passief monitoren en past dit niveau automatisch aan.';
+
+      const wx = state.weatherOk ? `${currentWeatherNode().short} weather live${state.pressure !== null ? ', pressure ' + Math.round(state.pressure) + ' hPa' : ''}` : `${currentWeatherNode().short} weather fallback`;
+      const sw = state.spaceOk ? `Kp ${state.kp?.toFixed(1) ?? '--'}, solar wind ${Math.round(state.wind ?? 0)} km/s` : 'space weather fallback';
+      const eq = state.quakeOk ? `${state.quakeCount} M2.5+ earthquakes in USGS day feed` : 'earthquake feed fallback';
+
+      $('briefingText').innerHTML = `
+        <strong>Current OPS summary:</strong> ${wx}; ${sw}; ${eq}.<br>
+        <br>
+        <strong>Recommended watch:</strong> keep RF/SIGINT available, check selected weather node before outside missions, and use the quick-launch grid for air, sea, satellite and deep-intel pages.
+      `;
+      $('briefingExplain').innerHTML = `
+        <strong>Wat betekent deze samenvatting?</strong> De briefing vat drie live-databronnen samen: de gekozen weer-node, ruimteweer voor HF/GPS/SAT-impact, en recente aardbevingen uit de wereldfeed. De aanbevolen watch is een praktische actieregel: welke panelen je als eerste moet bekijken.
+      `;
+      $('footerStatus').textContent = level === 'HIGH' ? 'PRIORITY WATCH ACTIVE' : level === 'ELEV' ? 'NOTICE // ELEVATED CONDITIONS' : 'ALL SYSTEMS NOMINAL';
+      $('footerStatus').className = level === 'HIGH' ? 'bad' : level === 'ELEV' ? 'warn' : 'good';
+
+      const liveCount = [state.weatherOk, state.spaceOk, state.quakeOk].filter(Boolean).length;
+      $('sourceState').textContent = liveCount === 3 ? 'DATA: LIVE' : liveCount > 0 ? `DATA: ${liveCount}/3 LIVE` : 'DATA: FALLBACK';
+    }
+
+    async function refreshAll() {
+      state.lastRefresh = new Date();
+      $('briefingTag').textContent = 'REFRESHING';
+      log('Manual/auto briefing refresh started.');
+      await Promise.allSettled([loadWeather(), loadSpaceWeather(), loadQuakes()]);
+      updateThreatAndBriefing();
+      drawOpsMap();
+      $('briefingTag').textContent = 'AUTO GENERATED';
+      log('Briefing refresh complete.');
+    }
+
+    function drawOpsMap() {
+      const c = $('opsMap');
+      const ctx = c.getContext('2d');
+      const w = c.width, h = c.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#031006';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(0,255,102,.08)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 44) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+      const land = [
+        [90,150,120,40], [130,210,90,52], [255,135,130,62], [340,175,150,70],
+        [455,120,90,48], [510,190,120,70], [575,285,75,72], [190,300,84,86]
+      ];
+      ctx.fillStyle = 'rgba(0,255,102,.10)';
+      ctx.strokeStyle = 'rgba(0,255,102,.20)';
+      land.forEach(([x,y,rx,ry]) => {
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, -0.15, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+      });
+
+      const nodes = [
+        { name: currentWeatherNode().short.toUpperCase(), x: currentWeatherNode().x, y: currentWeatherNode().y, color:'#00ff66' },
+        { name:'TWENTE SDR', x:372, y:154, color:'#00d9ff' },
+        { name:'USGS', x:155, y:205, color:'#ffb400' },
+        { name:'NOAA SWPC', x:130, y:175, color:'#00d9ff' },
+        { name:'GLOBAL WATCH', x:530, y:255, color: state.maxMag >= 5 ? '#ff375f' : '#ffb400' }
+      ];
+
+      nodes.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 5, 0, Math.PI*2);
+        ctx.fillStyle = n.color;
+        ctx.shadowColor = n.color;
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.font = '12px Share Tech Mono';
+        ctx.fillStyle = 'rgba(220,255,232,.92)';
+        ctx.fillText(n.name, n.x + 10, n.y + 4);
+      });
+
+      ctx.strokeStyle = 'rgba(0,217,255,.25)';
+      ctx.lineWidth = 1;
+      for (let i=1; i<nodes.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(nodes[0].x, nodes[0].y);
+        ctx.quadraticCurveTo((nodes[0].x + nodes[i].x)/2, nodes[0].y - 80 + (i*18), nodes[i].x, nodes[i].y);
+        ctx.stroke();
+      }
+
+      const ringRadius = 28 + ((Date.now() / 55) % 40);
+      ctx.beginPath();
+      ctx.arc(nodes[0].x, nodes[0].y, ringRadius, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(0,255,102,.22)';
+      ctx.stroke();
+    }
+
+    function animateMap() {
+      drawOpsMap();
+      requestAnimationFrame(animateMap);
+    }
+
+    function toggleAudio() {
+      state.audio = !state.audio;
+      const btn = $('audioBtn');
+      if (state.audio) {
+        btn.textContent = '🔊 AUDIO: ON';
+        btn.style.color = 'var(--green)';
+        speak('Luiz Defense operations briefing center online.');
+      } else {
+        btn.textContent = '🔊 AUDIO: OFF';
+        btn.style.color = 'var(--blue)';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    function speak(text) {
+      if (!state.audio || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.pitch = .82;
+      u.rate = .96;
+      window.speechSynthesis.speak(u);
+    }
+
+    const syntheticMessages = [
+      'RF watchlist synchronized with SIGINT OPS.',
+      'Quick-launch grid ready for surveillance routing.',
+      'Local Haarlem node heartbeat received.',
+      'Space-weather status recalculated for HF bands.',
+      'Passive event monitoring remains active.',
+      'World grid render refreshed.'
+    ];
+
+    function addSyntheticLog() {
+      log(syntheticMessages[Math.floor(Math.random() * syntheticMessages.length)]);
+    }
+
+    updateClock();
+    updateSpeechStatus();
+    initWeatherSelect();
+    setInterval(updateClock, 1000);
+    setInterval(addSyntheticLog, 8500);
+    setInterval(refreshAll, 10 * 60 * 1000);
+    animateMap();
+    refreshAll();
+  </script>
+</body>
+</html>

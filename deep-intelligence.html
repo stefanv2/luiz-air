@@ -2,236 +2,581 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DEEP INTEL - LUIZ-DEFENSE</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --cyber-green: #00ff41;
-      --cyber-red: #ff003c;
-      --cyber-blue: #00e5ff;
-      --bg-black: #050505;
+      --green: #00ff6a;
+      --green-soft: rgba(0, 255, 106, .12);
+      --green-border: rgba(0, 255, 106, .36);
+      --blue: #00d9ff;
+      --blue-soft: rgba(0, 217, 255, .13);
+      --orange: #ff9f1c;
+      --red: #ff2d55;
+      --bg: #030506;
+      --panel: rgba(4, 17, 14, .86);
+      --panel-strong: rgba(0, 0, 0, .82);
+      --line: rgba(255, 255, 255, .08);
+      --header-height: 64px;
+      --gap: 16px;
+      --radius: 14px;
     }
 
     * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
     body {
       margin: 0;
       font-family: 'Share Tech Mono', monospace;
-      background-color: var(--bg-black);
-      color: var(--cyber-green);
-      overflow: hidden;
-      height: 100vh;
+      color: var(--green);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(0, 217, 255, .12), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(0, 255, 106, .11), transparent 32%),
+        linear-gradient(180deg, #07100e 0%, var(--bg) 55%, #010202 100%);
+      overflow-x: hidden;
     }
 
-    header { 
-      border-bottom: 1px solid var(--cyber-green); 
-      padding: 10px 20px; 
-      background: #000;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+      opacity: .45;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255,255,255,.02) 0,
+        rgba(255,255,255,.02) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      mix-blend-mode: screen;
+      opacity: .26;
+      z-index: 50;
+    }
+
+    header {
+      height: var(--header-height);
+      padding: 0 18px;
+      background: rgba(0,0,0,.82);
+      border-bottom: 1px solid var(--green-border);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      height: 50px;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
     }
 
-    .brand { font-family: 'Black Ops One'; font-size: 18px; color: var(--cyber-green); text-decoration: none; }
-    .nav-back { color: #555; text-decoration: none; font-size: 12px; border: 1px solid #333; padding: 4px 12px; border-radius: 4px; }
+    .brand-block { display: flex; align-items: center; gap: 14px; min-width: 0; }
 
-    /* HOOFD GRID */
-    .intel-grid {
+    .brand {
+      font-family: 'Black Ops One', system-ui;
+      color: var(--green);
+      text-decoration: none;
+      letter-spacing: .08em;
+      font-size: clamp(16px, 2vw, 23px);
+      white-space: nowrap;
+      text-shadow: 0 0 18px rgba(0,255,106,.38);
+    }
+
+    .subline {
+      color: rgba(255,255,255,.42);
+      font-size: 11px;
+      border-left: 1px solid rgba(255,255,255,.14);
+      padding-left: 12px;
+      white-space: nowrap;
+    }
+
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+
+    .control-btn,
+    .nav-back {
+      background: rgba(0,0,0,.45);
+      border: 1px solid var(--line);
+      color: rgba(255,255,255,.68);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: .2s ease;
+      white-space: nowrap;
+    }
+
+    .control-btn:hover,
+    .nav-back:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      box-shadow: 0 0 18px rgba(0,217,255,.16);
+    }
+
+    .control-btn.danger {
+      color: var(--red);
+      border-color: rgba(255,45,85,.55);
+    }
+
+    .control-btn.danger:hover {
+      background: rgba(255,45,85,.10);
+      box-shadow: 0 0 22px rgba(255,45,85,.18);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      height: calc(100svh - var(--header-height));
+      padding: var(--gap);
       display: grid;
-      grid-template-columns: 1fr 380px;
-      grid-template-rows: 1fr 350px;
-      gap: 15px;
-      padding: 15px;
-      height: calc(100vh - 50px);
+      grid-template-columns: minmax(0, 1fr) clamp(340px, 28vw, 430px);
+      grid-template-rows: minmax(380px, 1.55fr) minmax(255px, .9fr);
+      grid-template-areas:
+        "main side"
+        "bottom side";
+      gap: var(--gap);
     }
+
+    .main-panel { grid-area: main; }
+    .bottom-triple { grid-area: bottom; }
+    .right-stack { grid-area: side; }
 
     .intel-box {
-      background: rgba(0, 20, 0, 0.4);
-      border: 1px solid #1a331a;
+      min-width: 0;
+      min-height: 0;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      background:
+        linear-gradient(180deg, rgba(0,255,106,.08), rgba(0,0,0,.14)),
+        var(--panel);
+      border: 1px solid rgba(0,255,106,.22);
+      border-radius: var(--radius);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.025),
+        0 18px 60px rgba(0,0,0,.34);
+    }
+
+    .intel-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.10), transparent 18%),
+        radial-gradient(circle at 20% 0%, rgba(0,217,255,.11), transparent 40%);
+      opacity: .65;
+      z-index: 1;
     }
 
     .box-header {
-      background: rgba(0, 255, 65, 0.1);
-      padding: 6px 12px;
-      font-size: 10px;
-      font-weight: bold;
-      border-bottom: 1px solid #1a331a;
+      min-height: 38px;
+      padding: 9px 12px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      background: rgba(0,0,0,.48);
+      border-bottom: 1px solid rgba(0,255,106,.19);
+      z-index: 5;
       text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 11px;
+      color: rgba(255,255,255,.75);
+    }
+
+    .box-header strong {
+      color: var(--green);
+      font-weight: 400;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border: 1px solid rgba(0,255,106,.26);
+      border-radius: 999px;
+      background: rgba(0,0,0,.42);
+      color: var(--green);
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .frame-area {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: #000;
+      z-index: 2;
+    }
+
+    .frame-fill {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    .threat-frame { filter: brightness(.82) contrast(1.08) saturate(1.04) hue-rotate(88deg); }
+    .p2000-frame { filter: invert(.94) hue-rotate(180deg) brightness(.84) contrast(1.22) saturate(1.06); }
+    .traffic-frame { filter: invert(.90) hue-rotate(150deg) saturate(1.18) brightness(.86) contrast(1.08); }
+
+    .bottom-triple {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--gap);
+    }
+
+    .right-stack {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(260px, 1.25fr) minmax(112px, .34fr) minmax(92px, .27fr) minmax(150px, .48fr);
+      gap: var(--gap);
+    }
+
+    .weather-radar {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+      filter: invert(.90) hue-rotate(90deg) brightness(1.08) contrast(1.05);
+    }
+
+    .rail-wrapper {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
+    .rail-frame {
+      position: absolute;
+      top: 0;
+      left: -260px;
+      width: calc(100% + 260px);
+      height: 100%;
+      border: 0;
+      filter: invert(.88) hue-rotate(190deg) brightness(1.08) contrast(1.34) saturate(1.05);
+    }
+
+    .sigint-wave {
+      height: 42px;
+      margin: 12px 12px 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(0,217,255,.20);
+      background:
+        linear-gradient(90deg, transparent 0 8%, rgba(0,217,255,.22) 8% 9%, transparent 9% 17%, rgba(0,255,106,.22) 17% 18%, transparent 18% 27%),
+        radial-gradient(circle at center, rgba(0,217,255,.22), transparent 60%),
+        #020506;
+      background-size: 180px 100%, 100% 100%, 100% 100%;
+      animation: waveMove 2.4s linear infinite;
+    }
+
+    @keyframes waveMove { to { background-position: 180px 0, 0 0, 0 0; } }
+
+    .metric-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 12px 14px;
+      z-index: 3;
+    }
+
+    #freq-display {
+      color: var(--blue);
+      font-size: clamp(18px, 2.1vw, 28px);
+      text-shadow: 0 0 18px rgba(0,217,255,.32);
+    }
+
+    #crypto-key {
+      color: var(--red);
+      font-size: clamp(22px, 2.4vw, 34px);
+      text-shadow: 0 0 22px rgba(255,45,85,.36);
+      letter-spacing: .09em;
+    }
+
+    .terminal-content {
+      flex: 1;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--blue);
+      line-height: 1.35;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(0,217,255,.05), transparent),
+        rgba(0,0,0,.30);
+      z-index: 2;
+    }
+
+    .terminal-content div { margin-bottom: 3px; opacity: .92; }
+
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,106,.70), transparent);
+      animation: scan 4.2s linear infinite;
+      pointer-events: none;
       z-index: 20;
     }
 
-    /* ONDERSTE RIJ: TRIPLE SECTOR */
-    .bottom-triple { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr 1fr; 
-      gap: 15px; 
-      height: 100%; 
-    }
-    
-    /* IFRAME FILTERS */
-    .p2000-frame { filter: invert(0.95) hue-rotate(180deg) brightness(0.8) contrast(1.2); border: none; width: 100%; height: 100%; }
-    .traffic-frame { filter: invert(0.9) hue-rotate(150deg) saturate(1.2) brightness(0.8); border: none; width: 100%; height: 100%; }
+    @keyframes scan { 0% { top: -2px; } 100% { top: 100%; } }
 
-    /* RAIL HACK (Menu verbergen) */
-    .rail-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
-    .rail-frame { 
-      position: absolute; 
-      top: 0; 
-      left: -280px; 
-      width: calc(100% + 280px); 
-      height: 100%; 
-      border: none; 
-      /* Nieuwe filter: minder donker, meer contrast */
-      filter: invert(0.85) hue-rotate(190deg) brightness(1.2) contrast(1.5); 
-    }
-
-    /* RECHTER STACK */
-    .right-stack { 
-      grid-column: 2; 
-      grid-row: 1 / span 2; 
-      display: grid; 
-      grid-template-rows: 1.5fr 120px 80px 120px; 
-      gap: 15px; 
-    }
-
-    /* METEO FIX (Geen uitrekking) */
-    .weather-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; }
-    .weather-frame { filter: invert(0.9) hue-rotate(90deg) brightness(1.1); width: 100%; height: 100%; object-fit: contain; border: none; }
-
-    .terminal-content { padding: 8px; font-size: 10px; color: var(--cyber-blue); line-height: 1.2; overflow: hidden; }
-
-    .scan-line {
-      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-      background: rgba(0, 255, 65, 0.4);
-      animation: scan 4s linear infinite;
+    .corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      z-index: 6;
       pointer-events: none;
-      z-index: 10;
+      opacity: .85;
     }
-    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+    .corner.tl { top: 9px; left: 9px; border-top: 1px solid var(--green); border-left: 1px solid var(--green); }
+    .corner.tr { top: 9px; right: 9px; border-top: 1px solid var(--green); border-right: 1px solid var(--green); }
+    .corner.bl { bottom: 9px; left: 9px; border-bottom: 1px solid var(--green); border-left: 1px solid var(--green); }
+    .corner.br { bottom: 9px; right: 9px; border-bottom: 1px solid var(--green); border-right: 1px solid var(--green); }
 
-    .alert-active { border-color: var(--cyber-red) !important; animation: alert-flash 1.5s infinite; }
-    @keyframes alert-flash { 0%, 100% { box-shadow: inset 0 0 20px rgba(255,0,60,0); } 50% { box-shadow: inset 0 0 40px rgba(255,0,60,0.2); } }
+    .alert-active {
+      border-color: rgba(255,45,85,.76) !important;
+      animation: alertPulse 1.4s ease-in-out infinite;
+    }
+
+    .alert-active .box-header { border-bottom-color: rgba(255,45,85,.45); }
+    .alert-active .status-pill { color: var(--red); border-color: rgba(255,45,85,.65); }
+
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: inset 0 0 0 rgba(255,45,85,0), 0 18px 60px rgba(0,0,0,.34); }
+      50% { box-shadow: inset 0 0 44px rgba(255,45,85,.18), 0 18px 60px rgba(255,45,85,.08); }
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow-y: auto; }
+      .page {
+        height: auto;
+        min-height: calc(100svh - var(--header-height));
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(420px, 54vh) minmax(260px, auto) auto;
+        grid-template-areas:
+          "main"
+          "bottom"
+          "side";
+      }
+      .right-stack {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: minmax(260px, 360px) 135px 145px;
+      }
+      .right-stack .intel-box:first-child { grid-column: 1 / span 2; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --header-height: auto; --gap: 12px; }
+      header {
+        position: relative;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px;
+      }
+      .brand-block { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .subline { border-left: 0; padding-left: 0; }
+      .nav-actions { width: 100%; justify-content: space-between; }
+      .page {
+        padding: 12px;
+        grid-template-rows: minmax(360px, 58vh) auto auto;
+      }
+      .bottom-triple { grid-template-columns: 1fr; grid-auto-rows: 300px; }
+      .right-stack { grid-template-columns: 1fr; grid-template-rows: 320px 130px 110px 160px; }
+      .right-stack .intel-box:first-child { grid-column: auto; }
+      .rail-frame { left: -210px; width: calc(100% + 210px); }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <a href="surveillance.html" class="brand">LUIZ-DEFENSE // DEEP INTEL</a>
-    <div style="display:flex; gap:10px;">
-        <button onclick="toggleAlert()" style="background:none; border:1px solid var(--cyber-red); color:var(--cyber-red); font-family:'Share Tech Mono'; cursor:pointer; font-size:10px; padding: 2px 8px;">🚨 DEFCON</button>
-        <a href="surveillance.html" class="nav-back">⬅ BACK</a>
+    <div class="brand-block">
+      <a href="surveillance.html" class="brand">LUIZ-DEFENSE // DEEP INTEL</a>
+      <div class="subline">GLOBAL SIGNALS · TRAFFIC · RAIL · METEO</div>
+    </div>
+    <div class="nav-actions">
+      <button onclick="toggleAlert()" class="control-btn danger">🚨 DEFCON</button>
+      <a href="surveillance.html" class="nav-back">⬅ BACK</a>
     </div>
   </header>
 
-  <main class="intel-grid">
-    
-    <div class="intel-box" id="main-alert-box">
-      <div class="box-header"><span>GLOBAL THREAT OVERLAY</span><span id="defcon-status">NOMINAL</span></div>
-      <iframe src="https://cybermap.kaspersky.com/en/widget/dynamic/dark" style="width:100%; height:100%; border:none; filter: brightness(0.8) hue-rotate(90deg);"></iframe>
-      <div class="scan-line"></div>
-    </div>
+  <main class="page">
 
-    <div class="bottom-triple">
-      <div class="intel-box">
-        <div class="box-header"><span>DISPATCH // HAARLEM</span></div>
-        <iframe src="https://monitor.p2000alarm.nl/plaats/Haarlem" class="p2000-frame"></iframe>
+    <section class="intel-box main-panel" id="main-alert-box">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="box-header">
+        <strong>GLOBAL THREAT OVERLAY</strong>
+        <span class="status-pill" id="defcon-status">NOMINAL</span>
       </div>
-      <div class="intel-box">
-        <div class="box-header"><span>ROAD // LIVE TRAFFIC</span></div>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d156064.652134444!2d4.8970!3d52.3702!3m2!1i1024!2i768!4f13.1!5e1!3m2!1snl!2snl!4v1615812345678!5m2!1snl!2snl&layer=t" class="traffic-frame"></iframe>
+      <div class="frame-area">
+        <iframe src="https://cybermap.kaspersky.com/en/widget/dynamic/dark" class="frame-fill threat-frame" title="Global cyber threat overlay"></iframe>
+        <div class="scan-line"></div>
       </div>
-      <div class="intel-box">
-        <div class="box-header"><span>RAIL // TRAIN UPLINK</span></div>
-        <div class="rail-wrapper">
-            <iframe src="https://treinenradar.nl/" class="rail-frame" scrolling="no"></iframe>
+    </section>
+
+    <section class="bottom-triple" aria-label="Operational frames">
+      <article class="intel-box">
+        <div class="box-header"><strong>DISPATCH // HAARLEM</strong><span class="status-pill">LIVE</span></div>
+        <div class="frame-area">
+          <iframe src="https://monitor.p2000alarm.nl/plaats/Haarlem" class="frame-fill p2000-frame" title="P2000 Haarlem dispatch"></iframe>
         </div>
-      </div>
-    </div>
+      </article>
 
-    <div class="right-stack">
-      
-      <div class="intel-box">
-        <div class="box-header"><span>METEO // STRATEGIC RADAR</span></div>
-        <div class="weather-container">
-            <iframe src="https://api.buienradar.nl/image/1.0/RadarMapNL?w=350&h=350" class="weather-frame" scrolling="no"></iframe>
+      <article class="intel-box">
+        <div class="box-header"><strong>ROAD // LIVE TRAFFIC</strong><span class="status-pill">MAP</span></div>
+        <div class="frame-area">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d156064.652134444!2d4.8970!3d52.3702!3m2!1i1024!2i768!4f13.1!5e1!3m2!1snl!2snl!4v1615812345678!5m2!1snl!2snl&layer=t" class="frame-fill traffic-frame" title="Live traffic map"></iframe>
         </div>
-      </div>
+      </article>
 
-      <div class="intel-box" style="padding: 5px;">
-        <div class="box-header"><span>SIGINT ANALYZER</span></div>
-        <div style="height: 30px; background: url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6bmZ6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxVfFfUK09O/giphy.gif'); background-size: cover; opacity: 0.3; margin: 5px;"></div>
-        <div style="text-align: center; font-size: 14px; color: var(--cyber-blue);" id="freq-display">144.800 MHz</div>
-      </div>
+      <article class="intel-box">
+        <div class="box-header"><strong>RAIL // TRAIN UPLINK</strong><span class="status-pill">NS</span></div>
+        <div class="frame-area">
+          <div class="rail-wrapper">
+            <iframe src="https://treinenradar.nl/" class="rail-frame" scrolling="no" title="Train radar"></iframe>
+          </div>
+        </div>
+      </article>
+    </section>
 
-      <div class="intel-box">
-        <div class="box-header"><span>ENCRYPTION BREAKER</span></div>
-        <div id="crypto-key" style="text-align:center; font-size:18px; color:var(--cyber-red); margin-top:10px;">A7-X9-ZZ</div>
-      </div>
+    <aside class="right-stack" aria-label="Deep intel status panels">
+      <section class="intel-box">
+        <div class="box-header"><strong>METEO // STRATEGIC RADAR</strong><span class="status-pill">NL</span></div>
+        <div class="frame-area">
+          <img src="https://api.buienradar.nl/image/1.0/RadarMapNL?w=700&h=700" class="weather-radar" alt="Buienradar Nederland" />
+        </div>
+      </section>
 
-      <div class="intel-box">
-        <div class="box-header"><span>DATA INTERCEPT LOG</span></div>
+      <section class="intel-box">
+        <div class="box-header"><strong>SIGINT ANALYZER</strong><span class="status-pill">SCAN</span></div>
+        <div class="sigint-wave" aria-hidden="true"></div>
+        <div class="metric-center"><div id="freq-display">144.800 MHz</div></div>
+      </section>
+
+      <section class="intel-box">
+        <div class="box-header"><strong>ENCRYPTION BREAKER</strong><span class="status-pill">KEY</span></div>
+        <div class="metric-center"><div id="crypto-key">A7-X9-ZZ</div></div>
+      </section>
+
+      <section class="intel-box">
+        <div class="box-header"><strong>DATA INTERCEPT LOG</strong><span class="status-pill">TAIL</span></div>
         <div id="terminal" class="terminal-content"></div>
-      </div>
-
-    </div>
+      </section>
+    </aside>
 
   </main>
 
   <script>
-    const logs = ["Establishing tunnel...", "Bypassing firewalls...", "Intercepting AIS...", "Signal verified.", "Syncing Haarlem node...", "Monitoring NS-Rail telemetry..."];
+    const logs = [
+      "Establishing encrypted tunnel...",
+      "Synchronizing Haarlem dispatch node...",
+      "Traffic layer refreshed.",
+      "Rail telemetry feed checked.",
+      "Meteo radar frame normalized.",
+      "Signal verified.",
+      "Threat overlay heartbeat OK."
+    ];
+
     const term = document.getElementById('terminal');
+
     function addLog() {
       const line = document.createElement('div');
-      line.innerText = "> " + logs[Math.floor(Math.random() * logs.length)];
+      const time = new Intl.DateTimeFormat('nl-NL', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      }).format(new Date());
+      line.innerText = `[${time}] > ${logs[Math.floor(Math.random() * logs.length)]}`;
       term.appendChild(line);
-      if (term.childNodes.length > 6) term.removeChild(term.firstChild);
+      if (term.childNodes.length > 7) term.removeChild(term.firstChild);
     }
+
+    for (let i = 0; i < 4; i++) addLog();
     setInterval(addLog, 2500);
 
     let alertOn = false;
+
     function toggleAlert() {
-        alertOn = !alertOn;
-        const boxes = document.querySelectorAll('.intel-box');
-        const status = document.getElementById('defcon-status');
-        boxes.forEach(b => alertOn ? b.classList.add('alert-active') : b.classList.remove('alert-active'));
-        status.innerText = alertOn ? "DEFCON 2 ALERT" : "NOMINAL";
-        status.style.color = alertOn ? "var(--cyber-red)" : "var(--cyber-green)";
-        if(alertOn) speak("Warning. Defcon 2 authorized. Beware for threads Luiz.");
+      alertOn = !alertOn;
+      const boxes = document.querySelectorAll('.intel-box');
+      const status = document.getElementById('defcon-status');
+      boxes.forEach(box => box.classList.toggle('alert-active', alertOn));
+      status.innerText = alertOn ? "DEFCON 2" : "NOMINAL";
+      status.style.color = alertOn ? "var(--red)" : "var(--green)";
+      addLog();
+      if (alertOn) speak("Warning. Defcon two authorized. Beware of threats Luiz.");
     }
 
     setInterval(() => {
       const chars = "ABCDEF0123456789";
       let key = "";
-      for(let i=0; i<6; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+      for (let i = 0; i < 6; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
       document.getElementById('crypto-key').innerText = key.match(/.{1,2}/g).join('-');
-    }, 120);
+    }, 160);
 
     setInterval(() => {
       const freq = (Math.random() * (450 - 140) + 140).toFixed(3);
       document.getElementById('freq-display').innerText = freq + " MHz";
     }, 4000);
 
-    function speak(t) {
+    function speak(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        let u = new SpeechSynthesisUtterance(t);
-        u.lang = 'en-US'; u.pitch = 0.6; u.rate = 1.0;
-        window.speechSynthesis.speak(u);
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.pitch = 0.65;
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
       }
     }
 
-    window.onload = () => { speak("Deep Intel Systems Online."); };
+    // Veel browsers blokkeren automatisch geluid. Daarom alleen proberen, zonder foutmelding in beeld.
+    window.addEventListener('load', () => {
+      try { speak("Deep Intel Systems Online."); } catch (e) {}
+    });
   </script>
 </body>
 </html>

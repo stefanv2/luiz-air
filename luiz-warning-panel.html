@@ -1,373 +1,1146 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <title>LUIZ-AIR | Career Mode Simulator</title>
-    <link rel="preload" href="plane-gear.png" as="image">
-    <style>
-        :root {
-            --bg: #050a0f; 
-            --panel-color: rgba(17, 27, 36, 0.75); 
-            --accent: #00ff88;
-            --danger: #ff4d4d; 
-            --warn: #ffae00; 
-            --blue: #00a2ff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LUIZ-AIR // Landing Career Simulator</title>
 
-        body { 
-            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('cockpit.jpg');
-            background-size: cover;
-            background-position: center bottom;
-            background-attachment: fixed;
-            color: white; 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
+  <link rel="preload" href="cockpit.jpg" as="image">
+  <link rel="preload" href="plane.png" as="image">
+  <link rel="preload" href="plane-gear.png" as="image">
+  <link rel="preload" href="schiphol.png" as="image">
+  <link rel="preload" href="innsbruck.png" as="image">
+  <link rel="preload" href="kaitak.png" as="image">
 
-        /* --- WEATHER EFFECTS --- */
-        .weather-overlay {
-            position: fixed; inset: 0; pointer-events: none; z-index: 2; display: none;
-        }
-        
-        /* Regen Animatie (Kai Tak) */
-        .weather-rain {
-            display: block;
-            background: repeating-linear-gradient(
-                105deg, 
-                rgba(255,255,255,0.15) 0px, 
-                rgba(255,255,255,0.15) 2px, 
-                transparent 2px, 
-                transparent 40px
-            );
-            background-size: 100% 200%;
-            animation: rainFall 0.3s linear infinite;
-        }
-        @keyframes rainFall {
-            0% { background-position: 0 0; }
-            100% { background-position: -50px 100vh; }
-        }
+  <style>
+    :root {
+      --bg: #03070b;
+      --panel: rgba(9, 20, 31, .78);
+      --panel-strong: rgba(6, 12, 20, .94);
+      --glass: rgba(255,255,255,.07);
+      --line: rgba(151, 217, 255, .16);
+      --accent: #00ff88;
+      --danger: #ff4d4d;
+      --warn: #ffae00;
+      --blue: #00a2ff;
+      --text: #f2fbff;
+      --muted: #9fb5c7;
+      --shadow: rgba(0,0,0,.55);
+    }
 
-        /* Sneeuw Animatie (Innsbruck) */
-        .weather-snow {
-            display: block;
-            background-image: 
-                radial-gradient(circle, rgba(255,255,255,0.8) 2px, transparent 3px),
-                radial-gradient(circle, rgba(255,255,255,0.5) 1.5px, transparent 2px);
-            background-size: 100px 100px, 60px 60px;
-            background-position: 0 0, 30px 30px;
-            animation: snowFall 3s linear infinite;
-        }
-        @keyframes snowFall {
-            0% { background-position: 0 0, 30px 30px; }
-            100% { background-position: 50px 100px, 90px 150px; }
-        }
+    * { box-sizing: border-box; }
 
-        /* --- EFFECTS --- */
-        .red-alert-overlay {
-            position: fixed; inset: 0; pointer-events: none; z-index: 50;
-            background: rgba(255, 0, 0, 0.35);
-            animation: pulse-red 0.8s infinite alternate;
-            display: none; 
-        }
-        .red-alert-active { display: block; }
-        @keyframes pulse-red { 0% { opacity: 0.1; } 100% { opacity: 0.7; } }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #020407;
+    }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .shake { animation: shake 0.4s infinite; }
-        .shake-hard { animation: shake 0.1s infinite; }
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.84)),
+        radial-gradient(circle at 50% 30%, rgba(0,162,255,.18), transparent 42%),
+        url('cockpit.jpg');
+      background-size: cover;
+      background-position: center bottom;
+      background-attachment: fixed;
+    }
 
-        @keyframes shake-light {
-            0% { transform: translate(1px, 0px) rotate(0deg); }
-            25% { transform: translate(-1px, 1px) rotate(-0.2deg); }
-            50% { transform: translate(0px, -1px) rotate(0.2deg); }
-            75% { transform: translate(-1px, 0px) rotate(0deg); }
-            100% { transform: translate(1px, 1px) rotate(-0.2deg); }
-        }
-        .shake-light { animation: shake-light 0.4s infinite linear; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.026) 0 1px,
+          rgba(0,0,0,.12) 2px 4px
+        ),
+        radial-gradient(circle at center, transparent 55%, rgba(0,0,0,.55) 100%);
+      mix-blend-mode: screen;
+    }
 
-        .cockpit-grid { 
-            display: grid; grid-template-columns: 220px 1fr 220px; gap: 20px; 
-            width: 95vw; height: 90vh; z-index: 10;
-        }
+    .back-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 999;
+      padding: 10px 14px;
+      color: #d8f5ff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: .6px;
+      border-radius: 999px;
+      background: rgba(5, 13, 22, .74);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(0,162,255,.24);
+      transition: .2s ease;
+      font-size: .78rem;
+      text-transform: uppercase;
+      box-shadow: 0 12px 26px rgba(0,0,0,.34);
+    }
 
-        .glass-panel {
-            background: var(--panel-color); backdrop-filter: blur(10px); 
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
+    .back-btn:hover {
+      background: rgba(0,162,255,.20);
+      border-color: var(--blue);
+      transform: translateY(-1px);
+    }
 
-        #master-warning-bar {
-            grid-column: 1 / 4; height: 50px; display: flex; justify-content: center; align-items: center; 
-            border-radius: 10px; font-weight: bold; letter-spacing: 3px; cursor: pointer;
-        }
-        .master-active { background: var(--danger) !important; color: white; animation: flash 0.4s infinite; }
-        @keyframes flash { 50% { opacity: 0.5; } }
+    .weather-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      display: none;
+    }
 
-        .left-panel { display: flex; flex-direction: column; gap: 15px; height: 100%; }
-        .altitude-tape { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 10px; overflow-y: auto; flex-grow: 1; }
-        .alt-btn { padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #334; color: #8aa3b8; font-weight: bold; border-radius: 4px; transition: 0.2s; }
-        .alt-btn.active { background: var(--blue); color: white; cursor: pointer; box-shadow: 0 0 15px var(--blue); }
-        .alt-btn.done { background: rgba(0, 68, 34, 0.8); color: #00ff88; border-color: #00ff88; }
-        .left-controls { display: flex; flex-direction: column; gap: 8px; }
+    .weather-rain {
+      display: block;
+      background: repeating-linear-gradient(
+        105deg,
+        rgba(255,255,255,.14) 0px,
+        rgba(255,255,255,.14) 2px,
+        transparent 2px,
+        transparent 38px
+      );
+      background-size: 100% 200%;
+      animation: rainFall .32s linear infinite;
+    }
 
-        .center-area { display: flex; flex-direction: column; gap: 10px; }
-        .emergency-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; height: 60px; }
-        .emerg-btn {
-            background: rgba(0,0,0,0.7); border: 2px solid #444; border-radius: 8px; color: #aaa; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; text-transform: uppercase; cursor: pointer;
-        }
-        .emerg-active { background: var(--danger); color: white; animation: pulse-fast 0.3s infinite; }
-        @keyframes pulse-fast { 50% { opacity: 0.7; } }
+    @keyframes rainFall {
+      0% { background-position: 0 0; }
+      100% { background-position: -55px 100vh; }
+    }
 
-        .display {
-            flex-grow: 1; border-radius: 15px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: space-between; position: relative; overflow: hidden; padding: 10px 0;
-            background-image: url('schiphol.png');
-            background-size: cover;
-            background-position: center;
-            transition: background-image 0.5s ease-in-out;
-        }
+    .weather-snow {
+      display: block;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.82) 2px, transparent 3px),
+        radial-gradient(circle, rgba(255,255,255,.46) 1.5px, transparent 2px);
+      background-size: 100px 100px, 64px 64px;
+      background-position: 0 0, 30px 30px;
+      animation: snowFall 3s linear infinite;
+    }
 
-        .chaos-panel {
-            display: none; flex-direction: column; gap: 10px; width: 95%; box-sizing: border-box;
-            background: rgba(0,0,0,0.6); border-radius: 10px; padding: 10px; margin-top: 5px;
-            backdrop-filter: blur(5px);
-        }
-        .radar-images { display: flex; justify-content: center; gap: 20px; width: 100%; }
-        .radar-images img { width: 220px; height: 220px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(53, 208, 127, 0.5); opacity: 0.9; }
+    @keyframes snowFall {
+      0% { background-position: 0 0, 30px 30px; }
+      100% { background-position: 50px 110px, 90px 156px; }
+    }
 
-        #plane-display { 
-            width: 60%; 
-            max-height: 200px; 
-            object-fit: contain; 
-            display: none; 
-            filter: drop-shadow(0 0 15px rgba(0, 162, 255, 0.3)); 
-            z-index: 5; 
-            transition: transform 0.4s ease-out, top 0.4s ease-out; 
-            position: relative; 
-            top: 0;
-        }
+    .red-alert-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background: rgba(255, 0, 0, .34);
+      animation: pulse-red .8s infinite alternate;
+      display: none;
+    }
 
-        @keyframes float-subtle { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-        .plane-normal { animation: float-subtle 4s ease-in-out infinite; }
-        .plane-bank-left { transform: rotate(-7deg); animation: float-subtle 4s ease-in-out infinite; }
-        .plane-bank-right { transform: rotate(7deg); animation: float-subtle 4s ease-in-out infinite; }
-        .plane-nose-up { transform: rotate(-25deg); }
-        @keyframes vibrate-fast { 0% { transform: translate(-2px, 0); } 50% { transform: translate(2px, 0); } 100% { transform: translate(-2px, 0); } }
-        .plane-vibrate { animation: vibrate-fast 0.1s infinite linear; }
-        .plane-flare { transform: rotate(-15deg); top: 30px; }
+    .red-alert-active { display: block; }
 
-        #alt-display { font-size: 6rem; font-weight: bold; font-family: monospace; color: var(--accent); background: rgba(0,0,0,0.5); border-radius: 10px; padding: 0 15px; z-index: 5;}
-        #msg-display { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; background: rgba(0,0,0,0.5); border-radius: 5px; padding: 5px 10px; z-index: 5;}
+    @keyframes pulse-red {
+      0% { opacity: .10; }
+      100% { opacity: .70; }
+    }
 
-        .captain-btn, .gear-lever {
-            height: 55px; background: rgba(0,0,0,0.7); border: 2px solid #555; border-radius: 10px;
-            color: #aaa; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 5px; transition: 0.3s;
-        }
-        .pulse-blue { border-color: var(--blue); color: var(--blue); cursor: pointer; animation: pulse-blue 1s infinite; }
-        .pulse-amber { border-color: var(--warn); color: var(--warn); cursor: pointer; animation: pulse-amber 0.5s infinite; }
-        .btn-green { background: rgba(0, 68, 0, 0.8); border-color: var(--accent); color: var(--accent); }
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
 
-        .touchdown-btn {
-            height: 130px; 
-            background: rgba(0,0,0,0.85); border: 4px solid #333; border-radius: 15px; color: #555;
-            font-size: 2rem; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-            text-transform: uppercase; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); margin-top: auto;
-        }
-        .td-orange { background: var(--warn); color: #000; cursor: pointer; border-color: #fff; box-shadow: 0 0 30px var(--warn); }
-        .td-red { background: var(--danger); color: #fff; cursor: pointer; border-color: #fff; box-shadow: 0 0 30px var(--danger); }
-        .td-blue { background: var(--blue); color: #fff; cursor: pointer; animation: pulse-fast 0.2s infinite; border-color: #fff; box-shadow: 0 0 30px var(--blue); }
+    .shake { animation: shake .4s infinite; }
+    .shake-hard { animation: shake .1s infinite; }
 
-        .report-overlay {
-            position: absolute; inset: 0; background: rgba(5, 10, 15, 0.95);
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 200; text-align: center; backdrop-filter: blur(10px);
-        }
-        .report-box {
-            padding: 40px; border: 3px solid var(--accent); border-radius: 20px;
-            background: rgba(17, 27, 36, 0.9); box-shadow: 0 0 50px rgba(0, 255, 136, 0.2);
-        }
+    @keyframes shake-light {
+      0% { transform: translate(1px, 0px) rotate(0deg); }
+      25% { transform: translate(-1px, 1px) rotate(-.2deg); }
+      50% { transform: translate(0px, -1px) rotate(.2deg); }
+      75% { transform: translate(-1px, 0px) rotate(0deg); }
+      100% { transform: translate(1px, 1px) rotate(-.2deg); }
+    }
 
-        .start-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
-        .main-layout { display: flex; gap: 30px; align-items: flex-start; margin-top: 20px; }
-        .manual-container { width: 320px; background: rgba(255,255,255,0.05); border: 1px solid #444; border-radius: 10px; padding: 15px; text-align: left; }
-        .manual-container h3 { color: var(--warn); margin-top: 0; text-transform: uppercase; font-size: 1rem; border-bottom: 1px solid #444; padding-bottom: 5px;}
-        .manual-container ul { padding-left: 20px; font-size: 0.9rem; color: #ccc; }
-        .manual-container li { margin-bottom: 10px; }
-        
-        .scoreboard-container { width: 320px; background: rgba(0,162,255,0.1); border: 1px solid var(--blue); border-radius: 10px; padding: 15px; max-height: 250px; overflow-y: auto;}
-        .scoreboard-container h3 { color: var(--blue); margin-top: 0; margin-bottom: 5px; text-align: center; text-transform: uppercase; }
-        .score-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.9rem;}
-        
-        .btn-start { padding: 15px 60px; font-size: 1.8rem; background: var(--accent); border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin-bottom: 10px; box-shadow: 0 0 20px var(--accent);}
-        .name-input { padding: 10px; margin-bottom: 15px; border-radius: 5px; width: 250px; text-align: center; background: #000; border: 1px solid var(--accent); color: white; }
+    .shake-light { animation: shake-light .4s infinite linear; }
 
-        .level-select { display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; }
-        .level-btn { padding: 10px 25px; font-size: 1rem; font-weight: bold; border-radius: 20px; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
-        .level-btn.selected { border-color: white; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
-        .btn-l1 { background: rgba(0, 162, 255, 0.15); color: var(--blue); border-color: rgba(0, 162, 255, 0.4); }
-        .btn-l1:hover { background: rgba(0, 162, 255, 0.3); }
-        .btn-l2 { background: rgba(255, 174, 0, 0.15); color: var(--warn); border-color: rgba(255, 174, 0, 0.4); }
-        .btn-l2:hover { background: rgba(255, 174, 0, 0.3); }
-        .btn-l3 { background: rgba(255, 77, 77, 0.15); color: var(--danger); border-color: rgba(255, 77, 77, 0.4); }
-        .btn-l3:hover { background: rgba(255, 77, 77, 0.3); }
+    .sim-shell {
+      position: relative;
+      z-index: 10;
+      width: min(1500px, 96vw);
+      min-height: 94vh;
+      margin: 3vh auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+    }
 
-/* --- TERUG KNOP --- */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 999;
-            padding: 10px 20px;
-            color: #ccc;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 8px;
-            background: rgba(17, 27, 36, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.3s;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .back-btn:hover {
-            background: rgba(0, 162, 255, 0.3);
-            border-color: var(--blue);
-            color: white;
-            transform: scale(1.05);
-        }
+    .sim-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 22px;
+      background: rgba(4, 11, 18, .72);
+      border: 1px solid rgba(0,162,255,.18);
+      box-shadow: 0 18px 40px var(--shadow);
+      backdrop-filter: blur(18px);
+    }
 
-    </style>
+    .sim-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-orb {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,255,136,.36);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,255,136,.22), transparent 30%),
+        conic-gradient(from 0deg, rgba(0,162,255,.8), transparent 22%, rgba(255,174,0,.76), transparent 55%, rgba(0,255,136,.86), transparent 100%),
+        #03090f;
+      box-shadow: 0 0 24px rgba(0,255,136,.16);
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .brand-orb::after {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border: 1px solid rgba(255,255,255,.23);
+      border-radius: 50%;
+    }
+
+    .sim-title {
+      font-weight: 1000;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: clamp(1.15rem, 2vw, 1.9rem);
+      line-height: 1;
+      text-shadow: 0 0 22px rgba(0,255,136,.22);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sim-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .78rem;
+      letter-spacing: .8px;
+    }
+
+    .sim-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .nav-pill {
+      color: #dff8ff;
+      text-decoration: none;
+      border: 1px solid rgba(0,162,255,.22);
+      background: rgba(0,162,255,.08);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: .76rem;
+      font-weight: 800;
+      transition: .18s ease;
+      white-space: nowrap;
+    }
+
+    .nav-pill:hover {
+      transform: translateY(-1px);
+      background: rgba(0,162,255,.16);
+      border-color: var(--blue);
+    }
+
+    .nav-pill.ops {
+      background: #7c3cff;
+      border-color: #7c3cff;
+      color: #fff;
+      box-shadow: 0 0 18px rgba(124,60,255,.26);
+    }
+
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(420px, 1fr) 260px;
+      grid-template-rows: 56px minmax(0, 1fr);
+      grid-template-areas:
+        "warning warning warning"
+        "left center right";
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .glass-panel {
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 36px rgba(0,0,0,.40), inset 0 0 28px rgba(0,162,255,.035);
+    }
+
+    #master-warning-bar {
+      grid-area: warning;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 18px;
+      font-weight: 1000;
+      letter-spacing: 4px;
+      cursor: pointer;
+      color: #ffdae0;
+      background:
+        linear-gradient(90deg, rgba(255,77,77,.18), rgba(255,174,0,.08), rgba(255,77,77,.18)),
+        rgba(7, 11, 18, .86);
+      border-color: rgba(255,77,77,.22);
+      text-transform: uppercase;
+    }
+
+    .master-active {
+      background: var(--danger) !important;
+      color: white !important;
+      animation: flash .4s infinite;
+      box-shadow: 0 0 28px rgba(255,77,77,.55);
+    }
+
+    @keyframes flash { 50% { opacity: .54; } }
+
+    .left-panel {
+      grid-area: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .panel-title {
+      color: var(--blue);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      font-weight: 900;
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(90deg, rgba(0,162,255,.10), transparent);
+    }
+
+    .altitude-tape {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px;
+      border-radius: 18px;
+      overflow-y: auto;
+      flex-grow: 1;
+      min-height: 240px;
+    }
+
+    .alt-btn {
+      padding: 10px 8px;
+      background: rgba(0,0,0,.42);
+      border: 1px solid rgba(151,217,255,.16);
+      color: #8aa3b8;
+      font-weight: 1000;
+      border-radius: 9px;
+      transition: .2s ease;
+      letter-spacing: .8px;
+    }
+
+    .alt-btn.active {
+      background: var(--blue);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,162,255,.55);
+      transform: scale(1.02);
+    }
+
+    .alt-btn.done {
+      background: rgba(0, 68, 34, .82);
+      color: var(--accent);
+      border-color: rgba(0,255,136,.55);
+    }
+
+    .alt-btn.locked {
+      opacity: .38;
+      border-color: rgba(255,77,77,.35);
+    }
+
+    .left-controls,
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .center-area {
+      grid-area: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .emergency-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      min-height: 62px;
+    }
+
+    .emerg-btn {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent),
+        rgba(0,0,0,.58);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      color: #aebbc7;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: .18s ease;
+      box-shadow: inset 0 0 18px rgba(0,0,0,.45);
+    }
+
+    .emerg-btn:hover {
+      border-color: rgba(255,174,0,.48);
+      color: white;
+    }
+
+    .emerg-active {
+      background: var(--danger);
+      color: white;
+      animation: pulse-fast .3s infinite;
+      box-shadow: 0 0 24px rgba(255,77,77,.46);
+    }
+
+    @keyframes pulse-fast { 50% { opacity: .68; } }
+
+    .display {
+      flex-grow: 1;
+      min-height: 540px;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      padding: 14px 0 18px;
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42)),
+        url('schiphol.png');
+      background-size: cover;
+      background-position: center;
+      transition: background-image .5s ease-in-out;
+      border: 1px solid rgba(255,255,255,.16);
+    }
+
+    .display::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(0,162,255,.12) 1px, transparent 1px),
+        linear-gradient(rgba(0,162,255,.08) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(180deg, transparent, black 18%, black 82%, transparent);
+      opacity: .36;
+      z-index: 1;
+    }
+
+    .chaos-panel {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      width: 95%;
+      box-sizing: border-box;
+      background: rgba(0,0,0,.46);
+      border: 1px solid rgba(0,255,136,.18);
+      border-radius: 16px;
+      padding: 10px;
+      margin-top: 5px;
+      backdrop-filter: blur(7px);
+      position: relative;
+      z-index: 4;
+    }
+
+    .radar-images {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .radar-images img {
+      width: min(220px, 45%);
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(53, 208, 127, .5);
+      opacity: .92;
+      box-shadow: 0 0 18px rgba(0,255,136,.08);
+    }
+
+    #plane-display {
+      width: min(62%, 600px);
+      max-height: 230px;
+      object-fit: contain;
+      display: none;
+      filter: drop-shadow(0 0 20px rgba(0, 162, 255, .42));
+      z-index: 5;
+      transition: transform .4s ease-out, top .4s ease-out;
+      position: relative;
+      top: 0;
+    }
+
+    @keyframes float-subtle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-9px); }
+    }
+
+    .plane-normal { animation: float-subtle 4s ease-in-out infinite; }
+    .plane-bank-left { transform: rotate(-7deg); animation: float-subtle 4s ease-in-out infinite; }
+    .plane-bank-right { transform: rotate(7deg); animation: float-subtle 4s ease-in-out infinite; }
+    .plane-nose-up { transform: rotate(-25deg); }
+
+    @keyframes vibrate-fast {
+      0% { transform: translate(-2px, 0); }
+      50% { transform: translate(2px, 0); }
+      100% { transform: translate(-2px, 0); }
+    }
+
+    .plane-vibrate { animation: vibrate-fast .1s infinite linear; }
+    .plane-flare { transform: rotate(-15deg); top: 30px; }
+
+    #alt-display {
+      font-size: clamp(3.6rem, 9vw, 7rem);
+      line-height: 1;
+      font-weight: 1000;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      color: var(--accent);
+      background: rgba(0,0,0,.52);
+      border: 1px solid rgba(0,255,136,.22);
+      border-radius: 18px;
+      padding: 7px 20px;
+      z-index: 5;
+      box-shadow: 0 0 24px rgba(0,255,136,.12);
+      min-width: 220px;
+      text-align: center;
+    }
+
+    #msg-display {
+      font-size: 1.1rem;
+      font-weight: 1000;
+      margin-bottom: 12px;
+      background: rgba(0,0,0,.56);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px;
+      padding: 8px 13px;
+      z-index: 5;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .captain-btn,
+    .gear-lever {
+      min-height: 60px;
+      background: rgba(0,0,0,.50);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
+      color: #adb9c3;
+      font-weight: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7px;
+      transition: .22s ease;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      box-shadow: inset 0 0 18px rgba(0,0,0,.36);
+    }
+
+    .captain-btn small,
+    .gear-lever small {
+      color: #758696;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .pulse-blue {
+      border-color: var(--blue);
+      color: var(--blue);
+      cursor: pointer;
+      animation: pulse-blue 1s infinite;
+    }
+
+    @keyframes pulse-blue {
+      50% { box-shadow: 0 0 22px rgba(0,162,255,.42), inset 0 0 18px rgba(0,162,255,.10); }
+    }
+
+    .pulse-amber {
+      border-color: var(--warn);
+      color: var(--warn);
+      cursor: pointer;
+      animation: pulse-amber .5s infinite;
+    }
+
+    @keyframes pulse-amber {
+      50% { box-shadow: 0 0 22px rgba(255,174,0,.42), inset 0 0 18px rgba(255,174,0,.10); }
+    }
+
+    .btn-green {
+      background: rgba(0, 68, 34, .82) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+    }
+
+    .controls {
+      grid-area: right;
+      min-height: 0;
+    }
+
+    .side-card {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.13);
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+
+    .side-card strong {
+      display: block;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 7px;
+      font-size: .78rem;
+    }
+
+    .touchdown-btn {
+      flex: 1;
+      min-height: 160px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.05), transparent 50%),
+        rgba(0,0,0,.68);
+      border: 3px solid rgba(255,255,255,.18);
+      border-radius: 24px;
+      color: #58626b;
+      font-size: clamp(1.6rem, 3vw, 2.35rem);
+      font-weight: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s ease;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 26px rgba(0,0,0,.5);
+      margin-top: auto;
+      text-align: center;
+      padding: 10px;
+      letter-spacing: 1px;
+    }
+
+    .td-orange {
+      background: var(--warn);
+      color: #000;
+      cursor: pointer;
+      border-color: #fff;
+      box-shadow: 0 0 34px rgba(255,174,0,.64);
+    }
+
+    .td-red {
+      background: var(--danger);
+      color: #fff;
+      cursor: pointer;
+      border-color: #fff;
+      box-shadow: 0 0 34px rgba(255,77,77,.64);
+    }
+
+    .td-blue {
+      background: var(--blue);
+      color: #fff;
+      cursor: pointer;
+      animation: pulse-fast .2s infinite;
+      border-color: #fff;
+      box-shadow: 0 0 34px rgba(0,162,255,.64);
+    }
+
+    .report-overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(0,255,136,.12), transparent 38%),
+        rgba(2, 7, 12, .96);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      padding: 22px;
+    }
+
+    .report-box {
+      width: min(680px, 94vw);
+      padding: clamp(24px, 5vw, 46px);
+      border: 2px solid var(--accent);
+      border-radius: 28px;
+      background: rgba(9, 20, 31, .92);
+      box-shadow: 0 0 60px rgba(0, 255, 136, .18);
+    }
+
+    .start-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top, rgba(0,162,255,.14), transparent 34%),
+        rgba(2, 6, 11, .96);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 24px;
+      overflow: auto;
+    }
+
+    .start-card {
+      width: min(1060px, 96%);
+      display: grid;
+      grid-template-columns: minmax(280px, .88fr) minmax(320px, 1.12fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .start-hero,
+    .start-info {
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: inset 0 0 22px rgba(0,162,255,.03);
+    }
+
+    .start-hero h1 {
+      color: var(--accent);
+      text-shadow: 0 0 24px rgba(0,255,136,.28);
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .start-hero p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0 0 16px;
+    }
+
+    .name-input {
+      padding: 13px 14px;
+      margin: 4px 0 14px;
+      border-radius: 14px;
+      width: 100%;
+      text-align: center;
+      background: rgba(0,0,0,.56);
+      border: 1px solid rgba(0,255,136,.34);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .name-input:focus {
+      box-shadow: 0 0 20px rgba(0,255,136,.16);
+      border-color: var(--accent);
+    }
+
+    .level-select {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0 20px;
+    }
+
+    .level-btn {
+      padding: 12px 10px;
+      font-size: .92rem;
+      font-weight: 1000;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: .2s ease;
+      min-height: 50px;
+    }
+
+    .level-btn.selected {
+      border-color: white;
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 0 18px rgba(255,255,255,.24);
+    }
+
+    .btn-l1 { background: rgba(0, 162, 255, .14); color: var(--blue); border-color: rgba(0, 162, 255, .38); }
+    .btn-l1:hover { background: rgba(0, 162, 255, .26); }
+    .btn-l2 { background: rgba(255, 174, 0, .14); color: var(--warn); border-color: rgba(255, 174, 0, .38); }
+    .btn-l2:hover { background: rgba(255, 174, 0, .26); }
+    .btn-l3 { background: rgba(255, 77, 77, .14); color: var(--danger); border-color: rgba(255, 77, 77, .38); }
+    .btn-l3:hover { background: rgba(255, 77, 77, .26); }
+
+    .btn-start {
+      width: 100%;
+      padding: 15px 28px;
+      font-size: 1.25rem;
+      background: var(--accent);
+      color: #001b10;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      box-shadow: 0 0 26px rgba(0,255,136,.34);
+      transition: .2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .manual-container,
+    .scoreboard-container {
+      background: rgba(0,0,0,.24);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .manual-container h3,
+    .scoreboard-container h3 {
+      color: var(--warn);
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      font-size: .95rem;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      padding-bottom: 7px;
+      letter-spacing: 1px;
+    }
+
+    .scoreboard-container {
+      border-color: rgba(0,162,255,.28);
+      max-height: 285px;
+      overflow-y: auto;
+    }
+
+    .scoreboard-container h3 { color: var(--blue); text-align: center; }
+
+    .manual-container ul {
+      padding-left: 18px;
+      font-size: .88rem;
+      color: #d0d7de;
+      margin: 0;
+      line-height: 1.38;
+    }
+
+    .manual-container li { margin-bottom: 9px; }
+
+    .score-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 4px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.12);
+      font-size: .86rem;
+    }
+
+    .start-footer {
+      margin-top: 16px;
+      font-size: .72rem;
+      color: #8aa3b8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      body {
+        overflow: auto;
+        background-attachment: scroll;
+      }
+
+      .sim-shell {
+        width: min(1120px, 96vw);
+        min-height: auto;
+        margin: 16px auto;
+      }
+
+      .back-btn {
+        position: static;
+        display: inline-flex;
+        width: fit-content;
+        margin: 12px 0 0 12px;
+      }
+
+      .sim-header {
+        grid-template-columns: 1fr;
+      }
+
+      .sim-nav { justify-content: flex-start; }
+
+      .cockpit-grid {
+        grid-template-columns: minmax(260px, .72fr) minmax(460px, 1fr);
+        grid-template-rows: 56px minmax(520px, auto) auto;
+        grid-template-areas:
+          "warning warning"
+          "center center"
+          "left right";
+      }
+
+      .display { min-height: 560px; }
+
+      .left-panel,
+      .controls {
+        min-height: 360px;
+      }
+
+      .altitude-tape { max-height: 360px; }
+
+      .start-card {
+        grid-template-columns: 1fr;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .sim-shell { width: 96vw; margin: 10px auto 18px; }
+      .sim-header { padding: 11px; border-radius: 18px; }
+      .sim-brand { gap: 10px; }
+      .brand-orb { width: 40px; height: 40px; border-radius: 14px; }
+      .sim-title { white-space: normal; font-size: 1.18rem; }
+      .sim-sub { font-size: .7rem; }
+
+      .cockpit-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: 54px auto auto auto;
+        grid-template-areas:
+          "warning"
+          "center"
+          "left"
+          "right";
+        gap: 10px;
+      }
+
+      .emergency-row { grid-template-columns: 1fr; }
+      .display { min-height: 620px; border-radius: 20px; }
+      .start-overlay { justify-content: flex-start; padding: 14px; }
+      .start-card { width: 100%; gap: 12px; }
+      .start-hero, .start-info { padding: 16px; border-radius: 18px; }
+      .level-select { grid-template-columns: 1fr; }
+      .manual-container, .scoreboard-container { padding: 13px; }
+
+      .left-panel,
+      .controls {
+        min-height: auto;
+      }
+
+      .altitude-tape {
+        min-height: 0;
+        max-height: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .touchdown-btn {
+        min-height: 130px;
+      }
+
+      #alt-display {
+        min-width: 180px;
+      }
+    }
+  </style>
 </head>
 <body>
-<a href="https://luiz-air.voorbij.duckdns.org/" class="back-btn">🔙 L.A. LUIZ-AIR & CARGO 🇧🇷</a>
-<div id="weather-overlay" class="weather-overlay"></div>
-<div id="red-alert-overlay" class="red-alert-overlay"></div>
+  <a href="https://luiz-air.voorbij.duckdns.org/" class="back-btn">🔙 L.A. Luiz-Air & Cargo 🇧🇷</a>
 
-<div id="report-overlay" class="report-overlay">
+  <div id="weather-overlay" class="weather-overlay"></div>
+  <div id="red-alert-overlay" class="red-alert-overlay"></div>
+
+  <div id="report-overlay" class="report-overlay">
     <div class="report-box">
-        <h1 id="report-title" style="color: var(--accent); margin-bottom: 10px;">LANDING SUCCESSFUL</h1>
-        <p style="font-size: 1.4rem;">Captain: <span id="report-name" style="color: white;">---</span></p>
-        <p style="font-size: 1.6rem; color: var(--blue); margin-top: 10px;" id="report-level">Level: ---</p>
-        <p style="font-size: 2.2rem; margin: 20px 0;">Score: <span id="report-fpm" style="color: var(--accent); font-weight: bold;">---</span> FPM</p>
-        <p style="font-size: 1.2rem; color: white;" id="report-rank">Rank: ---</p>
-        <button class="btn-start" style="margin-top: 30px; font-size: 1.2rem;" onclick="location.reload()">BACK TO SCOREBOARD</button>
+      <div style="color: var(--blue); letter-spacing: 3px; font-weight: 900; text-transform: uppercase;">Landing Report</div>
+      <h1 id="report-title" style="color: var(--accent); margin: 10px 0 4px; font-size: clamp(2rem,5vw,4rem);">LANDING SUCCESSFUL</h1>
+      <p style="font-size: 1.25rem;">Captain: <span id="report-name" style="color: white;">---</span></p>
+      <p style="font-size: 1.35rem; color: var(--blue); margin-top: 10px;" id="report-level">Level: ---</p>
+      <p style="font-size: 2rem; margin: 18px 0;">Score: <span id="report-fpm" style="color: var(--accent); font-weight: 1000;">---</span> FPM</p>
+      <p style="font-size: 1.12rem; color: white;" id="report-rank">Rank: ---</p>
+      <button class="btn-start" style="margin-top: 26px; max-width: 360px;" onclick="location.reload()">BACK TO SCOREBOARD</button>
     </div>
-</div>
+  </div>
 
-<div class="cockpit-grid">
-    <div id="master-warning-bar" class="glass-panel" onclick="silenceWarning()">MASTER WARNING</div>
+  <div class="sim-shell">
+    <header class="sim-header">
+      <div class="sim-brand">
+        <div class="brand-orb" aria-hidden="true"></div>
+        <div>
+          <div class="sim-title">LUIZ-AIR // Landing Career Simulator</div>
+          <div class="sim-sub">ILS approach trainer // emergency callouts // weather challenge // FPM scoring</div>
+        </div>
+      </div>
 
-    <div class="left-panel">
-        <div class="altitude-tape glass-panel" id="tape"></div>
+      <nav class="sim-nav">
+        <a class="nav-pill ops" href="ops-briefing.html">📯 OPS Briefing</a>
+        <a class="nav-pill" href="tracker.html">⏱ ETA Tracker</a>
+        <a class="nav-pill" href="surveillance.html">🛰 Surveillance</a>
+        <a class="nav-pill" href="security.html">⬅ Home</a>
+      </nav>
+    </header>
+
+    <main class="cockpit-grid">
+      <div id="master-warning-bar" class="glass-panel" onclick="silenceWarning()">MASTER WARNING</div>
+
+      <aside class="left-panel">
+        <div class="altitude-tape glass-panel" id="tape">
+          <div class="panel-title" style="grid-column: 1 / -1;">Altitude Callouts</div>
+        </div>
+
         <div class="left-controls">
-            <div class="captain-btn glass-panel" id="captain-btn" onclick="handleCaptain()">PA SYSTEM<br><small>(Wait 2500ft)</small></div>
-            <div class="captain-btn glass-panel" id="lights-btn" onclick="handleLights()">LIGHTS OFF<br><small>(Wait 400ft)</small></div>
-            <div class="gear-lever glass-panel" id="seatbelts-lever" onclick="handleSeatbelts()">SEATBELTS OFF<br><small>(Wait 1000ft)</small></div>
+          <div class="captain-btn glass-panel" id="captain-btn" onclick="handleCaptain()">PA SYSTEM<br><small>Wait 2500ft</small></div>
+          <div class="captain-btn glass-panel" id="lights-btn" onclick="handleLights()">LIGHTS OFF<br><small>Wait 400ft</small></div>
+          <div class="gear-lever glass-panel" id="seatbelts-lever" onclick="handleSeatbelts()">SEATBELTS OFF<br><small>Wait 1000ft</small></div>
         </div>
-    </div>
+      </aside>
 
-    <div class="center-area">
+      <section class="center-area">
         <div class="emergency-row">
-            <div id="btn-pullup" class="emerg-btn" onclick="resolveEmergency('pullup')">PULL UP</div>
-            <div id="btn-stall" class="emerg-btn" onclick="resolveEmergency('stall')">STALL</div>
-            <div id="btn-overspeed" class="emerg-btn" onclick="resolveEmergency('overspeed')">OVERSPEED</div>
+          <div id="btn-pullup" class="emerg-btn" onclick="resolveEmergency('pullup')">PULL UP</div>
+          <div id="btn-stall" class="emerg-btn" onclick="resolveEmergency('stall')">STALL</div>
+          <div id="btn-overspeed" class="emerg-btn" onclick="resolveEmergency('overspeed')">OVERSPEED</div>
         </div>
-        
+
         <div class="display glass-panel" id="main-display">
-            <div id="start-overlay" class="start-overlay">
-                <h1 style="color: var(--accent); text-shadow: 0 0 20px var(--accent); margin-bottom: 5px;">LUIZ-AIR SIMULATOR</h1>
-                
+          <div id="start-overlay" class="start-overlay">
+            <div class="start-card">
+              <div class="start-hero">
+                <h1>Luiz-Air<br>Simulator</h1>
+                <p>
+                  Kies een bestemming, vlieg de approach, klik de callouts op tijd en land zo zacht mogelijk.
+                  Hoe lager je FPM-score, hoe beter de landing.
+                </p>
+
                 <input type="text" id="player-name" placeholder="Naam Piloot" class="name-input">
-                
-                <p style="color: #8aa3b8; margin: 5px 0;">Kies je Bestemming:</p>
+
+                <div style="color: #8aa3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: .8rem;">Kies je bestemming</div>
                 <div class="level-select">
-                    <button class="level-btn btn-l1 selected" onclick="selectLevel(1)" id="btn-level-1">Schiphol</button>
-                    <button class="level-btn btn-l2" onclick="selectLevel(2)" id="btn-level-2">Innsbruck</button>
-                    <button class="level-btn btn-l3" onclick="selectLevel(3)" id="btn-level-3">Kai Tak</button>
+                  <button class="level-btn btn-l1 selected" onclick="selectLevel(1)" id="btn-level-1">Schiphol</button>
+                  <button class="level-btn btn-l2" onclick="selectLevel(2)" id="btn-level-2">Innsbruck</button>
+                  <button class="level-btn btn-l3" onclick="selectLevel(3)" id="btn-level-3">Kai Tak</button>
                 </div>
 
                 <button class="btn-start" onclick="initFlight()">CLEARED TO LAND</button>
 
-                <div class="main-layout">
-                    <div class="manual-container">
-                        <h3>📋 Flight Manual</h3>
-                        <ul>
-                            <li><strong>Scanning:</strong> Klik de blauwe hoogte-knoppen links.</li>
-                            <li><strong>Systems:</strong> Gear (1000ft), Seatbelts (1000ft), Lights (400ft), Flaps (100ft).</li>
-                            <li><strong>Alerts:</strong> Schudt het scherm rood? Klik de noodknop bovenin!</li>
-                            <li><strong>Landing:</strong> 1x bij ORANJE (Landing) en 1x bij BLAUW (Remmen).</li>
-                        </ul>
-                    </div>
-                    <div class="scoreboard-container">
-                        <h3>🏆 Top Records</h3>
-                        <div id="score-list" style="text-align: left;">
-                            <div style="text-align:center;">Laden...</div>
-                   </div>
+                <div class="start-footer">© 2026 Luiz-Air Entertainment</div>
+              </div>
+
+              <div class="start-info">
+                <div class="manual-container">
+                  <h3>📋 Flight Manual</h3>
+                  <ul>
+                    <li><strong>Scanning:</strong> klik de blauwe hoogte-knoppen links zodra ze actief worden.</li>
+                    <li><strong>Systems:</strong> Gear en Seatbelts rond 1000ft, Lights rond 400ft, Flaps bij 100ft.</li>
+                    <li><strong>Alerts:</strong> schudt het scherm rood? Klik de juiste noodknop bovenin.</li>
+                    <li><strong>Landing:</strong> klik 1x bij ORANJE voor touchdown en 1x bij BLAUW voor reverse thrust.</li>
+                  </ul>
+                </div>
+
+                <div class="scoreboard-container" style="margin-top: 14px;">
+                  <h3>🏆 Top Records</h3>
+                  <div id="score-list" style="text-align: left;">
+                    <div style="text-align:center;">Laden...</div>
+                  </div>
                 </div>
               </div>
-	   <div class="main-layout">
-                    </div>
-
-                <div style="margin-top: 40px; font-size: 0.8rem; color: #8aa3b8; letter-spacing: 2px; text-transform: uppercase;">
-                    © 2026 Luiz-Air Entertainment
-                </div>
-                </div> ```
             </div>
+          </div>
 
-
-
-            <div class="chaos-panel" id="chaos-panel">
-                <div class="radar-images"><img src="radar1.png"><img src="radar2.png"></div>
+          <div class="chaos-panel" id="chaos-panel">
+            <div class="radar-images">
+              <img src="radar1.png" alt="Radar display 1">
+              <img src="radar2.png" alt="Radar display 2">
             </div>
+          </div>
 
-            <img src="plane.png" id="plane-display">
-            <div id="alt-display">----</div>
-            <div id="msg-display">READY FOR ILS</div>
+          <img src="plane.png" id="plane-display" alt="Aircraft">
+          <div id="alt-display">----</div>
+          <div id="msg-display">READY FOR ILS</div>
         </div>
-    </div>
+      </section>
 
-    <div class="controls">
-        <div class="gear-lever glass-panel" id="gear-lever" onclick="handleGear()">GEAR UP<br><small>(Wait 1000ft)</small></div>
-        <div class="gear-lever glass-panel" id="flaps-lever" onclick="handleFlaps()">FLAPS DOWN<br><small>(Wait 30ft)</small></div>
+      <aside class="controls">
+        <div class="side-card">
+          <strong>Approach Checklist</strong>
+          2500ft: PA call. 1000ft: gear en seatbelts. 400ft: landing lights.
+          100ft: flaps. Daarna touchdown en direct reverse thrust.
+        </div>
+
+        <div class="gear-lever glass-panel" id="gear-lever" onclick="handleGear()">GEAR UP<br><small>Wait 1000ft</small></div>
+        <div class="gear-lever glass-panel" id="flaps-lever" onclick="handleFlaps()">FLAPS DOWN<br><small>Wait 100ft</small></div>
         <div id="touchdown-btn" class="touchdown-btn" onclick="handleTouchdown()">TOUCHDOWN</div>
-    </div>
-</div>
+      </aside>
+    </main>
+  </div>
 
-<audio id="snd-master" src="sounds/master_warning.mp3" loop></audio>
-<audio id="snd-atc" src="sounds/air-traffic-control.mp3" loop></audio>
-<audio id="snd-wind" loop></audio> <audio id="snd-apoff" src="sounds/autopilot_off.mp3"></audio>
-<audio id="snd-gear" src="sounds/landing-gear.mp3"></audio>
-<audio id="snd-flaps" src="sounds/flaps-hydrolique.mp3"></audio>
-<audio id="snd-seatbelts" src="sounds/seatbelts.mp3"></audio>
-<audio id="snd-captain" src="sounds/captain.mp3"></audio>
-<audio id="snd-pullup" src="sounds/pull-up.mp3" loop></audio>
-<audio id="snd-stall" src="sounds/stall.mp3" loop></audio>
-<audio id="snd-overspeed" src="sounds/overspeed.mp3" loop></audio>
-<audio id="snd-applause" src="sounds/applause.mp3"></audio>
-<audio id="snd-crash" src="sounds/boom.mp3"></audio>
-<audio id="snd-tires" src="sounds/tires.mp3"></audio>
+  <audio id="snd-master" src="sounds/master_warning.mp3" loop></audio>
+  <audio id="snd-atc" src="sounds/air-traffic-control.mp3" loop></audio>
+  <audio id="snd-wind" loop></audio>
+  <audio id="snd-apoff" src="sounds/autopilot_off.mp3"></audio>
+  <audio id="snd-gear" src="sounds/landing-gear.mp3"></audio>
+  <audio id="snd-flaps" src="sounds/flaps-hydrolique.mp3"></audio>
+  <audio id="snd-seatbelts" src="sounds/seatbelts.mp3"></audio>
+  <audio id="snd-captain" src="sounds/captain.mp3"></audio>
+  <audio id="snd-pullup" src="sounds/pull-up.mp3" loop></audio>
+  <audio id="snd-stall" src="sounds/stall.mp3" loop></audio>
+  <audio id="snd-overspeed" src="sounds/overspeed.mp3" loop></audio>
+  <audio id="snd-applause" src="sounds/applause.mp3"></audio>
+  <audio id="snd-crash" src="sounds/boom.mp3"></audio>
+  <audio id="snd-tires" src="sounds/tires.mp3"></audio>
 
-<script>
-    // --- CONFIG ---
+  <script>
+// --- CONFIG ---
 const BIN_ID = "69c84d7eed015c742bc69be4";
 const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm";
 
@@ -375,7 +1148,8 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
     let currentIndex = 0;
     let isWarningActive = false, gearStatus = 'up', flapsStatus = 'up', seatbeltsStatus = 'off', lightsStatus = 'off', captainSpoke = false;
     let touchdownPhase = 0, currentPlayer = "Captain", globalScores = [], activeEmergency = null, emergencyTimer = null, calloutTimeoutTimer = null;
-    let finalFpm = 0, currentAudio = null;
+    let runwayOverrunTimer = null, brakeTimeoutTimer = null;
+    let finalFpm = 0, currentAudio = null, extraAudio = null;
 
     let currentLevel = 1;
 
@@ -444,7 +1218,7 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
             renderScores();
         } catch(e) { console.log(e); }
     }
-    window.onload = loadScores;
+    window.addEventListener('load', loadScores);
 
     function getRank(fpm) {
         if (fpm <= 100) return "🌟 Top Gun Legend";
@@ -611,6 +1385,8 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
     function startTouchdownSequence() {
         clearTimeout(emergencyTimer); 
         clearTimeout(calloutTimeoutTimer);
+        clearTimeout(runwayOverrunTimer);
+        clearTimeout(brakeTimeoutTimer);
         document.body.classList.remove('shake', 'shake-hard', 'shake-light');
         
         if(activeEmergency) { 
@@ -641,25 +1417,38 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
         const btn = document.getElementById('touchdown-btn');
         btn.className = 'touchdown-btn td-orange'; btn.innerText = "TOUCHDOWN!";
         touchdownPhase = 1;
+        btn.style.pointerEvents = 'auto';
         setTimeout(() => { if(touchdownPhase === 1) btn.className = 'touchdown-btn td-red'; }, currentLevel === 3 ? 900 : 1200);
-        setTimeout(() => { if(touchdownPhase < 3) crashFlight("CRASH! Baan overschreden!"); }, currentLevel === 3 ? 2000 : 2500);
+        runwayOverrunTimer = setTimeout(() => { if(touchdownPhase === 1) crashFlight("CRASH! Baan overschreden!"); }, currentLevel === 3 ? 2000 : 2500);
     }
 
     function handleTouchdown() {
-        if(touchdownPhase === 0) return;
-        if(touchdownPhase === 3) return finalizeLanding();
+        // Voorkom dubbele-klik bug: na SAFE AT GATE of buiten de landingfase doet de knop niets.
+        if (touchdownPhase === 0 || touchdownPhase === 4) return;
+
+        // Fase 3 = vliegtuig staat op de baan; deze klik is bedoeld als reverse thrust / remmen.
+        if (touchdownPhase === 3) return finalizeLanding();
+
+        // Alleen fase 1 is een geldige eerste touchdown-klik.
+        if (touchdownPhase !== 1) return;
 
         const btn = document.getElementById('touchdown-btn');
         finalFpm = btn.classList.contains('td-orange') ? Math.floor(Math.random()*120+40) : Math.floor(Math.random()*300+300);
         
         document.getElementById('snd-tires').play();
         touchdownPhase = 3;
-        btn.className = 'touchdown-btn td-blue'; btn.innerHTML = "REVERSE THRUST!<br><small>STOP NOW</small>";
-        setTimeout(() => { if(touchdownPhase === 3) crashFlight("CRASH! Remmen vergeten!"); }, currentLevel === 3 ? 1500 : 2000);
+        clearTimeout(runwayOverrunTimer);
+        clearTimeout(brakeTimeoutTimer);
+        btn.className = 'touchdown-btn td-blue';
+        btn.innerHTML = "REVERSE THRUST!<br><small>STOP NOW</small>";
+        brakeTimeoutTimer = setTimeout(() => { if(touchdownPhase === 3) crashFlight("CRASH! Remmen vergeten!"); }, currentLevel === 3 ? 1500 : 2000);
     }
 
     function finalizeLanding() {
+        if (touchdownPhase !== 3) return;
         touchdownPhase = 4;
+        clearTimeout(runwayOverrunTimer);
+        clearTimeout(brakeTimeoutTimer);
         
         // Achtergrondgeluid stoppen bij veilige landing
         document.getElementById('snd-wind').pause();
@@ -668,6 +1457,7 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
         document.getElementById('snd-applause').play();
         document.getElementById('touchdown-btn').className = 'touchdown-btn btn-green';
         document.getElementById('touchdown-btn').innerText = "SAFE AT GATE";
+        document.getElementById('touchdown-btn').style.pointerEvents = 'none';
         
         const plane = document.getElementById('plane-display');
         plane.classList.remove('plane-flare', 'plane-nose-up');
@@ -684,8 +1474,33 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
         }, 1500);
     }
 
-    function playCallout(h) { stopAudio(); currentAudio = new Audio(`sounds/${h}.mp3`); currentAudio.play(); }
-    function stopAudio() { if(currentAudio) currentAudio.pause(); }
+    function playCallout(h) {
+    stopAudio();
+
+    currentAudio = new Audio(`sounds/${h}.mp3`);
+
+    if ([30, 20, 10].includes(h)) {
+        currentAudio.addEventListener('ended', () => {
+            extraAudio = new Audio('sounds/retard.mp3');
+            extraAudio.play().catch(err => console.log('extra audio error:', err));
+        }, { once: true });
+    }
+
+    currentAudio.play().catch(err => console.log('callout audio error:', err));
+}
+    function stopAudio() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+    }
+
+    if (extraAudio) {
+        extraAudio.pause();
+        extraAudio.currentTime = 0;
+        extraAudio = null;
+    }
+}
 
     function updateEffects() {
         const o = document.getElementById('red-alert-overlay');
@@ -730,8 +1545,8 @@ const MASTER_KEY = "$2a$10$TFhYD876PqRtAzk/kY54TeJ1hr120JsRdCye3yJOVm5PSdTYQCojm
         document.body.classList.remove('shake', 'shake-light');
         document.body.classList.add('shake-hard');
         document.getElementById('snd-crash').play();
-        document.body.innerHTML = `<div style="text-align:center; padding-top:20vh; font-family:sans-serif; background: black; height: 100vh;"><h1 style="color:red; font-size:5rem;">CRASH</h1><p style="color:white; font-size:1.5rem;">${r}</p><button onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem; cursor:pointer;">RETRY</button></div>`;
+        document.body.innerHTML = `<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'Segoe UI',sans-serif; background: radial-gradient(circle at center, rgba(255,77,77,.18), transparent 35%), #020204; color:white; padding:24px;"><div style="width:min(680px,92vw); border:2px solid #ff4d4d; border-radius:24px; background:rgba(17,27,36,.88); box-shadow:0 0 40px rgba(255,77,77,.22); padding:34px;"><div style="font-size:12px; letter-spacing:4px; color:#ffae00; text-transform:uppercase;">Luiz-Air Incident Report</div><h1 style="color:#ff4d4d; font-size:clamp(3rem,10vw,6rem); margin:12px 0;">CRASH</h1><p style="color:white; font-size:1.35rem; line-height:1.5;">${r}</p><button onclick="location.reload()" style="margin-top:22px; padding:15px 34px; font-size:1rem; cursor:pointer; border-radius:999px; border:0; font-weight:900; background:#00ff88; color:#001b10; box-shadow:0 0 24px rgba(0,255,136,.38);">RETRY APPROACH</button></div></div>`;
     }
-</script>
+  </script>
 </body>
 </html>
