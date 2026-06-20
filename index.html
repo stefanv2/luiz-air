@@ -599,7 +599,7 @@
       <div class="brand">
         
         <a href="https://luiz-air.voorbij.duckdns.org/game.html" class="logo-badge" title="Klik hier voor een verrassing!">
-          <img src="Capybara-vector2.png" alt="Capybara Logo">
+          <img src="assets/images/Capybara-vector2.png" alt="Capybara Logo">
         </a>
         
         <a href="index.html" style="text-decoration: none; color: inherit;">
@@ -632,7 +632,7 @@
   
   <section id="home" class="card" style="padding:0; border:none;">
     <div class="hero-img-container" style="margin:0; border-radius:24px;">
-      <img id="heroImage" src="luiz-air-777.png" alt="LUIZ-AIR" onerror="this.src='https://images.unsplash.com/photo-1542296332-2e44a996aaad?auto=format&fit=crop&w=1200&q=80'">
+      <img id="heroImage" src="assets/images/luiz-air-777.png" alt="LUIZ-AIR" onerror="this.src='https://images.unsplash.com/photo-1542296332-2e44a996aaad?auto=format&fit=crop&w=1200&q=80'">
     </div>
   </section>
 
@@ -763,14 +763,14 @@
       
       <div class="jet-grid">
         <div class="jet-card" onclick="selectJet(1, this)">
-          <img src="prive_luiz1.png" alt="Golden Capybara" onerror="this.src='https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=600&q=80'">
+          <img src="assets/images/prive_luiz1.png" alt="Golden Capybara" onerror="this.src='https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=600&q=80'">
           <div class="jet-info">
             <div class="jet-name">The Golden Capybara</div>
             <div style="font-size:12px;">Max 8 Personen • 900 km/u</div>
           </div>
         </div>
         <div class="jet-card" onclick="selectJet(2, this)">
-          <img src="prive_luiz2.png" alt="Silver Arrow" onerror="this.src='https://images.unsplash.com/photo-1583413230540-ddf906819630?auto=format&fit=crop&w=600&q=80'">
+          <img src="assets/images/prive_luiz2.png" alt="Silver Arrow" onerror="this.src='https://images.unsplash.com/photo-1583413230540-ddf906819630?auto=format&fit=crop&w=600&q=80'">
           <div class="jet-info">
             <div class="jet-name">The Silver Arrow</div>
             <div style="font-size:12px;">Max 12 Personen • Slaapkamers</div>
@@ -961,16 +961,16 @@
 
 <script>
   // --- AFBEELDINGEN & DATA ---
-  const IMAGES_PAX = ["luiz-air-777.png", "Luiz_air2.png", "Luiz-air3.png", "777x.png", "737.png", "a330.png", "a340.png", "an124.png"];
-  const IMAGES_CARGO = ["Luiz_cargo.png", "Luiz_cargo4.png", "Luiz_cargo1.png", "Luiz_cargo3.jpeg", "Luiz_cargo2.jpeg", "a330.png", "a340.png", "a330f.png", "md11f.png", "747f.png", "an14.png"];
+  const IMAGES_PAX = ["assets/images/luiz-air-777.png", "assets/images/Luiz_air2.png", "assets/images/Luiz-air3.png", "assets/images/777x.png", "assets/images/737.png", "assets/images/a330.png", "assets/images/a340.png", "assets/images/an124.png"];
+  const IMAGES_CARGO = ["assets/images/Luiz_cargo.png", "assets/images/Luiz_cargo4.png", "assets/images/Luiz_cargo1.png", "assets/images/Luiz_cargo3.jpeg", "assets/images/Luiz_cargo2.jpeg", "assets/images/a330.png", "assets/images/a340.png", "assets/images/a330f.png", "assets/images/md11f.png", "assets/images/747f.png", "assets/images/an14.png"];
   const ANIMAL_PICS = {
-    dog: "puppy.png", cat: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=200&q=80",
-    parrot: "papagaai.png", rabbit: "konijn.png",
+    dog: "assets/images/puppy.png", cat: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=200&q=80",
+    parrot: "assets/images/papagaai.png", rabbit: "assets/images/konijn.png",
     hamster: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=200&q=80",
-    capybara: "Capybara-PNG-Pic.png"
+    capybara: "assets/images/Capybara-PNG-Pic.png"
   };
-  const CARGO_PIC = "doos.png"; 
-  const PAX_PIC = "persoon.png"; 
+  const CARGO_PIC = "assets/images/doos.png";
+  const PAX_PIC = "assets/images/persoon.png";
   
   // VIDEOS
   const VIDEO_PAX = "promo.mp4";
@@ -1290,7 +1290,7 @@
       document.getElementById('vipForm').classList.remove('hidden');
       document.getElementById('vipReviews').classList.remove('hidden');
       document.querySelector('.mode-switch').style.display = 'none'; // Hide switch in VIP
-      document.getElementById('heroImage').src = 'prive_luiz1.png'; // Show jet
+      document.getElementById('heroImage').src = 'assets/images/prive_luiz1.png'; // Show jet
       
       // HIER VERANDERT DE VIDEO NAAR DE VIP JET
       const vid = document.getElementById("mainVideo");
@@ -1538,7 +1538,7 @@
       details: "ROYAL CLASS",
       seat: selectedJetName,
       meal: document.getElementById('vipFood').value,
-      img: selectedJetImg || 'prive_luiz1.png'
+      img: selectedJetImg || 'assets/images/prive_luiz1.png'
     });
   };
 
