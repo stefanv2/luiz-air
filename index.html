@@ -1169,16 +1169,20 @@
   let selectedJetImg = "";
 
   const ROUTES = [
-    { id:"AMS-GRU", name:"Amsterdam ✈ São Paulo", eco:399, cargo: 12 },
-    { id:"GRU-AMS", name:"São Paulo ✈ Amsterdam", eco:385, cargo: 11 },
-    { id:"AMS-GIG", name:"Amsterdam ✈ Rio de Janeiro", eco:429, cargo: 14 },
-    { id:"AMS-JFK", name:"Amsterdam ✈ New York", eco:450, cargo: 15 },
-    { id:"AMS-NRT", name:"Amsterdam ✈ Tokyo", eco:850, cargo: 20 },
-    { id:"AMS-DXB", name:"Amsterdam ✈ Dubai", eco:380, cargo: 10 },
+  { id:"AMS-ZLG", name:"Amsterdam ✈ Zelenograd, Republic of ECO", eco:275, cargo: 9 },
+  { id:"ZLG-AMS", name:"Zelenograd, Republic of ECO ✈ Amsterdam", eco:260, cargo: 9 },
+
+  { id:"AMS-GRU", name:"Amsterdam ✈ São Paulo", eco:399, cargo: 12 },
+  { id:"GRU-AMS", name:"São Paulo ✈ Amsterdam", eco:385, cargo: 11 },
+  { id:"AMS-GIG", name:"Amsterdam ✈ Rio de Janeiro", eco:429, cargo: 14 },
+  { id:"AMS-JFK", name:"Amsterdam ✈ New York", eco:450, cargo: 15 },
+  { id:"AMS-NRT", name:"Amsterdam ✈ Tokyo", eco:850, cargo: 20 },
+  { id:"AMS-DXB", name:"Amsterdam ✈ Dubai", eco:380, cargo: 10 },
   ];
 
   // --- WEER DATA ---
   const WEATHER_DB = {
+    "ZLG": { temp: "23°C", icon: "🌲", desc: "Groen en zonnig", type: "sunny" },
     "GRU": { temp: "26°C", icon: "⛅", desc: "Aangenaam Warm", type: "sunny" },
     "AMS": { temp: "12°C", icon: "🌧️", desc: "Regenachtig", type: "rainy" },
     "GIG": { temp: "32°C", icon: "☀️", desc: "Perfect Strandweer", type: "sunny" },
