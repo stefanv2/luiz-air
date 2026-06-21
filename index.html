@@ -589,6 +589,156 @@
 .pulse-sim-btn {
   animation: pulse-sim 1.4s infinite;
 }
+
+/* --- REPUBLIC OF ECO POPUP --- */
+#btnEco {
+  border: 1px solid #d6aa3a;
+  color: #d6aa3a;
+  background: linear-gradient(135deg, rgba(0,63,45,0.35), rgba(185,21,27,0.18));
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  display: inline-block;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 8px rgba(214,170,58,0.35);
+  transition: all 0.25s ease;
+}
+
+#btnEco:hover {
+  color: #071a13 !important;
+  background: linear-gradient(135deg, #d6aa3a, #f5f1e8);
+  box-shadow: 0 0 20px rgba(214,170,58,0.65);
+  transform: scale(1.05);
+}
+
+@keyframes pulse-eco {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,170,58,0.65); }
+  50% { transform: scale(1.06); box-shadow: 0 0 16px 10px rgba(214,170,58,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,170,58,0); }
+}
+
+.pulse-eco-btn {
+  animation: pulse-eco 1.6s infinite;
+}
+
+.eco-popup-card {
+  width: 720px;
+  max-width: 92%;
+  background: #071a13;
+  color: #f5f1e8;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 2px solid #d6aa3a;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 40px rgba(214,170,58,0.22);
+  position: relative;
+  animation: ecoSlideUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes ecoSlideUp {
+  from { transform: translateY(70px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.eco-popup-image {
+  height: 270px;
+  background:
+    linear-gradient(135deg, rgba(0,63,45,0.80), rgba(7,26,19,0.25)),
+    url("eco/assets/hero-map.png") center/cover no-repeat;
+  position: relative;
+}
+
+.eco-popup-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(7,26,19,0.92), rgba(7,26,19,0.05));
+}
+
+.eco-popup-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 2;
+  background: rgba(7,26,19,0.78);
+  border: 1px solid rgba(214,170,58,0.7);
+  color: #d6aa3a;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.eco-popup-content {
+  padding: 26px;
+  text-align: left;
+}
+
+.eco-popup-content h2 {
+  color: #d6aa3a;
+  margin: 0 0 10px;
+  font-size: clamp(28px, 5vw, 46px);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.eco-popup-content p {
+  color: #d8d1bd;
+  margin: 0 0 20px;
+  font-size: 16px;
+}
+
+.eco-popup-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eco-popup-actions .eco-visit-btn {
+  background: linear-gradient(135deg, #d6aa3a, #f5f1e8);
+  color: #071a13;
+  border: 0;
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eco-popup-actions .eco-close-btn {
+  background: transparent;
+  color: #d6aa3a;
+  border: 1px solid rgba(214,170,58,0.6);
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.eco-popup-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(214,170,58,0.65);
+  background: rgba(7,26,19,0.75);
+  color: #d6aa3a;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .eco-popup-image { height: 210px; }
+  .eco-popup-content { padding: 20px; }
+}
+
   </style>
 </head>
 <body>
@@ -613,6 +763,7 @@
       <a href="https://gallery.voorbij.duckdns.org/" id="btnGallery" class="pulse-gallery-btn" target="_blank"><span class="gallery-icon">📡</span>GALLERY</a>
       <a href="security.html" id="btnSecurity" class="pulse-security-btn">📡 SECURITY</a>
       <a href="luiz-warning-panel.html" id="btnSim" class="pulse-sim-btn">🎮 SIMULATOR</a>
+      <button id="btnEco" onclick="openEcoPopup()" class="pulse-eco-btn">🌍 VISIT ECO</button>
       <button id="langBtn" style="background:transparent; border:1px solid rgba(255,255,255,0.5); color:white; padding:5px 10px; border-radius:20px; cursor:pointer;">PT/NL</button>
     </nav>
   </div>
@@ -881,6 +1032,27 @@
   </footer>
 
 </main>
+
+
+<div id="ecoPopupOverlay" class="modal-overlay">
+  <div class="eco-popup-card">
+    <button class="eco-popup-x" onclick="closeEcoPopup()" aria-label="Sluit ECO popup">×</button>
+    <div class="eco-popup-image">
+      <div class="eco-popup-badge">New destination</div>
+    </div>
+    <div class="eco-popup-content">
+      <h2>Visit Republic of ECO</h2>
+      <p>
+        Ontdek Zelenograd, groene bergen, de ECO-rivier, retro vliegtuigen en een compleet nieuw land
+        binnen de Luiz-Air wereld.
+      </p>
+      <div class="eco-popup-actions">
+        <a class="eco-visit-btn" href="eco/">🌍 Open ECO website</a>
+        <button class="eco-close-btn" onclick="closeEcoPopup()">Later bekijken</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="vipAccessOverlay" class="modal-overlay">
   <div class="access-card">
@@ -1541,6 +1713,28 @@
       img: selectedJetImg || 'assets/images/prive_luiz1.png'
     });
   };
+
+
+  // --- REPUBLIC OF ECO POPUP ---
+  function openEcoPopup() {
+    document.getElementById("ecoPopupOverlay").classList.add("visible");
+    try { sessionStorage.setItem("ecoPopupSeen", "yes"); } catch(e) {}
+  }
+
+  function closeEcoPopup() {
+    document.getElementById("ecoPopupOverlay").classList.remove("visible");
+  }
+
+  // Laat de popup 1x per browsersessie automatisch zien
+  window.addEventListener("load", function() {
+    try {
+      if (!sessionStorage.getItem("ecoPopupSeen")) {
+        setTimeout(openEcoPopup, 1200);
+      }
+    } catch(e) {
+      setTimeout(openEcoPopup, 1200);
+    }
+  });
 
   init();
 </script>
