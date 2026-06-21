@@ -2,158 +2,197 @@
 
 ![Luiz Air preview](assets/luiz-air-preview.png)
 
-Luiz Air is een speelse, interactieve luchtvaartsite met meerdere HTML-pagina’s, afbeeldingen, geluiden en video’s.  
-De site bevat onder andere cockpit-achtige schermen, waarschuwingen, vliegtuigthema’s, radar/surveillance-achtige pagina’s en diverse media-effecten.
+L.A. LUIZ-AIR & CARGO 🇧🇷
 
-Dit project is vooral bedoeld als creatieve webpagina / hobbyproject en draait als statische website via Nginx in Docker.
+L.A. LUIZ-AIR & CARGO is een speelse, interactieve luchtvaartwebsite met meerdere pagina’s, vliegtuigthema’s, simulator-elementen, cargo/vip-functies, command-center schermen, geluiden, video’s en afbeeldingen.
 
-## Inhoud
+Het project is gebouwd als creatieve hobby-/familiesite en draait als statische website via Nginx in Docker.
 
-De site bestaat uit meerdere losse HTML-pagina’s, waaronder:
+Wat zit er in deze site?
 
-- `index.html` — hoofdsite / startpagina
-- `game.html` — spelpagina
-- `luiz.html` — Luiz Air pagina
-- `decoder.html` — decoder / encryptie pagina
-- `security.html` — security / toegangspagina
-- `tracker.html` — tracker pagina
-- `surveillance.html` — surveillance pagina
-- `wargames.html` — wargames thema
-- `intel-signals.html` — intelligence/signals pagina
-- `deep-intelligence.html` — extra intelligence pagina
-- `rus.html` — themapagina
+De site bestaat uit meerdere losse HTML-pagina’s met elk een eigen thema.
 
-Daarnaast bevat het project veel afbeeldingen, geluiden en video’s die direct door de HTML-pagina’s worden gebruikt.
+Hoofdpagina
+index.html
+Startpagina van L.A. LUIZ-AIR & CARGO met passagiersvluchten, cargo, VIP-jets, gallery-link, security-link en simulator-link.
+Simulator en games
+luiz-warning-panel.html
+Landing Career Simulator met hoogte-callouts, landing gear, flaps, master warning, touchdown en score.
+game.html
+Speelse gamepagina met vliegtuig/capybara-thema.
+Command center / defense pagina’s
+ops-briefing.html
+OPS Briefing Center met weerinformatie, space weather, situation room en live briefingstijl.
+tracker.html
+Tactical ETA Tracker met routeplanning, afstand, snelheid en aankomsttijd.
+surveillance.html
+Surveillance-dashboard met luchtvaart-, satelliet- en monitoringstijl.
+intel-signals.html
+SIGINT / radio / space monitor pagina.
+deep-intelligence.html
+Extra intelligence-dashboard met externe informatiebronnen en monitoringpanelen.
+security.html
+Security/thema-pagina met command aircraft en beveiligingsstijl.
+decoder.html
+Decoder/encryptiepagina.
+Extra thema’s
+luiz.html
+Extra Luiz-Air promotiepagina.
+rus.html
+Thema-pagina met Sovjet/Russische luchtvaartstijl.
+Let op: als deze lokaal bewust uit Git is gehaald, staat hij mogelijk niet meer in de GitHub-repo.
+Projectstructuur
 
-## Projectstructuur
+Globaal ziet de repo er zo uit:
 
-Globaal:
-
-```text
 .
 ├── index.html
 ├── game.html
 ├── luiz.html
-├── security.html
+├── luiz-warning-panel.html
+├── ops-briefing.html
 ├── tracker.html
 ├── surveillance.html
+├── security.html
+├── intel-signals.html
+├── deep-intelligence.html
 ├── decoder.html
 ├── Dockerfile
 ├── docker-compose.yml
+├── assets/
+│   └── images/
+│       └── *.png / *.jpg / *.jpeg / *.webp
 ├── sounds/
 │   └── *.mp3
-├── *.png
-├── *.jpg / *.jpeg
-├── *.mp3
-└── *.mp4
+├── video/
+│   └── *.mp4
+└── README.md
+Media
 
-cat > README.md <<'EOF'
-# Luiz Air
+De media zijn bewust verdeeld over aparte mappen:
 
-Luiz Air is een speelse, interactieve luchtvaartsite met meerdere HTML-pagina’s, afbeeldingen, geluiden en video’s.  
-De site bevat onder andere cockpit-achtige schermen, waarschuwingen, vliegtuigthema’s, radar/surveillance-achtige pagina’s en diverse media-effecten.
+assets/images/   afbeeldingen
+sounds/          geluiden / mp3-bestanden
+video/           video-bestanden
 
-Dit project is vooral bedoeld als creatieve webpagina / hobbyproject en draait als statische website via Nginx in Docker.
+Hierdoor blijft de hoofdmap overzichtelijk en staan de meeste losse bestanden niet meer direct in de root van de repository.
 
-## Inhoud
-
-De site bestaat uit meerdere losse HTML-pagina’s, waaronder:
-
-- `index.html` — hoofdsite / startpagina
-- `game.html` — spelpagina
-- `luiz.html` — Luiz Air pagina
-- `decoder.html` — decoder / encryptie pagina
-- `security.html` — security / toegangspagina
-- `tracker.html` — tracker pagina
-- `surveillance.html` — surveillance pagina
-- `wargames.html` — wargames thema
-- `intel-signals.html` — intelligence/signals pagina
-- `deep-intelligence.html` — extra intelligence pagina
-- `rus.html` — themapagina
-
-Daarnaast bevat het project veel afbeeldingen, geluiden en video’s die direct door de HTML-pagina’s worden gebruikt.
-
-## Projectstructuur
-
-Globaal:
-
-```text
-.
-├── index.html
-├── game.html
-├── luiz.html
-├── security.html
-├── tracker.html
-├── surveillance.html
-├── decoder.html
-├── Dockerfile
-├── docker-compose.yml
-├── sounds/
-│   └── *.mp3
-├── *.png
-├── *.jpg / *.jpeg
-├── *.mp3
-└── *.mp4
 Lokaal draaien met Docker
 
-Start de site met Docker Compose:
+De site draait als statische Nginx-site.
+
+Starten:
 
 docker compose up -d --build
 
-Controleer of de container draait:
+Controleren:
 
 docker compose ps
 
-Open daarna de site in je browser. Afhankelijk van de poort in docker-compose.yml, bijvoorbeeld:
+Open daarna:
 
 http://localhost:8080
 
-of vanaf een andere machine:
+Of vanaf een andere machine in het netwerk:
 
-http://<server-ip>:<poort>
-Stoppen
+http://<server-ip>:8080
+
+Stoppen:
+
 docker compose down
-Bestanden die niet in Git staan
+Dockerfile
 
-Grote mediabestanden kunnen bewust buiten Git blijven, bijvoorbeeld video’s groter dan 100 MB.
-GitHub accepteert standaard geen bestanden groter dan 100 MB.
+De site gebruikt een eenvoudige Nginx-container:
 
-Controleer grote bestanden met:
+FROM nginx:alpine
+COPY . /usr/share/nginx/html
+EXPOSE 80
 
-find . -type f -not -path "./.git/*" -size +90M -exec ls -lh {} \;
+Omdat de bestanden tijdens de build naar de container worden gekopieerd, moet je na HTML/CSS/JS/media-wijzigingen opnieuw builden:
 
-Als grote bestanden lokaal nodig zijn, plaats ze handmatig terug in de projectmap.
+docker compose up -d --build
+Nieuwe afbeeldingen toevoegen
 
-GitHub
+Plaats nieuwe afbeeldingen bij voorkeur in:
 
-Deze repo bevat de bronbestanden van de Luiz Air site.
+assets/images/
 
-Eerste keer pushen:
+Gebruik daarna in HTML of JavaScript bijvoorbeeld:
 
-git remote add origin git@github.com:stefanv2/luiz-air.git
-git branch -M main
-git push -u origin main
+<img src="assets/images/voorbeeld.png" alt="Voorbeeld">
 
-Bij bestaande remote:
+Of in JavaScript:
 
-git remote -v
-git push
-Ontwikkeling
+const IMAGE = "assets/images/voorbeeld.png";
+Nieuwe geluiden toevoegen
 
-Na wijzigingen:
+Plaats nieuwe mp3-bestanden bij voorkeur in:
+
+sounds/
+
+Voorbeeld:
+
+<audio src="sounds/voorbeeld.mp3"></audio>
+Nieuwe video’s toevoegen
+
+Plaats video’s bij voorkeur in:
+
+video/
+
+Voorbeeld:
+
+<video controls>
+  <source src="video/promo.mp4" type="video/mp4">
+</video>
+Git workflow
+
+Controleer wijzigingen:
 
 git status
 git diff
 
-Wijzigingen committen:
+Alles toevoegen:
 
-git add .
-git commit -m "Update Luiz Air site"
+git add -A
+
+Commit maken:
+
+git commit -m "Update Luiz-Air site"
+
+Pushen:
+
 git push
+
+Voor grotere wijzigingen is een aparte branch handig:
+
+git checkout -b mijn-wijziging
+Handige controles
+
+Zoek root-level afbeeldingen die nog niet in assets/images/ staan:
+
+find . -maxdepth 1 -type f \( \
+  -iname "*.jpg" -o \
+  -iname "*.jpeg" -o \
+  -iname "*.png" -o \
+  -iname "*.webp" \
+\) -printf "%f\n" | sort
+
+Zoek root-level mp3’s:
+
+find . -maxdepth 1 -type f -iname "*.mp3" -printf "%f\n" | sort
+
+Zoek root-level mp4’s:
+
+find . -maxdepth 1 -type f -iname "*.mp4" -printf "%f\n" | sort
+
+Controleer of Git geen whitespace-problemen ziet:
+
+git diff --check
 Let op
 
-Dit is een statische hobby-/demo-site. Eventuele wachtwoordvelden, pincodes of “security”-schermen in de HTML zijn niet bedoeld als echte beveiliging. Alles wat in HTML, CSS of JavaScript staat, is zichtbaar voor bezoekers via de browser.
+Dit is een creatieve hobby-/demo-site. Eventuele security-schermen, pincodes, access panels of waarschuwingen in HTML/JavaScript zijn bedoeld voor spel en beleving.
 
+Alles wat in HTML, CSS en JavaScript staat, is zichtbaar in de browser.
 Voor echte beveiliging is server-side authenticatie nodig.
 
 Licentie
