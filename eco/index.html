@@ -5,6 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Republic of ECO | Official Gateway</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .rail-section {
+      background:
+        radial-gradient(circle at top left, rgba(214, 170, 58, 0.16), transparent 38%),
+        linear-gradient(180deg, #071a13, #0b241a);
+      border-top: 1px solid rgba(214, 170, 58, 0.28);
+      border-bottom: 1px solid rgba(214, 170, 58, 0.28);
+    }
+
+    .rail-showcase {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 28px;
+      align-items: stretch;
+      margin-top: 28px;
+    }
+
+    .rail-map-img {
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+    }
+
+    .rail-routes {
+      display: grid;
+      gap: 14px;
+    }
+
+    .rail-routes article {
+      border: 1px solid rgba(214, 170, 58, 0.36);
+      border-radius: 16px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    }
+
+    .rail-routes strong {
+      display: block;
+      color: var(--eco-gold);
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .rail-routes span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .rail-showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .rail-map-img {
+        min-height: auto;
+      }
+    }
+  </style>
+
+
+  <style>
+    .aircraft-overview {
+      margin-top: 44px;
+      padding: 28px;
+      border: 1px solid rgba(214, 170, 58, 0.34);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top right, rgba(214, 170, 58, 0.12), transparent 34%),
+        rgba(255,255,255,0.045);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.24);
+    }
+
+    .aircraft-overview h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--eco-gold);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin-bottom: 10px;
+    }
+
+    .aircraft-overview-img {
+      margin-top: 22px;
+      display: block;
+      max-height: 860px;
+      object-fit: contain;
+      background: #f5f1e8;
+    }
+  </style>
+
 </head>
 <body>
   <header class="site-header">
@@ -20,6 +109,7 @@
       <a href="#visit">Visit</a>
       <a href="#invest">Invest</a>
       <a href="#airlines">Airlines</a>
+      <a href="#rail">Rail Network</a>
       <a href="#football">Football</a>
       <a href="#defense">Defense</a>
     </nav>
@@ -110,6 +200,53 @@
           <img src="assets/retro-a310.png" alt="Retro ECO aircraft livery" />
           <figcaption>Retro ECO livery</figcaption>
         </figure>
+      </div>
+    </section>
+
+
+
+      <div class="aircraft-overview">
+        <p class="eyebrow">Aircraft & Transport Network</p>
+        <h3>Republic of ECO Aviation Overview</h3>
+        <p>
+          A complete overview of ECO aviation: Republic of ECO International Airlines,
+          EcoFreight cargo division, military profile and national transport links.
+        </p>
+        <img class="feature-img aircraft-overview-img" src="assets/aircraft-fleet-overview.png" alt="Republic of ECO aircraft and transport overview" />
+      </div>
+
+    <section id="rail" class="section rail-section">
+      <p class="eyebrow">National Rail Network</p>
+      <h2>Republic of ECO Rail Network</h2>
+      <p>
+        Travel from Zelenograd to the coast, the mountains and the major regions of ECO.
+        The network combines high-speed trains, intercity routes, regional lines and night trains.
+      </p>
+
+      <div class="rail-showcase">
+        <img class="feature-img rail-map-img" src="assets/rail-network.png" alt="Republic of ECO rail network route map" />
+        <div class="rail-routes">
+          <article>
+            <strong>Zelenograd – Adriaport</strong>
+            <span>Coastal gateway • 2h 35m • High-speed line</span>
+          </article>
+          <article>
+            <strong>Zelenograd – Nordhaven</strong>
+            <span>Northern corridor • 2h 50m • High-speed line</span>
+          </article>
+          <article>
+            <strong>Zelenograd – Eastgate</strong>
+            <span>Eastern connection • 2h 20m • High-speed line</span>
+          </article>
+          <article>
+            <strong>Green Coast Express</strong>
+            <span>Scenic coastal route • Regional line</span>
+          </article>
+          <article>
+            <strong>Starograd Sleeper</strong>
+            <span>Night train • Sleeper service</span>
+          </article>
+        </div>
       </div>
     </section>
 
