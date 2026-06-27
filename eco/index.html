@@ -158,6 +158,58 @@
     }
   </style>
 
+
+  <style>
+    .history-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 22px;
+      margin-bottom: 18px;
+    }
+
+    .language-toggle {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      border: 1px solid rgba(214, 170, 58, 0.38);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.18);
+      flex-shrink: 0;
+    }
+
+    .lang-pill {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      background: transparent;
+      font-family: Arial, Helvetica, sans-serif;
+      transition: 0.2s ease;
+    }
+
+    .lang-pill:hover {
+      color: var(--eco-gold);
+      transform: translateY(-1px);
+    }
+
+    .lang-pill.active {
+      color: var(--eco-dark);
+      background: var(--eco-gold);
+      box-shadow: 0 10px 24px rgba(214, 170, 58, 0.25);
+    }
+
+    @media (max-width: 700px) {
+      .history-heading-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <header class="site-header">
@@ -172,7 +224,7 @@
     <nav>
       <a href="#visit">Visit</a>
       <a href="#invest">Invest</a>
-      <a href="#history">History</a>
+      <a href="#history">🇳🇱/🇬🇧 History</a>
       <a href="#airlines">Airlines</a>
       <a href="#rail">Rail Network</a>
       <a href="#football">Football</a>
@@ -254,25 +306,36 @@
     </section>
 
 
+
     <section id="history" class="section history-section">
       <div class="history-inner">
-        <p class="eyebrow">History</p>
-        <h2>De geschiedenis van de Republic of ECO</h2>
-        <p>
+        <div class="history-heading-row">
+          <div>
+            <p class="eyebrow" data-i18n="history-eyebrow">Geschiedenis</p>
+            <h2 data-i18n="history-title">De geschiedenis van de Republic of ECO</h2>
+          </div>
+
+          <div class="language-toggle" aria-label="Kies taal">
+            <button type="button" class="lang-pill active" data-lang="nl" onclick="setEcoHistoryLang('nl')">🇳🇱 NL</button>
+            <button type="button" class="lang-pill" data-lang="en" onclick="setEcoHistoryLang('en')">🇬🇧 EN</button>
+          </div>
+        </div>
+
+        <p data-i18n="history-p1">
           De Republic of ECO begon als een klein bergland rond de rivier-vallei van
           Zelenograd. Eeuwenlang gebruikten handelaren, boeren en ingenieurs de rivier om
           de noordelijke hooglanden, de groene bossen en de Adriatische kust met elkaar te verbinden.
           De rode ster werd het symbool van moed, terwijl de bergen en de rivier het hart van het
           nationale wapen werden.
         </p>
-        <p>
+        <p data-i18n="history-p2">
           Na een lange periode van regionale veranderingen verenigde ECO zijn provincies tot één
           moderne republiek. De nieuwe regering investeerde in spoorwegen, schone energie,
           luchtvaart, onderwijs en sterke nationale infrastructuur. Zelenograd groeide uit tot het
           politieke, culturele en economische centrum van het land, terwijl Adriaport de toegangspoort
           naar zee werd.
         </p>
-        <p>
+        <p data-i18n="history-p3">
           In de moderne tijd werd ECO bekend als een groene Europese macht: trots op zijn natuur,
           ambitieus in technologie en verbonden met de wereld via Republic of ECO International
           Airlines, EcoFreight en het nationale hogesnelheidsnetwerk. Vandaag presenteert ECO zich
@@ -281,19 +344,19 @@
 
         <div class="history-timeline">
           <article>
-            <span>Oude tijd</span>
-            <strong>Nederzettingen langs de rivier</strong>
-            <p>De eerste steden ontstaan langs de rivier-vallei van Zelenograd.</p>
+            <span data-i18n="timeline-1-era">Oude tijd</span>
+            <strong data-i18n="timeline-1-title">Nederzettingen langs de rivier</strong>
+            <p data-i18n="timeline-1-text">De eerste steden ontstaan langs de rivier-vallei van Zelenograd.</p>
           </article>
           <article>
-            <span>Vereniging</span>
-            <strong>De republiek wordt geboren</strong>
-            <p>De provincies verenigen zich onder de rode ster, bergen en rivier in het nationale wapen.</p>
+            <span data-i18n="timeline-2-era">Vereniging</span>
+            <strong data-i18n="timeline-2-title">De republiek wordt geboren</strong>
+            <p data-i18n="timeline-2-text">De provincies verenigen zich onder de rode ster, bergen en rivier in het nationale wapen.</p>
           </article>
           <article>
-            <span>Modern ECO</span>
-            <strong>Groene Europese macht</strong>
-            <p>Spoorwegen, luchtvaart, schone energie en technologie vormen de toekomst.</p>
+            <span data-i18n="timeline-3-era">Modern ECO</span>
+            <strong data-i18n="timeline-3-title">Groene Europese macht</strong>
+            <p data-i18n="timeline-3-text">Spoorwegen, luchtvaart, schone energie en technologie vormen de toekomst.</p>
           </article>
         </div>
       </div>
@@ -391,5 +454,70 @@
     <strong>Republic of ECO</strong>
     <span>Unity • Sovereignty • Progress • Sustainability</span>
   </footer>
+
+  <script>
+    const ecoHistoryTranslations = {
+      nl: {
+        "history-eyebrow": "Geschiedenis",
+        "history-title": "De geschiedenis van de Republic of ECO",
+        "history-p1": "De Republic of ECO begon als een klein bergland rond de rivier-vallei van Zelenograd. Eeuwenlang gebruikten handelaren, boeren en ingenieurs de rivier om de noordelijke hooglanden, de groene bossen en de Adriatische kust met elkaar te verbinden. De rode ster werd het symbool van moed, terwijl de bergen en de rivier het hart van het nationale wapen werden.",
+        "history-p2": "Na een lange periode van regionale veranderingen verenigde ECO zijn provincies tot één moderne republiek. De nieuwe regering investeerde in spoorwegen, schone energie, luchtvaart, onderwijs en sterke nationale infrastructuur. Zelenograd groeide uit tot het politieke, culturele en economische centrum van het land, terwijl Adriaport de toegangspoort naar zee werd.",
+        "history-p3": "In de moderne tijd werd ECO bekend als een groene Europese macht: trots op zijn natuur, ambitieus in technologie en verbonden met de wereld via Republic of ECO International Airlines, EcoFreight en het nationale hogesnelheidsnetwerk. Vandaag presenteert ECO zich met één duidelijke gedachte: een sterk land kan ook zijn rivieren, bergen en toekomst beschermen.",
+        "timeline-1-era": "Oude tijd",
+        "timeline-1-title": "Nederzettingen langs de rivier",
+        "timeline-1-text": "De eerste steden ontstaan langs de rivier-vallei van Zelenograd.",
+        "timeline-2-era": "Vereniging",
+        "timeline-2-title": "De republiek wordt geboren",
+        "timeline-2-text": "De provincies verenigen zich onder de rode ster, bergen en rivier in het nationale wapen.",
+        "timeline-3-era": "Modern ECO",
+        "timeline-3-title": "Groene Europese macht",
+        "timeline-3-text": "Spoorwegen, luchtvaart, schone energie en technologie vormen de toekomst."
+      },
+      en: {
+        "history-eyebrow": "History",
+        "history-title": "The Story of the Republic of ECO",
+        "history-p1": "The Republic of ECO began as a small mountain nation around the river valley of Zelenograd. For centuries, traders, farmers and engineers used the river to connect the northern highlands, the green forests and the Adriatic coast. The red star became a symbol of courage, while the mountains and river became the heart of the national crest.",
+        "history-p2": "After a long period of regional change, ECO united its provinces into one modern republic. The new government invested in railways, clean energy, aviation, education and strong national infrastructure. Zelenograd grew into the political, cultural and economic centre of the country, while Adriaport became the gateway to the sea.",
+        "history-p3": "In the modern era, ECO became known as a green European power: proud of its nature, ambitious in technology, and connected to the world through Republic of ECO International Airlines, EcoFreight and the national high-speed rail network. Today, ECO presents itself with one clear idea: a strong nation can also protect its rivers, mountains and future.",
+        "timeline-1-era": "Ancient Era",
+        "timeline-1-title": "River Settlements",
+        "timeline-1-text": "First towns grow along the Zelenograd river valley.",
+        "timeline-2-era": "Unification",
+        "timeline-2-title": "The Republic is Born",
+        "timeline-2-text": "The provinces unite under the red star, mountains and river crest.",
+        "timeline-3-era": "Modern ECO",
+        "timeline-3-title": "Green European Power",
+        "timeline-3-text": "Rail, aviation, clean energy and technology shape the future."
+      }
+    };
+
+    function setEcoHistoryLang(lang) {
+      const dict = ecoHistoryTranslations[lang] || ecoHistoryTranslations.nl;
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+        if (dict[key]) {
+          element.textContent = dict[key];
+        }
+      });
+
+      document.querySelectorAll(".lang-pill").forEach((button) => {
+        button.classList.toggle("active", button.getAttribute("data-lang") === lang);
+      });
+
+      try {
+        localStorage.setItem("ecoHistoryLang", lang);
+      } catch (e) {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      let savedLang = "nl";
+      try {
+        savedLang = localStorage.getItem("ecoHistoryLang") || "nl";
+      } catch (e) {}
+      setEcoHistoryLang(savedLang);
+    });
+  </script>
+
 </body>
 </html>
